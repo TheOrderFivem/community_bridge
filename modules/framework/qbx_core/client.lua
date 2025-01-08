@@ -1,8 +1,5 @@
 if GetResourceState('qbx_core') ~= 'started' then return end
 
--- This fork is a cult, they just belittle people and degrade them to feel better about themselves.
--- Defualt support for the best free inventory currently available is cool though.
-
 QBox = exports.qbx_core
 
 Framework = {}
@@ -56,10 +53,3 @@ RegisterNetEvent('QBCore:Client:OnJobUpdate', function(data)
     PlayerJobGradeLevel = data.grade.level
     TriggerEvent('community_bridge:Client:OnPlayerJobUpdate',PlayerJobName, PlayerJobLabel, PlayerJobGradeName, PlayerJobGradeLevel)
 end)
-
---[[
-print("Qbox shit.")
-print(Framework.GetPlayerIdentifier())
-print(json.encode(Framework.GetPlayerInventory()))
-print(json.encode(Framework.GetIsPlayerDead()))
---]]

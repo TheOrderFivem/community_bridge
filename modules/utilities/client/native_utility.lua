@@ -229,7 +229,7 @@ Utility.GetClosestPlayer = function(coords, distanceScope, includeMe)
 end
 
 AddEventHandler('onResourceStop', function(resource)
-    if resource ~= GetCurrentResourceName() then
+    if resource == GetCurrentResourceName() then
         for _, blip in pairs(blipIDs) do
             if DoesBlipExist(blip.id) then
                 RemoveBlip(blip.id)
