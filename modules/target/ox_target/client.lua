@@ -61,7 +61,7 @@ Target.RemoveZone = function(name)
 end
 
 AddEventHandler('onResourceStop', function(resource)
-    if resource == GetCurrentResourceName() then
+    if resource ~= GetCurrentResourceName() then
         for _, target in pairs(targetZones) do
             if target.creator == resource then
                 ox_target:removeZone(target.id)

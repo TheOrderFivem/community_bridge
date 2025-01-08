@@ -67,3 +67,5 @@ RegisterNetEvent('QBCore:Client:OnJobUpdate', function(data)
     PlayerJobGradeLevel = data.grade.level
     TriggerEvent('community_bridge:Client:OnPlayerJobUpdate',PlayerJobName, PlayerJobLabel, PlayerJobGradeName, PlayerJobGradeLevel)
 end)
+
+Bridge.RegisterModule("Framework", Framework)

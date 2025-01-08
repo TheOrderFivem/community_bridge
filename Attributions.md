@@ -4,7 +4,7 @@ This project incorporates code from several libraries and resources licensed und
 
 ## r_bridge
 - **Purpose**: Code for codem-inventory bridging, targeting, and framework item registration.
-- **Modifications to the code**: Code was used for codem/tgian inventory bridge & targeting, the idea of native helper functions came from that entirely. Targeting code still remains as is and is used as well as the method of registering usables.
+- **Modifications to the code**: Code was not used for inventory, but was refrenced while doing my bridging for inventories and the idea of native helper functions came from that entirely. Targeting code still remains as is and is used as well as the method of registering usables.
 - **Credit**: **r_bridge** inventory bridging code for codem-inventory is used in this. Targeting code still remains as is and is used.
   [\[r_bridge\]](https://github.com/rumaier/r_bridge)
 

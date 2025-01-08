@@ -1,5 +1,8 @@
 if GetResourceState('qbx_core') ~= 'started' then return end
 
+-- This fork is a cult, they just belittle people and degrade them to feel better about themselves.
+-- Defualt support for the best free inventory currently available is cool though.
+
 local QBox = exports.qbx_core
 
 Framework = {}
