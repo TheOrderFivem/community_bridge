@@ -1,5 +1,8 @@
 Clothing = Clothing or {}
 
+local illeniumModule = Require('modules/clothing/illenium-appearance/client.lua')
+local ConvertToIlleniumFormat = illeniumModule.ConvertToIlleniumFormat
+
 ClothingBackup = {}
 
 Clothing.SetAppearance = function(data)
@@ -9,7 +12,8 @@ Clothing.SetAppearance = function(data)
 end
 
 Clothing.GetAppearance = function()
-    return Utility.GetEntitySkinData(cache.ped)
+    local defaultData = Utility.GetEntitySkinData(cache.ped)
+    return ConvertToIlleniumFormat(defaultData)
 end
 
 Clothing.RestoreAppearance = function()
@@ -22,14 +26,12 @@ Clothing.ReloadSkin = function()
     return true
 end
 
-
-
 Clothing.UpdateAppearanceBackup = function(data)
-    ClothingBackup = data
+    ClothingBackup = ConvertToIlleniumFormat(data)
 end
 
 RegisterNetEvent('community_bridge:client:updateClothingBackup', function(skindata)
-    ClothingBackup = skindata
+    ClothingBackup = ConvertToIlleniumFormat(skindata)
 end)
 
 RegisterNetEvent('community_bridge:client:SetAppearance', function(data)
@@ -37,7 +39,7 @@ RegisterNetEvent('community_bridge:client:SetAppearance', function(data)
 end)
 
 RegisterNetEvent('community_bridge:client:GetAppearance', function()
-    Clothing.GetAppearance()
+    return Clothing.GetAppearance()
 end)
 
 RegisterNetEvent('community_bridge:client:RestoreAppearance', function()
@@ -47,3 +49,4 @@ end)
 RegisterNetEvent('community_bridge:client:ReloadSkin', function()
     Clothing.ReloadSkin()
 end)
+

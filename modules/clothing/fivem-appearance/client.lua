@@ -1,6 +1,9 @@
 if GetResourceState('fivem-appearance') ~= 'started' then return end
 Clothing = Clothing or {}
 
+local illeniumModule = Require('modules/clothing/illenium-appearance/client.lua')
+local ConvertToIlleniumFormat = illeniumModule.ConvertToIlleniumFormat
+
 Clothing.SetAppearance = function(data)
     local clothing = {}
     if GetEntityModel(cache.ped) == `mp_m_freemode_01` then
@@ -14,7 +17,8 @@ Clothing.SetAppearance = function(data)
 end
 
 Clothing.GetAppearance = function()
-    return exports['fivem-appearance']:getPedAppearance(cache.ped)
+    local fivemData = exports['fivem-appearance']:getPedAppearance(cache.ped)
+    return ConvertToIlleniumFormat(fivemData)
 end
 
 Clothing.RestoreAppearance = function()
@@ -29,3 +33,4 @@ Clothing.ReloadSkin = function()
     TriggerEvent("fivem-appearance:client:reloadSkin", true)
     return true
 end
+
