@@ -87,6 +87,18 @@ Target.AddBoxZone = function(name, coords, size, heading, options)
     table.insert(targetZones, { name = name, creator = GetInvokingResource() })
 end
 
+Target.AddSphereZone = function(name, coords, radius, options)
+    options = Target.FixOptions(options)
+    exports['qb-target']:AddCircleZone(name, coords, radius, {
+        name = name,
+        debugPoly = targetDebug,
+    }, {
+        options = options,
+        distance = options.distance or 1.5,
+    })
+    table.insert(targetZones, { name = name, creator = GetInvokingResource() })
+end
+
 Target.RemoveGlobalPlayer = function()
     exports['qb-target']:RemoveGlobalPlayer()
 end

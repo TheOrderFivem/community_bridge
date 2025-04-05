@@ -96,6 +96,26 @@ Target.AddBoxZone = function(name, coords, size, heading, options)
     return target
 end
 
+---comment
+---@param name string
+---@param coords vector3
+---@param radius number
+---@param heading number -- unused, but kept for compatibility
+---@param options table
+---@return number
+Target.AddSphereZone = function(name, coords, radius, heading, options)
+    options = Target.FixOptions(options)
+    local target = ox_target:addSphereZone({
+        coords = coords,
+        radius = radius,
+        name = name,
+        debug = targetDebug,
+        options = options
+    })
+    table.insert(targetZones, { name = name, id = target, creator = GetInvokingResource() })
+    return target
+end
+
 Target.RemoveGlobalPlayer = function()
     ox_target:removeGlobalPlayer()
 end
