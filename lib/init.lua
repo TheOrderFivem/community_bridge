@@ -45,6 +45,7 @@ cLib = {
     Math = Math or Require("lib/utility/shared/math.lua"),
     LA = LA or Require("lib/utility/shared/la.lua"),
     Perlin = Perlin or Require("lib/utility/shared/perlin.lua"),
+    WaitFor = WaitFor or Require("lib/utility/shared/wait_for.lua"), -- new
     -- Action = Action or Require("lib/entities/shared/actions.lua"),
 }
 
@@ -73,5 +74,7 @@ cLib.Particle = Particle or Require("lib/particles/client/particles.lua")
 cLib.Cache = Cache or Require("lib/cache/client/cache.lua")
 cLib.ClientEntity = ClientEntity or Require("lib/entities/client/client_entity.lua")
 cLib.ClientEntityActions = ClientEntityActions or Require("lib/entities/client/client_entity_actions.lua")
+cLib.Anim = Requests or Require("lib/anim/client/index.lua") -- new
+cLib.Requests = Requests or Require("lib/requests/client/requests.lua") -- new
 
 return cLib

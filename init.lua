@@ -115,6 +115,8 @@ Bridge.RegisterModule("Object", cLib.Object)
 Bridge.RegisterModule("Particle", cLib.Particle)
 Bridge.RegisterModule("ClientEntity", cLib.ClientEntity)
 Bridge.RegisterModule("ClientEntityActions", cLib.ClientEntityActions)
+Bridge.RegisterModule("Anim", cLib.Anim) -- new
+Bridge.RegisterModule("Requests", cLib.Requests) -- new
 
 -- Fill the bridge tables with player data.
 function FillBridgeTables()
