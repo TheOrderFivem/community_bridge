@@ -1,5 +1,5 @@
 local Cache = {}
-local Config = require("lib/settings/clientConfig.lua")
+local Config = Require("settings/sharedConfig.lua")
 local max = 5000
 local CreateThread = CreateThread
 local Wait = Wait
@@ -10,9 +10,8 @@ Cache.Caches = Cache.Caches or {}
 Cache.LoopRunning = Cache.LoopRunning or false
 
 local function print(...)
-    if Config.Debug then
-        print("^2[Cache]^0", ...)
-    end
+    if Config.DebugLevel == 0 then return end
+    print("^2[Cache]^0", ...)
 end
 
 local function StartLoop()

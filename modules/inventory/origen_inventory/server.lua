@@ -55,7 +55,6 @@ Inventory.GetPlayerInventory = function(src)
     local playerItems = origen_inventory:GetInventory(src)
     local repackedTable = {}
     for _, v in pairs(playerItems.inventory) do
-        print(json.encode(v, { indent = true }))
         table.insert(repackedTable, {
             name = v.name,
             count = v.count,

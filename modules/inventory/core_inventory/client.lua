@@ -16,6 +16,34 @@ Inventory.GetImagePath = function(item)
     return imagePath or "https://avatars.githubusercontent.com/u/47620135"
 end
 
+---comment
+---@param item string
+---@return boolean
+Inventory.HasItem = function(item)
+    return core:hasItem(item, 1)
+end
+
+---comment
+---@param item string
+---@return number
+Inventory.GetItemCount = function(item)
+    return core:getItemCount(item)
+end
+
+Inventory.GetPlayerInventory = function()
+    local playerItems = core:getInventory()
+    local repackedTable = {}
+    for _, v in pairs(playerItems) do
+        table.insert(repackedTable, {
+            name = v.name,
+            count = v.count,
+            metadata = v.metadata,
+            slot = v.id,
+        })
+    end
+    return repackedTable
+end
+
 Inventory.GetItemInfo = function(item)
     local frameworkName = Framework.GetFrameworkName()
     if not frameworkName then return {} end

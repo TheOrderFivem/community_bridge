@@ -257,7 +257,7 @@ Framework.GetIsPlayerDead = function(src)
     local player = QBCore.Functions.GetPlayer(src)
     if not player then return end
     local playerData = player.PlayerData
-    return playerData.metadata.isdead or false
+    return playerData.metadata.isdead or playerData.metadata.inlaststand or false
 end
 
 
@@ -447,6 +447,7 @@ Framework.RegisterUsableItem = function(itemName, cb)
     local func = function(src, item, itemData)
         itemData = itemData or item
         itemData.metadata = itemData.metadata or itemData.info or {}
+        itemData.slot = itemData.id or itemData.slot
         cb(src, itemData)
     end
     QBCore.Functions.CreateUseableItem(itemName, func)

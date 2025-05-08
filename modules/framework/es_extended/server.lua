@@ -243,6 +243,7 @@ end
 Framework.AddAccountBalance = function(src, _type, amount)
     local xPlayer = ESX.GetPlayerFromId(src)
     if not xPlayer then return end
+    if _type == 'cash' then _type = 'money' end
     return xPlayer.addAccountMoney(_type, amount)
 end
 
@@ -251,6 +252,7 @@ end
 Framework.RemoveAccountBalance = function(src, _type, amount)
     local xPlayer = ESX.GetPlayerFromId(src)
     if not xPlayer then return end
+    if _type == 'cash' then _type = 'money' end
     xPlayer.removeAccountMoney(_type, amount)
     return true
 end
@@ -260,6 +262,7 @@ end
 Framework.GetAccountBalance = function(src, _type)
     local xPlayer = ESX.GetPlayerFromId(src)
     if not xPlayer then return end
+    if _type == 'cash' then _type = 'money' end
     return xPlayer.getAccount(_type).money
 end
 
@@ -298,6 +301,7 @@ Framework.RegisterUsableItem = function(itemName, cb)
     local func = function(src, item, itemData)
         itemData = itemData or item
         itemData.metadata = itemData.metadata or itemData.info or {}
+        itemData.slot = itemData.id or itemData.slot
         cb(src, itemData)
     end
     ESX.RegisterUsableItem(itemName, func)
@@ -331,5 +335,3 @@ Framework.Commands.Add = function(name, help, arguments, argsrequired, callback,
         arguments = arguments
     })
 end
-
--- test

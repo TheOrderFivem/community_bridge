@@ -127,8 +127,10 @@ end
 ---@param item string
 ---@return table
 Inventory.GetItemInfo = function(item)
-    local itemData = quasar:GetItemList()
-    if not itemData[item] then return {} end
+    local itemsData = quasar:GetItemList()
+    if not itemsData then return {} end
+    local itemData = itemsData[item]
+    if not itemData then return {} end
     local repackedTable = {
         name = itemData.name or "Missing Name",
         label = itemData.label or "Missing Label",

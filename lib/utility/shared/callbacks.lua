@@ -49,7 +49,8 @@ local function triggerCallback(eventName, target, name, args, callback)
 
     if not callback then
         local result = Citizen.Await(promise)
-        return #result == 1 and result[1] or table.unpack(result)
+        local returnResults = (result and type(result) == 'table' ) and result or {result}
+        return table.unpack(returnResults)
     end
 end
 

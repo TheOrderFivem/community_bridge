@@ -151,6 +151,10 @@ function ClientEntity.Get(id) return Entities[id] end
 
 function ClientEntity.GetAll() return Entities end
 
+function ClientEntity.RegisterAction(name, func)
+    ClientEntityActions.RegisterAction(name, func)
+end
+
 -- Network Event Handlers
 RegisterNetEvent("community_bridge:client:CreateEntity", ClientEntity.Register)
 RegisterNetEvent("community_bridge:client:DeleteEntity", ClientEntity.Unregister)
@@ -169,7 +173,28 @@ RegisterNetEvent("community_bridge:client:TriggerEntityAction", function(entityI
     end
 end)
 
--- Cleanup on resource stop
+
+RegisterNetEvent("community_bridge:client:TriggerEntityActions", function(entityId, actions, endPosition)
+    local entityData = Entities[entityId]
+    if entityData then
+        for _, actionData in pairs(actions) do 
+            local actionName = actionData.name
+            local actionParams = actionData.params
+            if actionName == "Stop" then
+                ClientEntityActions.StopAction(entityId)
+            elseif actionName == "Skip" then
+                ClientEntityActions.SkipAction(entityId)
+            else
+                local currentAction = ClientEntityActions.ActionQueue[entityId] and ClientEntityActions.ActionQueue[entityId][1]
+                ClientEntityActions.QueueAction(entityData, actionName, table.unpack(actionParams))
+            end
+        end
+    else
+        print(string.format("[ClientEntity] Received actions for non-existent entity %s.", entityId))
+    end
+end)
+
+-- Resource Stop Cleanup
 AddEventHandler('onResourceStop', function(resourceName)
     if resourceName == GetCurrentResourceName() then
         for id, entityData in pairs(Entities) do

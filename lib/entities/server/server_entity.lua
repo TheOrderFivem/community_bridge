@@ -26,6 +26,7 @@ function ServerEntity.Create(id, entityType, model, coords, rotation, meta)
 
     ServerEntity.Add(self)
     TriggerClientEvent("community_bridge:client:CreateEntity", -1, self)
+    Wait(1000)
     return self
 end
 
@@ -65,8 +66,16 @@ function ServerEntity.TriggerAction(entityId, actionName, endPosition, ...)
         print(string.format("[ServerEntity] Attempted to trigger action '%s' on non-existent entity %s", actionName, entityId))
         return
     end
-    print(string.format("[ServerEntity] Triggering action '%s' for entity %s", actionName, entityId))
     TriggerClientEvent("community_bridge:client:TriggerEntityAction", -1, entityId, actionName, endPosition, ...)
+end
+
+function ServerEntity.TriggerActions(entityId, actions, endPosition)
+    local entity = Entities[entityId]
+    if not entity then
+        print(string.format("[ServerEntity] Attempted to trigger actions on non-existent entity %s", entityId))
+        return
+    end
+    TriggerClientEvent("community_bridge:client:TriggerEntityActions", -1, entityId, actions, endPosition)
 end
 
 function ServerEntity.GetAll()

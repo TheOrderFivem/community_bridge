@@ -1,12 +1,22 @@
 DefaultActions = {}
 ClientEntityActions = ClientEntityActions or Require("lib/entities/client/client_entity_actions.lua")
+LA = LA or Require("lib/utility/shared/la.lua")
+
+-- Constants
+local DEFAULT_TIMEOUT = 1000
+local DEFAULT_BLEND_IN = 8.0
+local DEFAULT_BLEND_OUT = -8.0
+local DEFAULT_DURATION = -1
+local DEFAULT_FLAG = 0
+local DEFAULT_PLAYBACK_RATE = 0.0
+local GROUND_CHECK_DISTANCE = 2.0
 
 -- Helper Functions
 local function validateEntity(entityData, requirePed)
-    local entity = entityData.spawned
-    local entityId = entityData.id
+    local entity, entityId = entityData.spawned, entityData.id
+    local isValid = entity and DoesEntityExist(entity) and (not requirePed or IsEntityAPed(entity))
 
-    if not entity or not DoesEntityExist(entity) or (requirePed and not IsEntityAPed(entity)) then
+    if not isValid then
         ClientEntityActions.IsActionRunning[entityId] = false
         ClientEntityActions.ProcessNextAction(entityId)
         return false
@@ -31,16 +41,13 @@ function DefaultActions.WalkTo(entityData, coords, speed, timeout)
     if not isValid then return end
 
     ClearPedTasks(entity)
-
     local thread = CreateThread(function()
         TaskGoToCoordAnyMeans(entity, coords.x, coords.y, coords.z, speed or 1.0, 0, false, 786603, timeout or -1)
 
-        local entityCoords = GetEntityCoords(entity)
         while ClientEntityActions.IsActionRunning[entityId]
             and entityData.spawned == entity
             and DoesEntityExist(entity)
-            and #(entityCoords - coords) > 2.0 do
-            entityCoords = GetEntityCoords(entity)
+            and #(GetEntityCoords(entity) - coords) > GROUND_CHECK_DISTANCE do
             Wait(0)
         end
 
@@ -56,22 +63,17 @@ function DefaultActions.PlayAnim(entityData, animDict, animName, blendIn, blendO
     if not isValid then return end
 
     local params = {
-        blendIn = blendIn or 8.0,
-        blendOut = blendOut or -8.0,
-        duration = duration or -1,
-        flag = flag or 0,
-        playbackRate = playbackRate or 0.0
+        blendIn = blendIn or DEFAULT_BLEND_IN,
+        blendOut = blendOut or DEFAULT_BLEND_OUT,
+        duration = duration or DEFAULT_DURATION,
+        flag = flag or DEFAULT_FLAG,
+        playbackRate = playbackRate or DEFAULT_PLAYBACK_RATE
     }
 
     local thread = CreateThread(function()
-        -- Load animation dictionary
         if not HasAnimDictLoaded(animDict) then
             RequestAnimDict(animDict)
-            local timeout = 100
-            while not HasAnimDictLoaded(animDict) and timeout > 0 do
-                Wait(10)
-                timeout = timeout - 1
-            end
+            while not HasAnimDictLoaded(animDict) do Wait(0) end
         end
 
         if HasAnimDictLoaded(animDict) then
@@ -81,19 +83,16 @@ function DefaultActions.PlayAnim(entityData, animDict, animName, blendIn, blendO
             local startTime = GetGameTimer()
             local animTime = params.duration > 0 and (startTime + params.duration) or -1
 
-            -- Animation monitoring loop
             while ClientEntityActions.IsActionRunning[entityId]
                 and entityData.spawned == entity
                 and DoesEntityExist(entity) do
-                local isPlaying = IsEntityPlayingAnim(entity, animDict, animName, 3)
-
-                -- Check break conditions
-                if not isPlaying and GetEntityAnimCurrentTime(entity, animDict, animName) > 0.1
+                if not IsEntityPlayingAnim(entity, animDict, animName, 3)
+                    and GetEntityAnimCurrentTime(entity, animDict, animName) > 0.1
                     and params.duration == -1 then
                     break
                 end
-                if animTime ~= -1 and GetGameTimer() >= animTime then break end
 
+                if animTime ~= -1 and GetGameTimer() >= animTime then break end
                 Wait(100)
             end
         end
@@ -110,38 +109,27 @@ function DefaultActions.LerpTo(entityData, targetCoords, duration, easingType, e
 
     local startCoords = GetEntityCoords(entity)
     local startTime = GetGameTimer()
-    local params = {
-        easingType = easingType or "linear",
-        easingDirection = easingDirection or "inout"
+    local easing = {
+        type = easingType or "linear",
+        direction = easingDirection or "inout"
     }
 
     local thread = CreateThread(function()
-        while GetGameTimer() < startTime + duration do
-            if not ClientEntityActions.IsActionRunning[entityId]
-                or not entityData.spawned
-                or entityData.spawned ~= entity
-                or not DoesEntityExist(entity) then
-                break
-            end
-
-            local elapsed = GetGameTimer() - startTime
-            local t = LA.Clamp(elapsed / duration, 0.0, 1.0)
-            local easedT = LA.EaseInOut(t, params.easingType)
-
-            if params.easingDirection == "in" then
-                easedT = LA.EaseIn(t, params.easingType)
-            elseif params.easingDirection == "out" then
-                easedT = LA.EaseOut(t, params.easingType)
-            end
+        while GetGameTimer() < startTime + duration
+            and ClientEntityActions.IsActionRunning[entityId]
+            and entityData.spawned == entity
+            and DoesEntityExist(entity) do
+            local t = LA.Clamp((GetGameTimer() - startTime) / duration, 0.0, 1.0)
+            local easedT = easing.direction == "in" and LA.EaseIn(t, easing.type)
+                or easing.direction == "out" and LA.EaseOut(t, easing.type)
+                or LA.EaseInOut(t, easing.type)
 
             local currentPos = LA.LerpVector(startCoords, targetCoords, easedT)
             SetEntityCoordsNoOffset(entity, currentPos.x, currentPos.y, currentPos.z, false, false, false)
             Wait(0)
         end
 
-        if ClientEntityActions.IsActionRunning[entityId]
-            and entityData.spawned == entity
-            and DoesEntityExist(entity) then
+        if ClientEntityActions.IsActionRunning[entityId] and DoesEntityExist(entity) then
             SetEntityCoordsNoOffset(entity, targetCoords.x, targetCoords.y, targetCoords.z, false, false, false)
         end
 
@@ -216,9 +204,7 @@ function DefaultActions.GetInCar(entityData, vehicleData, seatIndex, timeout)
         finishAction(entityId)
         return
     end
-
     ClearPedTasks(entity)
-
     local thread = CreateThread(function()
         TaskEnterVehicle(entity, vehicleData.spawned, timeout or 1000, seatIndex or -1, 1.0, 1, 0)
         Wait(timeout or 1000)
@@ -227,6 +213,40 @@ function DefaultActions.GetInCar(entityData, vehicleData, seatIndex, timeout)
         finishAction(entityId)
     end)
     ClientEntityActions.ActionThreads[entityId] = thread
+end
+
+-- Movement Effects
+function DefaultActions.Circle(entityData, radius, speed)
+    local isValid, entity, entityId = validateEntity(entityData, false)
+    if not isValid then return end
+
+    local coords = GetEntityCoords(entity)
+    local angle = 0.0
+
+    CreateThread(function()
+        while DoesEntityExist(entity) do
+            FreezeEntityPosition(entity, false)
+            local pos = LA.Circle(angle, radius, coords)
+            SetEntityCoords(entity, pos.x, pos.y, pos.z, false, false, false, false)
+            angle = angle + speed * GetFrameTime()
+            FreezeEntityPosition(entity, true)
+            Wait(0)
+        end
+    end)
+end
+
+function DefaultActions.BobUpAndDown(entityData, speed, height)
+    local isValid, entity, entityId = validateEntity(entityData, false)
+    if not isValid then return end
+
+    local coords = GetEntityCoords(entity)
+    CreateThread(function()
+        while DoesEntityExist(entity) do
+            local newZ = coords.z + math.sin(GetGameTimer() * (speed / 1000)) * height
+            SetEntityCoords(entity, coords.x, coords.y, newZ)
+            Wait(10)
+        end
+    end)
 end
 
 -- Register all actions
