@@ -1,76 +1,115 @@
--- Grid-based point system
-Point = {}
+local Config = Require('lib/points/client/config')
+
+---@class Point
+---@field id string Unique identifier for the point
+---@field target vector3|number Static coordinates or entity handle
+---@field isEntity boolean Whether the point tracks an entity
+---@field coords vector3 Current coordinates
+---@field distance number Activation distance
+---@field inside boolean Whether player is inside the point
+---@field args table Custom data for the point
+---@field cellKey string Current grid cell key
+local Point = {}
+
+-- Cache frequently used functions for performance
+local floor = math.floor
+local format = string.format
+local insert = table.insert
+local pairs = pairs
+local type = type
+local vector3 = vector3
+
+-- Local state management
 local ActivePoints = {}
 local GridCells = {}
 local LoopStarted = false
 local insidePoints = {}
-local data = {} -- 👈 Move this outside the function
+local data = {}
 
--- Grid configuration
-local GRID_SIZE = 500.0 -- Size of each grid cell
-local CELL_BUFFER = 1 -- Number of adjacent cells to check
-
--- Consider adding these optimizations
-local ADAPTIVE_WAIT = true -- Adjust wait time based on player speed
-
----This is an internal function, do not call this externally
-function Point.GetCellKey(coords)
-    local cellX = math.floor(coords.x / GRID_SIZE)
-    local cellY = math.floor(coords.y / GRID_SIZE)
-    return cellX .. ":" .. cellY
+---Converts coordinates to vector3 format
+---@param coords vector3|table Coordinates to convert
+---@return vector3
+local function vector3FromCoords(coords)
+    return type(coords) == "vector3" and coords or vector3(coords.x, coords.y, coords.z)
 end
 
----This is an internal function, do not call this externally
-function Point.RegisterInGrid(point)
-    local cellKey = Point.GetCellKey(point.coords)
+---Calculates distance between two points
+---@param coords1 vector3|table First coordinate
+---@param coords2 vector3|table Second coordinate
+---@return number distance
+local function calculateDistance(coords1, coords2)
+    return #(vector3FromCoords(coords1) - vector3FromCoords(coords2))
+end
 
-    -- Initialize cell if it doesn't exist
+---Gets the grid cell key for given coordinates
+---@param coords vector3 Coordinates to get cell for
+---@return string cellKey Format: "x:y"
+function Point.GetCellKey(coords)
+    local cellX = floor(coords.x / Config.GRID_SIZE)
+    local cellY = floor(coords.y / Config.GRID_SIZE)
+    return format("%d:%d", cellX, cellY)
+end
+
+function Point.RegisterInGrid(point)
+    if not point or not point.coords then return false end
+
+    local cellKey = Point.GetCellKey(point.coords)
     GridCells[cellKey] = GridCells[cellKey] or {
         points = {},
         count = 0
     }
 
-    -- Add point to cell
     GridCells[cellKey].points[point.id] = point
     GridCells[cellKey].count = GridCells[cellKey].count + 1
-
-    -- Store cell reference in point
     point.cellKey = cellKey
+    return true
 end
 
----This is an internal function, do not call this externally
 function Point.UpdateInGrid(point, oldCellKey)
-    -- Remove from old cell if cell key changed
-    if oldCellKey and oldCellKey ~= point.cellKey then
-        if GridCells[oldCellKey] and GridCells[oldCellKey].points[point.id] then
-            GridCells[oldCellKey].points[point.id] = nil
-            GridCells[oldCellKey].count = GridCells[oldCellKey].count - 1
+    if not point or not point.coords then return false end
 
-            -- Clean up empty cells
-            if GridCells[oldCellKey].count <= 0 then
-                GridCells[oldCellKey] = nil
-            end
+    local newCellKey = Point.GetCellKey(point.coords)
+    if oldCellKey and oldCellKey == newCellKey then return true end
+
+    -- Remove from old cell
+    if oldCellKey and GridCells[oldCellKey] then
+        GridCells[oldCellKey].points[point.id] = nil
+        GridCells[oldCellKey].count = GridCells[oldCellKey].count - 1
+
+        if GridCells[oldCellKey].count <= 0 then
+            GridCells[oldCellKey] = nil
         end
-
-        -- Add to new cell
-        Point.RegisterInGrid(point)
     end
+
+    return Point.RegisterInGrid(point)
 end
 
----Gets nearby cells based on the coords
----@param coords table
----@return table
-function Point.GetNearbyCells(coords)
-    local cellX = math.floor(coords.x / GRID_SIZE)
-    local cellY = math.floor(coords.y / GRID_SIZE)
+---Optimized function to get nearby cells using circular range check
+---@param coords vector3 Center coordinates
+---@param range? number Optional custom range
+---@return table nearbyCells Array of cell keys
+function Point.GetNearbyCells(coords, range)
+    local cellX = floor(coords.x / Config.GRID_SIZE)
+    local cellY = floor(coords.y / Config.GRID_SIZE)
+    -- Use custom range or default buffer
+    local buffer = range and floor(range / Config.GRID_SIZE + 0.5) or Config.CELL_BUFFER
     local nearbyCells = {}
 
-    -- Get current and adjacent cells
-    for x = cellX - CELL_BUFFER, cellX + CELL_BUFFER do
-        for y = cellY - CELL_BUFFER, cellY + CELL_BUFFER do
-            local key = x .. ":" .. y
-            if GridCells[key] then
-                table.insert(nearbyCells, key)
+    -- Pre-calculate buffer squared for performance
+    local bufferSquared = buffer * buffer
+
+    -- Optimized circular range check
+    for x = cellX - buffer, cellX + buffer do
+        local dx = x - cellX
+        local dxSquared = dx * dx
+
+        for y = cellY - buffer, cellY + buffer do
+            -- Check if cell is within circular range using distance formula
+            if (dxSquared + (y - cellY) ^ 2) <= bufferSquared then
+                local key = format("%d:%d", x, y)
+                if GridCells[key] then
+                    insert(nearbyCells, key)
+                end
             end
         end
     end
@@ -78,131 +117,38 @@ function Point.GetNearbyCells(coords)
     return nearbyCells
 end
 
----Returns all points in the same cell as the given point
----This will require you to pass the point object
----@param point table
----@return table
-function Point.CheckPointsInSameCell(point)
-    local cellKey = point.cellKey
-    if not GridCells[cellKey] then return {} end
+-- Point management functions
+---@class GridCell
+---@field points table<string, Point> Points in this cell
+---@field count number Number of points in cell
 
-    local nearbyPoints = {}
-    for id, otherPoint in pairs(GridCells[cellKey].points) do
-        if id ~= point.id then
-            local distance = #(point.coords - otherPoint.coords)
-            if distance < (point.distance + otherPoint.distance) then
-                nearbyPoints[id] = otherPoint
-            end
-        end
-    end
+---Registers a point in the grid system
+---@param id string Unique identifier
+---@param target vector3|number Coordinates or entity handle
+---@param distance number Activation distance
+---@param args? table Custom data
+---@param onEnter? fun(point: Point, data: table): table
+---@param onExit? fun(point: Point, data: table): table
+---@param onNearby? fun(points: table<string, Point>, waitTime: number)
+---@return Point|nil
+function Point.Register(id, target, distance, args, onEnter, onExit, onNearby)
+    if not id or ActivePoints[id] then return nil end
 
-    return nearbyPoints
-end
-
----Internal function that starts the loop. Do not call this function directly.
-function Point.StartLoop()
-    if LoopStarted then return false end
-    LoopStarted = true
-    -- Remove the "local data = {}" line from here
-    CreateThread(function()
-        while LoopStarted do
-            local playerPed = PlayerPedId()
-            while playerPed == -1 do
-                Wait(100)
-                playerPed = PlayerPedId()
-            end
-            local playerCoords = GetEntityCoords(playerPed)
-            local targetsExist = false
-            local playerCellKey = Point.GetCellKey(playerCoords)
-            local nearbyCells = Point.GetNearbyCells(playerCoords)
-
-            local playerSpeed = GetEntitySpeed(playerPed)
-            local maxWeight = 1000
-            local waitTime = ADAPTIVE_WAIT and math.max(maxWeight/10, maxWeight - playerSpeed * maxWeight/10) or maxWeight
-            -- Process only points in nearby cells
-            for _, cellKey in ipairs(nearbyCells) do
-                if GridCells[cellKey] then
-                    for id, point in pairs(GridCells[cellKey].points) do
-                        targetsExist = true
-
-                        -- Update entity position if needed
-                        local oldCellKey = point.cellKey
-                        if point.isEntity then
-                            point.coords = GetEntityCoords(point.target)
-                            point.cellKey = Point.GetCellKey(point.coords)
-                            Point.UpdateInGrid(point, oldCellKey)
-                        end
-                        local coords = point.coords and vector3(point.coords.x, point.coords.y, point.coords.z) or vector3(0, 0, 0)
-                        local distance = #(playerCoords - coords)
-                        --local distance = #(playerCoords - point.coords)
-
-                        -- Check if player entered/exited the point
-                        if distance < point.distance then
-                            if not point.inside then
-                                point.inside = true
-                                data[point.id] = data[point.id] or point.args or {}
-                                data[point.id] = point.onEnter(point, data[point.id])
-                                insidePoints[point.id] = point
-                            end
-                        -- Modified main loop exit handler
-                        elseif point.inside then
-                            point.inside = false
-                            data[point.id] = data[point.id] or point.args or {}
-                            local result = point.onExit(point, data[point.id])
-                            data[point.id] = result ~= nil and result or data[point.id]  -- ← Use consistent fallback
-                            point.args = data[point.id]  -- ← Update point.args to match data[point.id]
-                            insidePoints[point.id] = nil
-                        end
-                        
-                        if point.onNearby then
-                            point.onNearby(GridCells[cellKey]?.points, waitTime)
-                        end
-                    end
-                end
-            end
-
-            for id, insidepoint in pairs(insidePoints) do
-                local pos = insidepoint.coords and vector3(insidepoint.coords.x, insidepoint.coords.y, insidepoint.coords.z) or vector3(0, 0, 0)
-                local dist = #(playerCoords - pos)
-                if dist > insidepoint.distance then
-                    insidepoint.inside = false
-                    data[insidepoint.id] = data[insidepoint.id] or insidepoint.args or {}
-                    local result = insidepoint.onExit(insidepoint, data[insidepoint.id])
-                    data[insidepoint.id] = result ~= nil and result or data[insidepoint.id]
-                    insidepoint.args = data[insidepoint.id]  -- ← Keep data in sync
-                    insidePoints[insidepoint.id] = nil
-                end
-            end
-            Wait(waitTime) -- Faster updates when moving quickly
-        end
-    end)
-    return true
-end
-
----Create a point based on a vector or entityID
----@param id string
----@param target number || vector3
----@param distance number
----@param _onEnter function
----@param _onExit function
----@param _onNearby function
----@param data self
----@return table
-function Point.Register(id, target, distance, args, _onEnter, _onExit, _onNearby)
     local isEntity = type(target) == "number"
     local coords = isEntity and GetEntityCoords(target) or target
 
-    local self = {}
-    self.id = id
-    self.target = target -- Store entity ID or Vector3
-    self.isEntity = isEntity
-    self.coords = coords
-    self.distance = distance
-    self.onEnter = _onEnter or function() end
-    self.onExit = _onExit or function() end
-    self.onNearby = _onNearby or function() end
-    self.inside = false -- Track if player is inside
-    self.args = args or {}
+    local self = {
+        id = id,
+        target = target,
+        isEntity = isEntity,
+        coords = vector3FromCoords(coords),
+        distance = distance,
+        onEnter = onEnter or function() end,
+        onExit = onExit or function() end,
+        onNearby = onNearby or function() end,
+        inside = false,
+        args = args or {}
+    }
 
     ActivePoints[id] = self
     Point.RegisterInGrid(self)
@@ -210,46 +156,145 @@ function Point.Register(id, target, distance, args, _onEnter, _onExit, _onNearby
     return self
 end
 
----Remove an exsisting point by its id
----@param id string
 function Point.Remove(id)
     local point = ActivePoints[id]
-    if point then
-        local cellKey = point.cellKey
-        if GridCells[cellKey] and GridCells[cellKey].points[id] then
-            GridCells[cellKey].points[id] = nil
-            GridCells[cellKey].count = GridCells[cellKey].count - 1
+    if not point then return false end
 
-            if GridCells[cellKey].count <= 0 then
-                GridCells[cellKey] = nil
-            end
+    if GridCells[point.cellKey] then
+        GridCells[point.cellKey].points[id] = nil
+        GridCells[point.cellKey].count = GridCells[point.cellKey].count - 1
+
+        if GridCells[point.cellKey].count <= 0 then
+            GridCells[point.cellKey] = nil
         end
+    end
 
-        ActivePoints[id] = nil
+    if insidePoints[id] then
+        insidePoints[id] = nil
+    end
+
+    ActivePoints[id] = nil
+    return true
+end
+
+---Updates point coordinates and grid position
+---@param id string Point identifier
+---@param coords vector3|table New coordinates
+---@return boolean success
+function Point.UpdateCoords(id, coords)
+    local point = ActivePoints[id]
+    if not point then return false end
+
+    local oldCellKey = point.cellKey
+    point.coords = vector3FromCoords(coords)
+    point.cellKey = Point.GetCellKey(point.coords)
+    return Point.UpdateInGrid(point, oldCellKey)
+end
+
+-- Main loop and processing
+function Point.ProcessPoint(point, playerCoords, playerSpeed)
+    if not point or not point.coords then return end
+
+    local distance = calculateDistance(playerCoords, point.coords)
+
+    -- Handle enter/exit events
+    if distance < point.distance then
+        if not point.inside then
+            point.inside = true
+            data[point.id] = data[point.id] or point.args or {}
+            data[point.id] = point.onEnter(point, data[point.id])
+            insidePoints[point.id] = point
+        end
+    elseif point.inside then
+        point.inside = false
+        data[point.id] = data[point.id] or point.args or {}
+        local result = point.onExit(point, data[point.id])
+        data[point.id] = result ~= nil and result or data[point.id]
+        point.args = data[point.id]
+        insidePoints[point.id] = nil
+    end
+
+    -- Handle nearby callback
+    if point.onNearby then
+        local waitTime = Config.ADAPTIVE_WAIT and
+            math.max(Config.MIN_WEIGHT, Config.MAX_WEIGHT - playerSpeed * 50) or
+            Config.MAX_WEIGHT
+        point.onNearby(GridCells[point.cellKey]?.points, waitTime)
     end
 end
 
----Returnes a point by its id
----@param id string
----@return table
+function Point.StartLoop()
+    if LoopStarted then return false end
+    LoopStarted = true
+
+    CreateThread(function()
+        while LoopStarted do
+            local playerPed = PlayerPedId()
+            if playerPed == -1 then
+                Wait(Config.UPDATE_RATE)
+                goto continue
+            end
+
+            local playerCoords = GetEntityCoords(playerPed)
+            local playerSpeed = GetEntitySpeed(playerPed)
+            local nearbyCells = Point.GetNearbyCells(playerCoords)
+
+            -- Process points in nearby cells
+            for _, cellKey in ipairs(nearbyCells) do
+                if GridCells[cellKey] then
+                    for _, point in pairs(GridCells[cellKey].points) do
+                        if point.isEntity then
+                            local oldCellKey = point.cellKey
+                            point.coords = GetEntityCoords(point.target)
+                            point.cellKey = Point.GetCellKey(point.coords)
+                            Point.UpdateInGrid(point, oldCellKey)
+                        end
+                        Point.ProcessPoint(point, playerCoords, playerSpeed)
+                    end
+                end
+            end
+
+            -- Process remaining inside points
+            for id, point in pairs(insidePoints) do
+                Point.ProcessPoint(point, playerCoords, playerSpeed)
+            end
+
+            local waitTime = Config.ADAPTIVE_WAIT and
+                math.max(Config.MIN_WEIGHT, Config.MAX_WEIGHT - playerSpeed * 50) or
+                Config.MAX_WEIGHT
+
+            Wait(waitTime)
+            ::continue::
+        end
+    end)
+    return true
+end
+
+-- Utility functions
 function Point.Get(id)
     return ActivePoints[id]
 end
 
-function Point.UpdateCoords(id, coords)
-    local point = ActivePoints[id]
-    if point then
-        point.coords = coords
-        local oldCellKey = point.cellKey
-        point.cellKey = Point.GetCellKey(coords)
-        Point.UpdateInGrid(point, oldCellKey)
-    end
-end
-
----Returns all points
----@return table
 function Point.GetAll()
     return ActivePoints
+end
+
+function Point.CheckPointsInSameCell(point)
+    if not point or not point.cellKey or not GridCells[point.cellKey] then
+        return {}
+    end
+
+    local nearbyPoints = {}
+    for id, otherPoint in pairs(GridCells[point.cellKey].points) do
+        if id ~= point.id then
+            local distance = calculateDistance(point.coords, otherPoint.coords)
+            if distance < (point.distance + otherPoint.distance) then
+                nearbyPoints[id] = otherPoint
+            end
+        end
+    end
+
+    return nearbyPoints
 end
 
 return Point
