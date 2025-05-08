@@ -1,63 +1,70 @@
 DefaultActions = {}
-ClientEntityActions = ClientEntityActions or Require("lib/entities/client/client_entity_actions.lua") -- Added
---- Internal implementation for walking. Registered via RegisterAction.
-function DefaultActions.WalkTo(entityData, coords, speed, timeout)
-    print("[ClientEntityActions] WalkTo action called", coords, speed, timeout)
+ClientEntityActions = ClientEntityActions or Require("lib/entities/client/client_entity_actions.lua")
+
+-- Helper Functions
+local function validateEntity(entityData, requirePed)
     local entity = entityData.spawned
-    local entityId = entityData.id -- Store ID locally for safety in thread
+    local entityId = entityData.id
 
-    if not entity or not DoesEntityExist(entity) or not IsEntityAPed(entity) then
+    if not entity or not DoesEntityExist(entity) or (requirePed and not IsEntityAPed(entity)) then
         ClientEntityActions.IsActionRunning[entityId] = false
-        ClientEntityActions.ProcessNextAction(entityId) -- Try next action if this one failed immediately
-        return
+        ClientEntityActions.ProcessNextAction(entityId)
+        return false
     end
+    return true, entity, entityId
+end
 
-    -- Clear previous tasks just in case
+local function finishAction(entityId)
+    if ClientEntityActions.IsActionRunning[entityId] then
+        ClientEntityActions.IsActionRunning[entityId] = false
+        ClientEntityActions.ProcessNextAction(entityId)
+    end
+end
+
+local function cleanupThread(entityId)
+    ClientEntityActions.ActionThreads[entityId] = nil
+end
+
+-- Movement Actions
+function DefaultActions.WalkTo(entityData, coords, speed, timeout)
+    local isValid, entity, entityId = validateEntity(entityData, true)
+    if not isValid then return end
+
     ClearPedTasks(entity)
 
     local thread = CreateThread(function()
         TaskGoToCoordAnyMeans(entity, coords.x, coords.y, coords.z, speed or 1.0, 0, false, 786603, timeout or -1)
-        -- Wait until task is completed/interrupted or entity is despawned/changed
+
         local entityCoords = GetEntityCoords(entity)
-        while ClientEntityActions.IsActionRunning[entityId] and entityData.spawned == entity and DoesEntityExist(entity) and #(entityCoords - coords) > 2.0 do
+        while ClientEntityActions.IsActionRunning[entityId]
+            and entityData.spawned == entity
+            and DoesEntityExist(entity)
+            and #(entityCoords - coords) > 2.0 do
             entityCoords = GetEntityCoords(entity)
-            Wait(0) -- Yield to avoid freezing the game
+            Wait(0)
         end
-        ClientEntityActions.ActionThreads[entityId] = nil -- Clear thread reference
-        -- Only process next action if this thread was the one running the action
-        if ClientEntityActions.IsActionRunning[entityId] then
-            ClientEntityActions.IsActionRunning[entityId] = false
-            ClientEntityActions.ProcessNextAction(entityId)
-        end
+
+        cleanupThread(entityId)
+        finishAction(entityId)
     end)
     ClientEntityActions.ActionThreads[entityId] = thread
 end
---- Internal implementation for playing an animation. Registered via RegisterAction.
--- @param entityData table
--- @param animDict string
--- @param animName string
--- @param blendIn number (Optional, default 8.0)
--- @param blendOut number (Optional, default -8.0)
--- @param duration number (Optional, default -1 for loop/until stopped)
--- @param flag number (Optional, default 0)
--- @param playbackRate number (Optional, default 0.0)
+
+-- Animation Actions
 function DefaultActions.PlayAnim(entityData, animDict, animName, blendIn, blendOut, duration, flag, playbackRate)
-    local entity = entityData.spawned
-    local entityId = entityData.id
+    local isValid, entity, entityId = validateEntity(entityData, true)
+    if not isValid then return end
 
-    if not entity or not DoesEntityExist(entity) or not IsEntityAPed(entity) then
-        ClientEntityActions.IsActionRunning[entityId] = false
-        ClientEntityActions.ProcessNextAction(entityId)
-        return
-    end
-
-    blendIn = blendIn or 8.0
-    blendOut = blendOut or -8.0
-    duration = duration or -1
-    flag = flag or 0
-    playbackRate = playbackRate or 0.0
+    local params = {
+        blendIn = blendIn or 8.0,
+        blendOut = blendOut or -8.0,
+        duration = duration or -1,
+        flag = flag or 0,
+        playbackRate = playbackRate or 0.0
+    }
 
     local thread = CreateThread(function()
+        -- Load animation dictionary
         if not HasAnimDictLoaded(animDict) then
             RequestAnimDict(animDict)
             local timeout = 100
@@ -68,71 +75,63 @@ function DefaultActions.PlayAnim(entityData, animDict, animName, blendIn, blendO
         end
 
         if HasAnimDictLoaded(animDict) then
-            TaskPlayAnim(entity, animDict, animName, blendIn, blendOut, duration, flag, playbackRate, false, false, false)
+            TaskPlayAnim(entity, animDict, animName, params.blendIn, params.blendOut,
+                params.duration, params.flag, params.playbackRate, false, false, false)
 
-            -- Wait for completion or interruption
             local startTime = GetGameTimer()
-            local animTime = duration > 0 and (startTime + duration) or -1
+            local animTime = params.duration > 0 and (startTime + params.duration) or -1
 
-            while ClientEntityActions.IsActionRunning[entityId] and entityData.spawned == entity and DoesEntityExist(entity) do
+            -- Animation monitoring loop
+            while ClientEntityActions.IsActionRunning[entityId]
+                and entityData.spawned == entity
+                and DoesEntityExist(entity) do
                 local isPlaying = IsEntityPlayingAnim(entity, animDict, animName, 3)
 
-                -- Break conditions:
-                -- 1. Action was stopped/skipped externally
-                -- 2. Entity changed/despawned
-                -- 3. Animation finished naturally (if not looping based on flags/duration)
-                -- 4. Duration expired (if duration > 0)
-                if not ClientEntityActions.IsActionRunning[entityId] or entityData.spawned ~= entity or not DoesEntityExist(entity) then break end
-                if duration == -1 and not isPlaying and GetEntityAnimCurrentTime(entity, animDict, animName) > 0.1 then break end -- Check if non-looping anim finished
+                -- Check break conditions
+                if not isPlaying and GetEntityAnimCurrentTime(entity, animDict, animName) > 0.1
+                    and params.duration == -1 then
+                    break
+                end
                 if animTime ~= -1 and GetGameTimer() >= animTime then break end
 
-                Wait(100) -- Check periodically
+                Wait(100)
             end
-            -- Don't remove dict here if other actions might use it immediately after
-            -- Consider a separate cleanup mechanism if needed
-        else
-            print(string.format("[ClientEntityActions] Failed to load anim dict '%s' for entity %s", animDict, entityId))
         end
 
-        -- Crucial: Mark as finished and process next
-        if ClientEntityActions.IsActionRunning[entityId] then
-            ClientEntityActions.IsActionRunning[entityId] = false
-            ClientEntityActions.ProcessNextAction(entityId)
-        end
+        finishAction(entityId)
     end)
     ClientEntityActions.ActionThreads[entityId] = thread
 end
---- Internal implementation for lerping. Registered via RegisterAction.
-function DefaultActions.LerpTo(entityData, targetCoords, duration, easingType, easingDirection)
-    local entity = entityData.spawned
-    local entityId = entityData.id -- Store ID locally
 
-    if not entity or not DoesEntityExist(entity) then
-        ClientEntityActions.IsActionRunning[entityId] = false
-        ClientEntityActions.ProcessNextAction(entityId) -- Try next action if this one failed immediately
-        return
-    end
+-- Movement with Physics Actions
+function DefaultActions.LerpTo(entityData, targetCoords, duration, easingType, easingDirection)
+    local isValid, entity, entityId = validateEntity(entityData, false)
+    if not isValid then return end
 
     local startCoords = GetEntityCoords(entity)
     local startTime = GetGameTimer()
-    easingType = easingType or "linear"
-    easingDirection = easingDirection or "inout"
+    local params = {
+        easingType = easingType or "linear",
+        easingDirection = easingDirection or "inout"
+    }
 
     local thread = CreateThread(function()
         while GetGameTimer() < startTime + duration do
-            -- Check if action should continue
-            if not ClientEntityActions.IsActionRunning[entityId] or not entityData.spawned or entityData.spawned ~= entity or not DoesEntityExist(entity) then
-                break -- Stop if entity despawned, changed, or action was stopped/skipped
+            if not ClientEntityActions.IsActionRunning[entityId]
+                or not entityData.spawned
+                or entityData.spawned ~= entity
+                or not DoesEntityExist(entity) then
+                break
             end
 
             local elapsed = GetGameTimer() - startTime
             local t = LA.Clamp(elapsed / duration, 0.0, 1.0)
-            local easedT = LA.EaseInOut(t, easingType) -- Default
+            local easedT = LA.EaseInOut(t, params.easingType)
 
-            if easingDirection == "in" then
-                easedT = LA.EaseIn(t, easingType)
-            elseif easingDirection == "out" then
-                easedT = LA.EaseOut(t, easingType)
+            if params.easingDirection == "in" then
+                easedT = LA.EaseIn(t, params.easingType)
+            elseif params.easingDirection == "out" then
+                easedT = LA.EaseOut(t, params.easingType)
             end
 
             local currentPos = LA.LerpVector(startCoords, targetCoords, easedT)
@@ -140,130 +139,97 @@ function DefaultActions.LerpTo(entityData, targetCoords, duration, easingType, e
             Wait(0)
         end
 
-        -- Ensure final position if completed fully and action wasn't stopped/skipped
-        if ClientEntityActions.IsActionRunning[entityId] and entityData.spawned == entity and DoesEntityExist(entity) then
-             SetEntityCoordsNoOffset(entity, targetCoords.x, targetCoords.y, targetCoords.z, false, false, false)
+        if ClientEntityActions.IsActionRunning[entityId]
+            and entityData.spawned == entity
+            and DoesEntityExist(entity) then
+            SetEntityCoordsNoOffset(entity, targetCoords.x, targetCoords.y, targetCoords.z, false, false, false)
         end
 
-        ClientEntityActions.ActionThreads[entityId] = nil -- Clear thread reference
-        -- Only process next action if this thread was the one running the action
-        if ClientEntityActions.IsActionRunning[entityId] then
-            ClientEntityActions.IsActionRunning[entityId] = false
-            ClientEntityActions.ProcessNextAction(entityId)
-        end
+        cleanupThread(entityId)
+        finishAction(entityId)
     end)
     ClientEntityActions.ActionThreads[entityId] = thread
 end
---- Internal implementation for attaching a prop. Registered via RegisterAction.
--- This action completes immediately after attaching. Use DetachProp to remove.
--- @param entityData table
--- @param propModel string|number
--- @param boneIndex number (Optional, default -1 for root)
--- @param offsetPos vector3 (Optional, default vector3(0,0,0))
--- @param offsetRot vector3 (Optional, default vector3(0,0,0))
--- @param useSoftPinning boolean (Optional, default false)
--- @param collision boolean (Optional, default false)
--- @param isPed boolean (Optional, default false) - Seems unused in native?
--- @param vertexIndex number (Optional, default 2) - Seems unused in native?
--- @param fixedRot boolean (Optional, default true)
-function DefaultActions.AttachProp(entityData, propModel, boneName, offsetPos, offsetRot, useSoftPinning, collision, isPed, vertexIndex, fixedRot)
-    local entity = entityData.spawned
-    local entityId = entityData.id
 
-    if not entity or not DoesEntityExist(entity) then
-        ClientEntityActions.IsActionRunning[entityId] = false
-        ClientEntityActions.ProcessNextAction(entityId)
-        return
-    end
+-- Prop Management Actions
+function DefaultActions.AttachProp(entityData, propModel, boneName, offsetPos, offsetRot, useSoftPinning, collision,
+                                   isPed, vertexIndex, fixedRot)
+    local isValid, entity, entityId = validateEntity(entityData, false)
+    if not isValid then return end
 
     local modelHash = Utility.GetEntityHashFromModel(propModel)
-    print(modelHash, propModel)
     if not Utility.LoadModel(modelHash) then
         print(string.format("[ClientEntityActions] Failed to load prop model '%s' for entity %s", propModel, entityId))
-        ClientEntityActions.IsActionRunning[entityId] = false
-        ClientEntityActions.ProcessNextAction(entityId)
+        finishAction(entityId)
         return
     end
 
-    local boneIndex = GetEntityBoneIndexByName(entity, boneName)
+    local params = {
+        boneIndex = GetEntityBoneIndexByName(entity, boneName) or GetPedBoneIndex(entity, 60309),
+        offsetPos = offsetPos or vector3(0.0, 0.0, 0.0),
+        offsetRot = offsetRot or vector3(0.0, 0.0, 0.0),
+        useSoftPinning = useSoftPinning or false,
+        collision = collision or false,
+        isPed = isPed or false,
+        vertexIndex = vertexIndex or 2,
+        fixedRot = fixedRot == nil and true or fixedRot
+    }
+    params.boneIndex = params.boneIndex == -1 and 0 or params.boneIndex
+
     local coords = GetEntityCoords(entity)
     local prop = CreateObject(modelHash, coords.x, coords.y, coords.z, false, false, false)
     SetModelAsNoLongerNeeded(modelHash)
 
-    boneIndex = boneIndex or GetPedBoneIndex(entity, 60309) -- SKEL_R_Hand if not specified and is ped
-    if boneIndex == -1 then boneIndex = 0 end -- Default to root if bone not found or not ped
-    offsetPos = offsetPos or vector3(0.0, 0.0, 0.0)
-    offsetRot = offsetRot or vector3(0.0, 0.0, 0.0)
-    print(string.format("[ClientEntityActions] Attaching prop '%s' to entity %s at bone %d", propModel, entityId, boneIndex))
-    AttachEntityToEntity(prop, entity, boneIndex, offsetPos.x, offsetPos.y, offsetPos.z, offsetRot.x, offsetRot.y, offsetRot.z, false, useSoftPinning or false, collision or false, isPed or false, vertexIndex or 2, fixedRot == nil and true or fixedRot)
+    AttachEntityToEntity(prop, entity, params.boneIndex,
+        params.offsetPos.x, params.offsetPos.y, params.offsetPos.z,
+        params.offsetRot.x, params.offsetRot.y, params.offsetRot.z,
+        false, params.useSoftPinning, params.collision,
+        params.isPed, params.vertexIndex, params.fixedRot)
 
-    -- Store the attached prop handle for later removal
     if not entityData.attachedProps then entityData.attachedProps = {} end
-    entityData.attachedProps[propModel] = prop -- Store by model name/hash for easy lookup
+    entityData.attachedProps[propModel] = prop
 
-    -- This action finishes immediately
-    ClientEntityActions.IsActionRunning[entityId] = false
-    ClientEntityActions.ProcessNextAction(entityId)
+    finishAction(entityId)
 end
---- Internal implementation for detaching a prop. Registered via RegisterAction.
--- @param entityData table
--- @param propModel string|number The model name/hash of the prop to detach.
+
 function DefaultActions.DetachProp(entityData, propModel)
     local entityId = entityData.id
 
     if entityData.attachedProps and propModel then
         local propHandle = entityData.attachedProps[propModel]
         if propHandle and DoesEntityExist(propHandle) then
-            DetachEntity(propHandle, true, true) -- Detach
-            DeleteEntity(propHandle) -- Delete
-            entityData.attachedProps[propModel] = nil -- Remove from tracking
-            -- print(string.format("[ClientEntityActions] Detached prop '%s' from entity %s", propModel, entityId))
-        else
-            -- print(string.format("[ClientEntityActions] Prop '%s' not found attached to entity %s for detachment.", propModel, entityId))
+            DetachEntity(propHandle, true, true)
+            DeleteEntity(propHandle)
+            entityData.attachedProps[propModel] = nil
         end
-    else
-       -- print(string.format("[ClientEntityActions] No props tracked or propModel not specified for detachment on entity %s.", entityId))
     end
 
-    -- This action finishes immediately
-    ClientEntityActions.IsActionRunning[entityId] = false
-    ClientEntityActions.ProcessNextAction(entityId)
+    finishAction(entityId)
 end
 
+-- Vehicle Actions
 function DefaultActions.GetInCar(entityData, vehicleData, seatIndex, timeout)
-    local entity = entityData.spawned
-    local vehicle = vehicleData.spawned
-    local entityId = entityData.id
+    local isValid, entity, entityId = validateEntity(entityData, true)
+    if not isValid then return end
 
-    if not entity or not DoesEntityExist(entity) or not IsEntityAPed(entity) then
-        ClientEntityActions.IsActionRunning[entityId] = false
-        ClientEntityActions.ProcessNextAction(entityId) -- Try next action if this one failed immediately
+    if not vehicleData.spawned or not DoesEntityExist(vehicleData.spawned) or not IsEntityAVehicle(vehicleData.spawned) then
+        finishAction(entityId)
         return
     end
 
-    if not vehicle or not DoesEntityExist(vehicle) or not IsEntityAVehicle(vehicle) then
-        ClientEntityActions.IsActionRunning[entityId] = false
-        ClientEntityActions.ProcessNextAction(entityId) -- Try next action if this one failed immediately
-        return
-    end
-
-    -- Clear previous tasks just in case
     ClearPedTasks(entity)
 
     local thread = CreateThread(function()
-        TaskEnterVehicle(entity, vehicle, timeout or 1000, seatIndex or -1, 1.0, 1, 0) -- Enter vehicle
-        Wait(timeout or 1000) -- Wait for a bit to ensure the task is completed
+        TaskEnterVehicle(entity, vehicleData.spawned, timeout or 1000, seatIndex or -1, 1.0, 1, 0)
+        Wait(timeout or 1000)
 
-        ClientEntityActions.ActionThreads[entityId] = nil -- Clear thread reference
-        -- Only process next action if this thread was the one running the action
-        if ClientEntityActions.IsActionRunning[entityId] then
-            ClientEntityActions.IsActionRunning[entityId] = false
-            ClientEntityActions.ProcessNextAction(entityId)
-        end
+        cleanupThread(entityId)
+        finishAction(entityId)
     end)
     ClientEntityActions.ActionThreads[entityId] = thread
 end
 
+-- Register all actions
 for name, func in pairs(DefaultActions) do
     ClientEntityActions.RegisterAction(name, func)
 end
