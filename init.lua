@@ -1,5 +1,12 @@
 Bridge = {}
 
+local function BridePrint(...)
+    if BridgeSharedConfig.DebugLevel ~= 0 then
+        print("^2[BRIDGE]^0", ...)
+    end
+end
+
+_ENV.print = BridePrint -- this will override the print function in the entire bridge
 function Bridge.RegisterModule(moduleName, moduleTable)
     if not moduleTable then
         if BridgeSharedConfig.DebugLevel ~= 0 then

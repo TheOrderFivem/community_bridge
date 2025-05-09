@@ -9,11 +9,6 @@ local GetGameTimer = GetGameTimer
 Cache.Caches = Cache.Caches or {}
 Cache.LoopRunning = Cache.LoopRunning or false
 
-local function print(...)
-    if Config.Debug then
-        print("^2[Cache]^0", ...)
-    end
-end
 
 local function StartLoop()
     if Cache.LoopRunning then return end

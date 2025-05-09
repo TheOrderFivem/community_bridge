@@ -9,6 +9,12 @@ Framework.GetFrameworkName = function()
     return 'es_extended'
 end
 
+Framework.GetPlayer = function(src)
+    if not src then return end
+    local xPlayer = ESX.GetPlayerFromId(src)
+    return xPlayer ~= nil and xPlayer or nil
+end
+
 Framework.GetPlayerDob = function(src)
     local xPlayer = ESX.GetPlayerFromId(src)
     if not xPlayer then return end

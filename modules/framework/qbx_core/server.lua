@@ -11,6 +11,12 @@ Framework.GetFrameworkName = function()
     return 'qbx_core'
 end
 
+Framework.GetPlayer = function(src)
+    if not src then return end
+    local player = QBox:GetPlayer(src)
+    return player ~= nil and player or nil
+end
+
 ---Returns the player date of birth.
 ---@param src number
 ---@return string

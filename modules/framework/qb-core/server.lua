@@ -10,6 +10,13 @@ Framework.GetFrameworkName = function()
     return 'qb-core'
 end
 
+Framework.GetPlayer = function(src)
+    if not src then return end
+    local player = QBCore.Functions.GetPlayer(src)
+    return player ~= nil and player or nil
+end
+
+
 -- Framework.GetPlayerIdentifier(src)
 -- Returns the citizen ID of the player.
 Framework.GetPlayerIdentifier = function(src)
