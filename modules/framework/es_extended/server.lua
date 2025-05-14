@@ -198,7 +198,7 @@ Framework.GetPlayerPhone = function(src)
 end
 
 
----Returns the job name, label, grade name, and grade level of the player.
+---Depricated: Returns the job name, label, grade name, and grade level of the player.
 ---@param src number
 ---@return string | nil
 ---@return string | nil
@@ -209,6 +209,25 @@ Framework.GetPlayerJob = function(src)
     if not xPlayer then return end
     local job = xPlayer.getJob()
     return job.name, job.label, job.grade_label, job.grade
+end
+
+---This will return the players job name, job label, job grade label job grade level, boss status, and duty status in a table
+---@param src number
+---@return table | nil
+Framework.GetPlayerJobData = function(src)
+    local xPlayer = Framework.GetPlayer(src)
+    if not xPlayer then return end
+    local job = xPlayer.getJob()
+    local isBoss = (job.grade_name == "boss")
+    return {
+        jobName = job.name,
+        jobLabel = job.label,
+        gradeName = job.grade_name,
+        gradeLabel = job.grade_label,
+        gradeRank = job.grade,
+        boss = isBoss,
+        onDuty = job.onduty,
+    }
 end
 
 ---Returns the players duty status.

@@ -285,16 +285,35 @@ Framework.GetPlayersByJob = function(job)
     return playerList
 end
 
----Returns the job name, label, grade name, and grade level of the player.
+---Depricated: Returns the job name, label, grade name, and grade level of the player.
 ---@param src number
 ---@return string | string | string | number | nil
 ---@return string | string | string | number | nil
 ---@return string | string | string | number | nil
 ---@return string | string | string | number | nil
 Framework.GetPlayerJob = function(src)
-    local player = Framework.GetPlayer(src).PlayerData
+    local player = Framework.GetPlayer(src)
     if not player then return end
-    return player.job.name, player.job.label, player.job.grade.name, player.job.grade.level
+    local playerData = player.PlayerData
+    return playerData.job.name, playerData.job.label, playerData.job.grade.name, playerData.job.grade.level
+end
+
+---This will return the players job name, job label, job grade label job grade level, boss status, and duty status in a table
+---@return table | nil
+Framework.GetPlayerJobData = function(src)
+    local player = Framework.GetPlayer(src)
+    if not player then return end
+    local playerData = player.PlayerData
+    local jobData = playerData.job
+    return {
+        jobName = jobData.name,
+        jobLabel = jobData.label,
+        gradeName = jobData.grade.name,
+        gradeLabel = jobData.grade.name,
+        gradeRank = jobData.grade.level,
+        boss = jobData.isboss,
+        onDuty = jobData.onduty,
+    }
 end
 
 ---Sets the player's job to the specified name and grade.

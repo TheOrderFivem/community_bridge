@@ -12,7 +12,7 @@ end
 ---This will return a table of the players data, this is an internal table and should not be used.
 ---@return table
 Framework.GetPlayerData = function()
-    return ESX.PlayerData
+    return ESX.GetPlayerData()
 end
 
 --<-- TODO swap to internal callback system
@@ -76,7 +76,7 @@ Framework.GetPlayerName = function()
     return playerData.firstName, playerData.lastName
 end
 
----This will return the players job name, job label, job grade label and job grade level
+---Depricated : This will return the players job name, job label, job grade label and job grade level
 ---@return string
 ---@return string
 ---@return string
@@ -84,6 +84,23 @@ end
 Framework.GetPlayerJob = function()
     local playerData = Framework.GetPlayerData()
     return playerData.job.name, playerData.job.label, playerData.job.grade_label, playerData.job.grade
+end
+
+---This will return the players job name, job label, job grade label job grade level, boss status, and duty status in a table
+---@return table
+Framework.GetPlayerJobData = function()
+    local playerData = Framework.GetPlayerData()
+    local jobData = playerData.job
+    local isBoss = (jobData.grade_name == "boss")
+    return {
+        jobName = jobData.name,
+        jobLabel = jobData.label,
+        gradeName = jobData.grade_name,
+        gradeLabel = jobData.grade_label,
+        gradeRank = jobData.grade,
+        boss = isBoss,
+        onDuty = jobData.onduty,
+    }
 end
 
 ---This will return a boolean if the player has the item in their inventory

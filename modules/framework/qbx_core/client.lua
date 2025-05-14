@@ -50,9 +50,30 @@ Framework.GetPlayerName = function()
     return playerData.charinfo.firstname, playerData.charinfo.lastname
 end
 
+---Depricated : This will return the players job name, job label, job grade label and job grade level
+---@return string
+---@return string
+---@return string
+---@return string
 Framework.GetPlayerJob = function()
     local playerData = Framework.GetPlayerData()
     return playerData.job.name, playerData.job.label, playerData.job.grade.name, playerData.job.grade.level
+end
+
+---This will return the players job name, job label, job grade label job grade level, boss status, and duty status in a table
+---@return table
+Framework.GetPlayerJobData = function()
+    local playerData = Framework.GetPlayerData()
+    local jobData = playerData.job
+    return {
+        jobName = jobData.name,
+        jobLabel = jobData.label,
+        gradeName = jobData.grade.name,
+        gradeLabel = jobData.grade.name,
+        gradeRank = jobData.grade.level,
+        boss = jobData.isboss,
+        onDuty = jobData.onduty,
+    }
 end
 
 Framework.GetPlayerInventory = function()
