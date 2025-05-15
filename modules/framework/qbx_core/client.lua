@@ -27,18 +27,23 @@ end
 ---@param _ unknown
 ---@return nil
 Framework.ShowHelpText = function(message, _)
-    return print("Community_bridge:WARN: ShowHelpText is not implemented for this framework, please set the helptext module to hide the help text.")
+    if _ == nil then _ = 'left-center' end
+    return exports.ox_lib:showTextUI(message, { position = _position })
 end
 
 ---This will hide the help text message on the screen
 ---@return nil
 Framework.HideHelpText = function()
-    return print("Community_bridge:WARN: HideHelpText is not implemented for this framework, please set the helptext module to hide the help text.")
+    return exports.ox_lib:hideTextUI()
 end
 
 Framework.GetPlayerMetaData = function(metadata)
     local playerData = Framework.GetPlayerData()
     return playerData.metadata[metadata]
+end
+
+Framework.Notify = function(message, type, time)
+    return QBox:Notify("Notification", type, time, message)
 end
 
 Framework.GetPlayerIdentifier = function()
