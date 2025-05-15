@@ -10,3 +10,5 @@ Weather.ToggleSync = function(toggle)
         TriggerEvent("qb-weathersync:client:DisableSync")
     end
 end
+
+return Weather

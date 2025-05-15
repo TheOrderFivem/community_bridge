@@ -208,3 +208,5 @@ Accessibility.getAdjustedColour = function(colourName, returnAsRGB)
         return "#FFFFFF" -- Default to white if the colour name is invalid
     end
 end
+
+return Accessibility

@@ -76,3 +76,5 @@ Shops.OpenShop = function(title, shopData)
     end
     Menu.Open({ id = generatedID,  title = title, options = buildMenu }, false)
 end
+
+return Shops

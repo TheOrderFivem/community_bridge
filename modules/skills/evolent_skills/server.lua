@@ -29,3 +29,5 @@ Skills.RemoveXp = function(src, skillName, amount)
     exports.evolent_skills:removeXp(src, skillName, amount)
     return true
 end
+
+return Skills

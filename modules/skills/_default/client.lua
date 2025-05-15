@@ -13,3 +13,5 @@ end
 Skills.GetSkillLevel = function(skillName)
     return 0, warnUser()
 end
+
+return Skills

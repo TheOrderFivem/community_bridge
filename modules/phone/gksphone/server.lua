@@ -27,3 +27,5 @@ Phone.SendEmail = function(src, email, title, message)
     exports["gksphone"]:SendNewMail(src, data)
     return true
 end
+
+return Phone

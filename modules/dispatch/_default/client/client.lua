@@ -27,3 +27,5 @@ RegisterNetEvent('community_bridge:Client:DispatchAlert', function(alert)
 	Wait(alert.time)
     Bridge.Utility.RemoveBlip(blip)
 end)
+
+return Dispatch

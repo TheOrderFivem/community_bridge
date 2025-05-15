@@ -3,7 +3,7 @@ if GetResourceState('es_extended') ~= 'started' then return end
 
 ESX = exports["es_extended"]:getSharedObject()
 
-Framework = {}
+Framework = Framework or {}
 
 Framework.GetFrameworkName = function()
     return 'es_extended'
@@ -12,9 +12,10 @@ end
 ---This will return a table of the players data, this is an internal table and should not be used.
 ---@return table
 Framework.GetPlayerData = function()
-    return ESX.PlayerData
+    return ESX.GetPlayerData()
 end
 
+--<-- TODO swap to internal callback system
 ---This will return a table of all the jobs in the framework.
 ---@return table
 Framework.GetFrameworkJobs = function()
@@ -25,7 +26,7 @@ end
 ---This will return the players birth date
 ---@return string
 Framework.GetPlayerDob = function()
-    local playerData = ESX.GetPlayerData()
+    local playerData = Framework.GetPlayerData()
     local dob = playerData.dateofbirth
     return dob
 end
@@ -34,7 +35,7 @@ end
 ---@param metadata string
 ---@return table | nil
 Framework.GetPlayerMetaData = function(metadata)
-    return ESX.GetPlayerData().metadata[metadata]
+    return Framework.GetPlayerData().metadata[metadata]
 end
 
 ---This will prompt the user with a notification message
@@ -63,7 +64,7 @@ end
 ---This will return the players identifier
 ---@return string
 Framework.GetPlayerIdentifier = function()
-    local playerData = ESX.GetPlayerData()
+    local playerData = Framework.GetPlayerData()
     return playerData.identifier
 end
 
@@ -71,18 +72,35 @@ end
 ---@return string
 ---@return string
 Framework.GetPlayerName = function()
-    local playerData = ESX.GetPlayerData()
+    local playerData = Framework.GetPlayerData()
     return playerData.firstName, playerData.lastName
 end
 
----This will return the players job name, job label, job grade label and job grade level
+---Depricated : This will return the players job name, job label, job grade label and job grade level
 ---@return string
 ---@return string
 ---@return string
 ---@return string
 Framework.GetPlayerJob = function()
-    local playerData = ESX.GetPlayerData()
+    local playerData = Framework.GetPlayerData()
     return playerData.job.name, playerData.job.label, playerData.job.grade_label, playerData.job.grade
+end
+
+---This will return the players job name, job label, job grade label job grade level, boss status, and duty status in a table
+---@return table
+Framework.GetPlayerJobData = function()
+    local playerData = Framework.GetPlayerData()
+    local jobData = playerData.job
+    local isBoss = (jobData.grade_name == "boss")
+    return {
+        jobName = jobData.name,
+        jobLabel = jobData.label,
+        gradeName = jobData.grade_name,
+        gradeLabel = jobData.grade_label,
+        gradeRank = jobData.grade,
+        boss = isBoss,
+        onDuty = jobData.onduty,
+    }
 end
 
 ---This will return a boolean if the player has the item in their inventory
@@ -96,7 +114,7 @@ end
 ---This will return a table of the players inventory
 ---@return table
 Framework.GetPlayerInventory = function()
-    local playerData = ESX.GetPlayerData()
+    local playerData = Framework.GetPlayerData()
     return playerData.inventory
 end
 
@@ -112,25 +130,21 @@ end
 ---This will return a boolean if the player is dead
 ---@return boolean
 Framework.GetIsPlayerDead = function()
-    local playerData = ESX.GetPlayerData()
+    local playerData = Framework.GetPlayerData()
     return playerData.dead
 end
 
 RegisterNetEvent('esx:playerLoaded', function(xPlayer)
     Wait(1500)
-    FillBridgeTables()
-	TriggerEvent('community_bridge:Client:OnPlayerLoaded')
+    TriggerEvent('community_bridge:Client:OnPlayerLoaded')
 end)
 
 RegisterNetEvent('esx:onPlayerLogout', function()
-    ClearClientSideVariables()
-	TriggerEvent('community_bridge:Client:OnPlayerUnload')
+    TriggerEvent('community_bridge:Client:OnPlayerUnload')
 end)
 
 RegisterNetEvent('esx:setJob', function(data)
-    PlayerJobName = data.name
-    PlayerJobLabel = data.label
-    PlayerJobGradeName = data.grade_label
-    PlayerJobGradeLevel = data.grade
-    TriggerEvent('community_bridge:Client:OnPlayerJobUpdate',PlayerJobName, PlayerJobLabel, PlayerJobGradeName, PlayerJobGradeLevel)
+    TriggerEvent('community_bridge:Client:OnPlayerJobUpdate', data.name, data.label, data.grade_label, data.grade)
 end)
+
+return Framework

@@ -35,6 +35,8 @@ function Require(modulePath, resourceName)
     return result
 end
 
+
+
 cLib = {
     Require = Require,
     Callback = Callback or Require("lib/utility/shared/callbacks.lua"),
@@ -58,7 +60,8 @@ cLib.ItemsBuilder = ItemsBuilder or Require("lib/generators/server/ItemsBuilder.
 cLib.LootTables = LootTables or Require("lib/generators/server/lootTables.lua")
 cLib.Cache = Cache or Require("lib/cache/shared/cache.lua")
 cLib.ServerEntity = ServerEntity or Require("lib/entities/server/server_entity.lua")
-
+cLib.Marker = Marker or Require("lib/markers/server/server.lua")
+cLib.Particle = Particle or Require("lib/particles/server/particles.lua")
 if IsDuplicityVersion() then return cLib end
 ::client::
 
@@ -74,4 +77,10 @@ cLib.Cache = Cache or Require("lib/cache/client/cache.lua")
 cLib.ClientEntity = ClientEntity or Require("lib/entities/client/client_entity.lua")
 cLib.ClientEntityActions = ClientEntityActions or Require("lib/entities/client/client_entity_actions.lua")
 cLib.ClientStateBag = ClientStateBag or Require("lib/statebags/client/client.lua")
+cLib.Marker = Marker or Require("lib/markers/client/markers.lua")
+cLib.Anim = Anim or Require("lib/anim/client/client.lua")
+cLib.Cutscene = Cutscene or Require("lib/cutscenes/client/cutscene.lua")
+cLib.DUI = DUI or Require("lib/dui/client/dui.lua")
+cLib.Particle = Particle or Require("lib/particles/client/particles.lua")
+
 return cLib

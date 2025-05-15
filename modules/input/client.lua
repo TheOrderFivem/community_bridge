@@ -107,6 +107,9 @@ function Input.Open(title, data, isQBFormat, submitText)
     return OpenInput(title, data, isQBFormat, submitText)
 end
 
+return Input
+
+
 --[[
 -- Unit tests
 local thisIsQB = {

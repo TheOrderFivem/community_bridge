@@ -16,3 +16,5 @@ end
 RegisterNetEvent('community_bridge:Server:genericEmail', function(data)
     TriggerServerEvent('qs-smartphone:server:sendNewMail', { sender = data.email, subject = data.title, message = data.message, button = {} })
 end)
+
+return Phone

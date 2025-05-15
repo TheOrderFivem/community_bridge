@@ -15,3 +15,5 @@ end
 HelpText.HideHelpText = function(src)
     TriggerClientEvent('community_bridge:Client:HideHelpText', src)
 end
+
+return HelpText

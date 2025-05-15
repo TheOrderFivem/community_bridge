@@ -13,3 +13,5 @@ Dispatch.SendAlert = function(data)
     }
     exports["bub-mdt"]:CustomAlert(alertData)
 end
+
+return Dispatch

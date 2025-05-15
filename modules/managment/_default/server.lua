@@ -11,3 +11,5 @@ end
 Managment.RemoveAccountMoney = function(account, amount)
     return false, print("The resource you are using does not support this function.")
 end
+
+return Managment

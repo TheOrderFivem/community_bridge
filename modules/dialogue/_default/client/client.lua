@@ -162,3 +162,5 @@ if BridgeSharedConfig.DebugLevel  >= 1 then
         end)
     end)
 end
+
+return Dialogue

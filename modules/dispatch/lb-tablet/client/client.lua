@@ -38,3 +38,5 @@ Dispatch.SendAlert = function(data)
     }
     TriggerServerEvent("community_bridge:server:dispatch:sendAlert", alertData)
 end
+
+return Dispatch

@@ -21,3 +21,5 @@ Phone.SendEmail = function(src, email, title, message)
     TriggerClientEvent('community_bridge:Server:genericEmail', src, { sender = email, subject = title, message = message, button = {} })
     return true
 end
+
+return Phone

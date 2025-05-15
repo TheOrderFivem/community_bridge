@@ -18,3 +18,5 @@ end
 HelpText.HideHelpText = function()
     return exports['lab-HintUI']:Hide()
 end
+
+return HelpText

@@ -13,3 +13,5 @@ end
 VehicleKey.RemoveKeys = function(vehicle, plate)
 
 end
+
+return VehicleKey

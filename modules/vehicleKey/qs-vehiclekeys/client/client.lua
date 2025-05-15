@@ -17,3 +17,5 @@ VehicleKey.RemoveKeys = function(vehicle, plate)
     local verifiedPlate = GetVehicleNumberPlateText(vehicle)
     return exports['qs-vehiclekeys']:RemoveKeys(verifiedPlate, model)
 end
+
+return VehicleKey

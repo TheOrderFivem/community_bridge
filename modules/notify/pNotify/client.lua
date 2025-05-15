@@ -18,3 +18,5 @@ Notify.SendNotify = function(message, _type, time)
     time = time or 3000
     return exports['pNotify']:SendNotification({ text = message, type = _type, timeout = time, layout = 'centerRight' })
 end
+
+return Notify

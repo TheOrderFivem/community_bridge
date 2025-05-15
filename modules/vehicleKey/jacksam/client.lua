@@ -14,3 +14,5 @@ VehicleKey.RemoveKeys = function(vehicle, plate)
     if not plate then return false end
     return TriggerServerEvent("vehicles_keys:selfRemoveKeys", plate)
 end
+
+return VehicleKey

@@ -9,3 +9,5 @@ end)
 RegisterNetEvent("Housing:client:DeleteFurnitures", function()
     TriggerServerEvent('community_bridge:Server:_OnPlayerInside', false)
 end)
+
+return Housing

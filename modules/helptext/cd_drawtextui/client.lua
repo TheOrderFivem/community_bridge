@@ -19,3 +19,5 @@ end
 HelpText.HideHelpText = function()
     return TriggerEvent('cd_drawtextui:HideUI')
 end
+
+return HelpText

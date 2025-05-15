@@ -9,3 +9,5 @@ end
 Phone.SendEmail = function(src, email, title, message)
     return false, Print.Error('There Is No Phone Bridged.')
 end
+
+return Phone

@@ -23,6 +23,7 @@ RegisterNetEvent('community_bridge:client:MenuCallback', function(_args)
     onSelect(args)
 end)
 
+return Menu
 
 --[[
 

@@ -32,7 +32,9 @@ end
 
 -- Core action processing functions
 function ClientEntityActions.ProcessNextAction(entityId)
-    if ClientEntityActions.IsActionRunning[entityId] then return end
+    if ClientEntityActions.IsActionRunning [entityId] then return end -- Already running something
+    local queue = ClientEntityActions.ActionQueue[entityId]
+    if not queue or #queue == 0 then return end -- Queue is empty
 
     logAction("Processing next action for entity %s", entityId)
     local queue = ClientEntityActions.ActionQueue[entityId]
@@ -46,9 +48,8 @@ function ClientEntityActions.ProcessNextAction(entityId)
         return
     end
 
-    local actionFunc = ClientEntityActions.RegisteredActions[nextAction.name]
-    logAction("Action '%s' dequeued for entity %s", nextAction.name, entityId)
-
+    -- Look up the action in the registry
+    local actionFunc = ClientEntityActions.RegisteredActions [nextAction.name]
     if actionFunc then
         ClientEntityActions.IsActionRunning[entityId] = true
         actionFunc(entityData, table.unpack(nextAction.args))

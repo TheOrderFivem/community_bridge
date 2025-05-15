@@ -27,3 +27,5 @@ Fuel.SetFuel = function(vehicle, fuel)
     if not DoesEntityExist(vehicle) then return end
     return exports['ti_fuel']:setFuel(vehicle, fuel, "RON91")
 end
+
+return Fuel

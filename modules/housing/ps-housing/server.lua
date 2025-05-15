@@ -11,3 +11,5 @@ RegisterNetEvent('ps-housing:server:leaveProperty', function(insideId)
     local src = source
     TriggerEvent('community_bridge:Server:_OnPlayerInside', src, insideId)
 end)
+
+return Housing

@@ -28,3 +28,5 @@ Fuel.SetFuel = function(vehicle, fuel, type)
     Entity(vehicle).state.fuel = currentFuel + fuel
     return Entity(vehicle).state.fuel
 end
+
+return Fuel

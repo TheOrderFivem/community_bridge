@@ -28,3 +28,5 @@ Dispatch.SendAlert = function(data)
     }
     exports["ps-dispatch"]:CustomAlert(alertData)
 end
+
+return Dispatch

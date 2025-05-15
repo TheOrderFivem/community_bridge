@@ -1,27 +1,34 @@
+---@diagnostic disable: duplicate-set-field
 Inventory = Inventory or {}
 
----This will fallback to framework add item functions when an inventory does not have the specifiec function.
+---Return the item info in oxs format, {name, label, stack, weight, description, image}
 ---@param item string
 ---@return table
 Inventory.GetItemInfo = function(item)
     return Framework.GetItemInfo(item)
 end
 
----This will fallback to framework add item functions when an inventory does not have the specifiec function.
+---Will return boolean if the player has the item.
 ---@param item string
 ---@return boolean
 Inventory.HasItem = function(item)
     return Framework.HasItem(item)
 end
 
----This will fallback to framework add item functions when an inventory does not have the specifiec function.
+---This will return th count of the item in the players inventory, if not found will return 0.
 ---@param item string
 ---@return number
 Inventory.GetItemCount = function(item)
     return Framework.GetItemCount(item)
 end
 
----This will provide a image of the community bridge logo if the inventory isnt bridged for the specific path.
+---This will return the players inventory in the format of {name, label, count, slot, metadata}
+---@return table
+Inventory.GetPlayerInventory = function()
+    return Framework:GetPlayerInventory()
+end
+
+---This will get the image path for this item, if not found will return placeholder.
 ---@param item string
 ---@return string
 Inventory.GetImagePath = function(item)
@@ -34,3 +41,5 @@ Inventory.StripPNG = function(item)
     end
     return item
 end
+
+return Inventory

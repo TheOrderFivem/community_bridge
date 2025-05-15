@@ -16,3 +16,5 @@ Dispatch.SendAlert = function(data)
         coords = data.coords or GetEntityCoords(cache.ped)
     })
 end
+
+return Dispatch

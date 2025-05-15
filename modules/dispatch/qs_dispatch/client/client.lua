@@ -36,3 +36,5 @@ Dispatch.SendAlert = function(data)
         TriggerServerEvent('qs-dispatch:server:CreateDispatchCall', customData)
     end)
 end
+
+return Dispatch

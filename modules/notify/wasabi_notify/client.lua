@@ -18,3 +18,5 @@ Notify.SendNotify = function(message, _type, time)
     time = time or 3000
     return exports.wasabi_notify:notify(_type, message, time, _type)
 end
+
+return Notify

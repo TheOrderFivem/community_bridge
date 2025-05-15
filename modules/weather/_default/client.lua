@@ -6,3 +6,5 @@ Weather = Weather or {}
 Weather.ToggleSync = function(toggle)
 
 end
+
+return Weather

@@ -18,3 +18,5 @@ Notify.SendNotify = function(message, _type, time)
     time = time or 3000
     return exports['t-notify']:Alert({ style = 'info', message = message, duration = time, })
 end
+
+return Notify

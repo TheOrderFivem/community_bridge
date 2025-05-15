@@ -14,3 +14,5 @@ end
 VehicleKey.RemoveKeys = function(vehicle, plate)
     return true, Prints.Error("There Is No Vehicle Key System Installed")
 end
+
+return VehicleKey

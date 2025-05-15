@@ -10,3 +10,5 @@ RegisterNetEvent('community_bridge:Server:_OnPlayerInside', function(src, inside
     local playerCoords = GetEntityCoords(playerEntity)
     TriggerEvent('community_bridge:Client:OnPlayerInside', src, insideId, currentBucket, playerCoords)
 end)
+
+return Housing

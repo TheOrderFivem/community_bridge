@@ -1,20 +1,16 @@
+---@diagnostic disable: duplicate-set-field
 if GetResourceState('tgiann-inventory') ~= 'started' then return end
 local tgiann = exports["tgiann-inventory"]
 
 Inventory = Inventory or {}
 
----@param id any
----@return nil
-Inventory.OpenStash = function(id)
-    -- open stash export... not sure what it is yet. 
-end
-
+---Return the item info in oxs format, {name, label, stack, weight, description, image}
 ---@param item string
 ---@return table
 Inventory.GetItemInfo = function(item)
     local itemData = tgiann:GetItemList()
     if not itemData[item] then return {} end
-    local repackedTable = {
+    return {
         name = itemData.name or "Missing Name",
         label = itemData.label or "Missing Label",
         stack = itemData.unique or "false",
@@ -22,10 +18,16 @@ Inventory.GetItemInfo = function(item)
         description = itemData.description or "none",
         image = itemData.image or Inventory.GetImagePath(item),
     }
-    return repackedTable
 end
 
----comment
+---Will return boolean if the player has the item.
+---@param item string
+---@return boolean
+Inventory.HasItem = function(item)
+    return tgiann:HasItem(item)
+end
+
+---This will return th count of the item in the players inventory, if not found will return 0.
 ---@param item string
 ---@return number
 Inventory.GetItemCount = function(item)
@@ -33,14 +35,7 @@ Inventory.GetItemCount = function(item)
     return searchItem or 0
 end
 
----This will return a boolean if the player has the item in the inventory
----@param item string
----@return boolean
-Inventory.HasItem = function(item)
-    return tgiann:HasItem(item)
-end
-
--- This will return the image path, it is incredibley useful for menus etc
+---This will get the image path for this item, if not found will return placeholder.
 ---@param item string
 ---@return string
 Inventory.GetImagePath = function(item)
@@ -51,7 +46,7 @@ Inventory.GetImagePath = function(item)
     return imagePath or "https://avatars.githubusercontent.com/u/47620135"
 end
 
----This will return the player inventory in a table
+---This will return the players inventory in the format of {name, label, count, slot, metadata}
 ---@return table
 Inventory.GetPlayerInventory = function()
     local items = {}
@@ -70,3 +65,11 @@ Inventory.GetPlayerInventory = function()
     end
     return items
 end
+
+---@param id any
+---@return nil
+Inventory.OpenStash = function(id)
+    tgiann:OpenInventory('stash', id, { maxweight = 400000, slots = 100 })
+end
+
+return Inventory

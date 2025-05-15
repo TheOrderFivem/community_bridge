@@ -13,3 +13,5 @@ Skills.GetSkillLevel = function(skillName)
     local skillData = exports.evolent_skills:getSkillLevel(skillName)
     return skillData or 0
 end
+
+return Skills

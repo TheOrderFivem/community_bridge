@@ -9,3 +9,5 @@ RegisterNetEvent("community_bridge:Server:DispatchAlert", function(data)
         end
     end
 end)
+
+return Dispatch

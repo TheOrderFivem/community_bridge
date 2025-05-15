@@ -66,3 +66,5 @@ end
 function Math.Map(value, inMin, inMax, outMin, outMax)
     return (value - inMin) / (inMax - inMin) * (outMax - outMin) + outMin
 end
+
+return Math

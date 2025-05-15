@@ -23,3 +23,5 @@ end)
 RegisterNetEvent('community_bridge:Client:HideHelpText', function()
     HelpText.HideHelpText()
 end)
+
+return HelpText

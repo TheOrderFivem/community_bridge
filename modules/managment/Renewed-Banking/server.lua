@@ -23,3 +23,5 @@ end
 Managment.RemoveAccountMoney = function(account, amount)
     return exports['Renewed-Banking']:removeAccountMoney(account, amount)
 end
+
+return Managment

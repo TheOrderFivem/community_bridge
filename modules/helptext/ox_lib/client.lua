@@ -19,3 +19,5 @@ end
 HelpText.HideHelpText = function()
     return exports.ox_lib:hideTextUI()
 end
+
+return HelpText

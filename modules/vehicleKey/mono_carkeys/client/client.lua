@@ -12,3 +12,5 @@ VehicleKey.RemoveKeys = function(vehicle, plate)
     if not plate then return false end
     TriggerServerEvent('mono_carkeys:DeleteKey', 1, plate)
 end
+
+return VehicleKey

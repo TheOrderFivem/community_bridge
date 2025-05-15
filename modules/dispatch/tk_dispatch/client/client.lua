@@ -18,3 +18,5 @@ Dispatch.SendAlert = function(data)
         jobs = data.jobs or {'police'},
     })
 end
+
+return Dispatch

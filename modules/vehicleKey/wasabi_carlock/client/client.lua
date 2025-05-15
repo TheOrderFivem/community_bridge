@@ -13,3 +13,5 @@ VehicleKey.RemoveKeys = function(vehicle, plate)
     if not plate and vehicle then plate = GetVehicleNumberPlateText(vehicle) end
     exports.wasabi_carlock:RemoveKey(plate)
 end
+
+return VehicleKey

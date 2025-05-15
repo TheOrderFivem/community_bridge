@@ -13,3 +13,5 @@ VehicleKey.RemoveKeys = function(vehicle, plate)
     if not vehicle and not DoesEntityExist(vehicle) then return false end
     return exports["mk_vehiclekeys"]:RemoveKey(vehicle)
 end
+
+return VehicleKey

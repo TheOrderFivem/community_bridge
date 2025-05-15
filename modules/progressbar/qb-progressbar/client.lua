@@ -60,6 +60,8 @@ function ProgressBar.Open(options, cb, qbFormat)
     return Citizen.Await(prom)
 end
 
+return ProgressBar
+
 
 -- Example usage:
 --[[

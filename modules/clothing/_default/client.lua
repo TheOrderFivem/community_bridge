@@ -34,8 +34,6 @@ Clothing.ReloadSkin = function()
     return true
 end
 
-
-
 Clothing.UpdateAppearanceBackup = function(data)
     ClothingBackup = data
 end
@@ -59,3 +57,5 @@ end)
 RegisterNetEvent('community_bridge:client:ReloadSkin', function()
     Clothing.ReloadSkin()
 end)
+
+return Clothing

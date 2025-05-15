@@ -23,3 +23,5 @@ end
 Managment.RemoveAccountMoney = function(account, amount)
     return exports['qb-banking']:RemoveMoney(account, amount)
 end
+
+return Managment

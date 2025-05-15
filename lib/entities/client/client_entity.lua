@@ -60,16 +60,41 @@ local function SpawnEntity(entityData)
         return
     end
 
-    local entity = createEntityByType(entityData.entityType, model, entityData.coords, entityData.rotation)
-    setupEntity(entity, entityData)
+    local entity = nil
+    local coords = entityData.coords
+    local rotation = entityData.rotation
+
+    if entityData.entityType == 'object' then
+        entity = CreateObject(model, coords.x, coords.y, coords.z, false, false, false)
+        SetEntityRotation(entity, rotation.x, rotation.y, rotation.z, 2, true)
+    elseif entityData.entityType == 'ped' then
+        entity = CreatePed(4, model, coords.x, coords.y, coords.z, type(rotation) == 'number' and rotation or rotation.z, false, false)
+        -- Apply ped specific settings from entityData.meta if needed
+    elseif entityData.entityType == 'vehicle' then
+        entity = CreateVehicle(model, coords.x, coords.y, coords.z, type(rotation) == 'number' and rotation or rotation.z, false, false)
+        -- Apply vehicle specific settings from entityData.meta if needed
+    else
+        print(string.format("[ClientEntity] Unknown entity type '%s' for entity %s", entityData.entityType, entityData.id))
+    end
+    if entity then
+        -- print(string.format("[ClientEntity] Spawned %s entity %s (GameID: %s)", entityData.entityType, entityData.id, entity))
+        entityData.spawned = entity
+        SetModelAsNoLongerNeeded(model)
+        SetEntityAsMissionEntity(entity, true, true) -- Keep entity from being deleted by game engine
+        FreezeEntityPosition(entity, true) -- Optional freeze based on meta
+        if entityData.OnSpawn and type(entityData.OnSpawn) == 'function' then
+            entityData.OnSpawn(entityData)
+        end
+        -- print(string.format("[ClientEntity] Spawned %s entity %s (GameID: %s)", entityData.entityType, entityData.id, entity))
+    else
+        SetModelAsNoLongerNeeded(model)
+    end
 end
 
 local function RemoveEntity(entityData)
-    entityData = entityData and entityData.args
+    entityData = entityData and entityData.args or entityData
     if not entityData then return end
-
     ClientEntityActions.StopAction(entityData.id)
-
     if entityData.spawned and DoesEntityExist(entityData.spawned) then
         local entityHandle = entityData.spawned
         entityData.spawned = nil
@@ -82,47 +107,41 @@ local function RemoveEntity(entityData)
     end
 end
 
-local function updateEntityPosition(entity, coords, rotation, entityType)
-    SetEntityCoords(entity, coords.x, coords.y, coords.z, false, false, false, true)
-    if rotation then
-        applyEntityRotation(entity, rotation, entityType)
-    end
-end
-
--- Public API
+--- Registers an entity received from the server and sets up proximity spawning.
+-- @param entityData table Data received from the server via 'community_bridge:client:CreateEntity'
 function ClientEntity.Register(entityData)
-    if Entities[entityData.id] then return end
+    if Entities[entityData.id] then return end -- Already registered
 
     Entities[entityData.id] = entityData
-    Point.Register(
-        entityData.id,
-        entityData.coords,
-        entityData.spawnDistance or DEFAULT_SPAWN_DISTANCE,
-        entityData,
-        SpawnEntity,
-        RemoveEntity,
-        function() end
-    )
+    -- print(string.format("[ClientEntity] Registering %s entity %s", entityData.entityType, entityData.id))
+
+    -- Use Point system for proximity checks
+    -- print(string.format("[ClientEntity] Registering entity %s at %s", entityData.id, json.encode(entityData)))
+    Point.Register(entityData.id, entityData.coords, entityData.spawnDistance or 50.0, entityData, SpawnEntity, RemoveEntity, function() end)
 end
 
 function ClientEntity.Unregister(id)
     local entityData = Entities[id]
     if not entityData then return end
 
-    Point.Remove(id)
-    RemoveEntity(entityData)
+    Point.Remove(id) 
+    RemoveEntity(entityData) 
     Entities[id] = nil
 end
 
 function ClientEntity.Update(id, data)
     local entityData = Entities[id]
+    -- print(string.format("[ClientEntity] Updating entity %s", id))
     if not entityData then return end
 
     local needsPointUpdate = false
     for key, value in pairs(data) do
-        if (key == 'coords' and #(entityData.coords - value) > 0.1) or
-            (key == 'spawnDistance' and entityData.spawnDistance ~= value) then
-            needsPointUpdate = true
+        if key == 'coords' and #(entityData.coords - value) > 0.1 then
+            -- print(string.format("[ClientEntity] Updating coords for entity %s", id))
+             needsPointUpdate = true
+        end
+        if key == 'spawnDistance' and entityData.spawnDistance ~= value then
+             needsPointUpdate = true
         end
         entityData[key] = value
     end
@@ -162,14 +181,20 @@ RegisterNetEvent("community_bridge:client:UpdateEntity", ClientEntity.Update)
 
 RegisterNetEvent("community_bridge:client:TriggerEntityAction", function(entityId, actionName, ...)
     local entityData = Entities[entityId]
-    if not entityData then return end
-
-    if actionName == "Stop" then
-        ClientEntityActions.StopAction(entityId)
-    elseif actionName == "Skip" then
-        ClientEntityActions.SkipAction(entityId)
-    else
-        ClientEntityActions.QueueAction(entityData, actionName, ...)
+    -- Check if entity exists locally (it doesn't need to be spawned to queue actions)
+    if entityData then
+        if actionName == "Stop" then
+            ClientEntityActions.StopAction(entityId)
+        elseif actionName == "Skip" then
+            ClientEntityActions.SkipAction(entityId)
+        else
+            print(string.format("[ClientEntity] Triggering action '%s' for entity %s", actionName, entityId))
+            local currentAction = ClientEntityActions.ActionQueue[entityId] and ClientEntityActions.ActionQueue[entityId][1]
+            ClientEntityActions.QueueAction(entityData, actionName, ...)
+        end
+    -- else
+        -- Optional: Log if action received but entity doesn't exist locally at all
+        -- print(string.format("[ClientEntity] Received action '%s' for non-existent entity %s.", actionName, entityId))
     end
 end)
 

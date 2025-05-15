@@ -10,3 +10,5 @@ RegisterNetEvent("community_bridge:server:dispatch:sendAlert", function(data)
         coords = data.coords
     })
 end)
+
+return Dispatch

@@ -2,9 +2,9 @@ Ids = Ids or {}
 
 
 ---This will generate a unique id.
----@param tbl table
----@param len number
----@param pattern string
+---@param tbl table | nil
+---@param len number | nil
+---@param pattern string | nil
 ---@return string
 Ids.CreateUniqueId = function(tbl, len, pattern) -- both optional
     tbl = tbl or {} -- table to check uniqueness. Ids to check against must be the key to the tables value

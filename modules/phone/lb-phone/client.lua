@@ -12,3 +12,5 @@ Phone = Phone or {}
 Phone.SendEmail = function(email, title, message)
     TriggerServerEvent('community_bridge:Server:genericEmail', {email = email, title = title, message = message})
 end
+
+return Phone

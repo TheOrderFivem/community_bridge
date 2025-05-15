@@ -6,3 +6,5 @@ Weather = Weather or {}
 Weather.ToggleSync = function(toggle)
     TriggerEvent('cd_easytime:PauseSync', toggle)
 end
+
+return Weather

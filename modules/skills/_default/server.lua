@@ -23,3 +23,5 @@ end
 Skills.RemoveXp = function(src, skillName, amount)
     return false, warnUser()
 end
+
+return Skills

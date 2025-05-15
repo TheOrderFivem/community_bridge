@@ -1,0 +1,73 @@
+name: Update Webhook Notification
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  send-webhook:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Send webhook notification
+        env:
+          WEBHOOK_URL: ${{ secrets.RELEASE_WEBHOOK_URL }}
+        run: |
+          # Extract repository name and release details
+          REPO_NAME=$(basename "$GITHUB_REPOSITORY")
+          RELEASE_VERSION=$(jq -r '.release.tag_name // "Unknown Version"' "$GITHUB_EVENT_PATH")
+          TITLE="$REPO_NAME $RELEASE_VERSION"
+          DESCRIPTION=$(jq -r '.release.body // "No description provided."' "$GITHUB_EVENT_PATH")
+
+          # Construct JSON payload
+          PAYLOAD=$(jq -n \
+            --arg title "$TITLE" \
+            --arg description "$DESCRIPTION" \
+            '{
+              "content": "<@&1337224918710095882>",
+              "allowed_mentions": { "parse": ["roles"] },
+              "embeds": [
+                {
+                  "title": $title,
+                  "description": $description,
+                  "color": 15105570,
+                  "footer": { "text": "🔄 Download the latest version of community_bridge to ensure compatibility." },
+                  "image": {
+                    "url": "https://avatars.githubusercontent.com/u/192999457?s=400&u=da632e8f64c85def390cfd1a73c3b664d6882b38&v=4"
+                  }
+                }
+              ],
+              "components": [
+                {
+                  "type": 1,
+                  "components": [
+                    {
+                      "type": 2,
+                      "style": 5,
+                      "label": "Get The Latest Release From Portal",
+                      "url": "https://portal.cfx.re/assets/granted-assets"
+                    },
+                    {
+                      "type": 2,
+                      "style": 5,
+                      "label": "Get The Latest Community Bridge Release",
+                      "url": "https://github.com/The-Order-Of-The-Sacred-Framework/community_bridge/tree/main"
+                    }
+                  ]
+                }
+              ]
+            }')
+
+          # Debugging: Print the payload for verification
+          echo "$PAYLOAD"
+
+          # Send webhook
+          curl -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            --data-raw "$PAYLOAD" || exit 1

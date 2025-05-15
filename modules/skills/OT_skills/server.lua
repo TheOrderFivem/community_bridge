@@ -27,3 +27,5 @@ Skills.RemoveXp = function(src, skillName, amount)
     exports.OT_skills:removeXP(src, skillName, amount)
     return true
 end
+
+return Skills

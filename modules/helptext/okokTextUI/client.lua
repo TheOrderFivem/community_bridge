@@ -18,3 +18,5 @@ end
 HelpText.HideHelpText = function()
     return exports['okokTextUI']:Close()
 end
+
+return HelpText

@@ -1,23 +1,33 @@
+---@diagnostic disable: duplicate-set-field
 if GetResourceState('qb-inventory') ~= 'started' then return end
-
 local qb = exports['qb-inventory']
 
 Inventory = Inventory or {}
 
-RegisterNetEvent('community_bridge:client:qb-inventory:openStash', function(id, data)
-    if source ~= 65535 then return end
-    TriggerEvent("inventory:client:SetCurrentStash", id)
-    TriggerServerEvent('inventory:server:OpenInventory', 'stash', id, { maxweight = data.weight, slots = data.slots })
-end)
+---Return the item info in oxs format, {name, label, stack, weight, description, image}
+---@param item string
+---@return table
+Inventory.GetItemInfo = function(item)
+    local itemData = Framework.Shared.Items[item]
+    if not itemData then return {} end
+    return {
+        name = itemData.name,
+        label = itemData.label,
+        stack = itemData.unique,
+        weight = itemData.weight,
+        description = itemData.description,
+        image = Inventory.GetImagePath(itemData.image or itemData.name)
+    }
+end
 
----This will return a boolean if the player has the item in their inventory
+---Will return boolean if the player has the item.
 ---@param item string
 ---@return boolean
 Inventory.HasItem = function(item)
     return qb:HasItem(item)
 end
 
----This will return a string of the image path for the item
+---This will get the image path for this item, if not found will return placeholder.
 ---@param item string
 ---@return string
 Inventory.GetImagePath = function(item)
@@ -27,17 +37,10 @@ Inventory.GetImagePath = function(item)
     return imagePath or "https://avatars.githubusercontent.com/u/47620135"
 end
 
-Inventory.GetItemInfo = function(item)
-    local itemData = Framework.Shared.Items[item]
-    if not itemData then return {} end
-    local repackedTable = {
-        name = itemData.name,
-        label = itemData.label,
-        stack = itemData.unique,
-        weight = itemData.weight,
-        description = itemData.description,
-        image = Inventory.GetImagePath(itemData.image or itemData.name)
-    }
-    return repackedTable
-end
+RegisterNetEvent('community_bridge:client:qb-inventory:openStash', function(id, data)
+    if source ~= 65535 then return end
+    TriggerEvent("inventory:client:SetCurrentStash", id)
+    TriggerServerEvent('inventory:server:OpenInventory', 'stash', id, { maxweight = data.weight, slots = data.slots })
+end)
 
+return Inventory

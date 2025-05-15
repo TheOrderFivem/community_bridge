@@ -61,3 +61,5 @@ RegisterNetEvent("community_bridge:completeCheckout", function(shopName, item, a
     if not paymentType == "money" or not paymentType == "bank" then return end
     Shops.CompleteCheckout(src, shopName, item, amount, paymentType)
 end)
+
+return Shops

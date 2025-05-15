@@ -136,3 +136,5 @@ end
 Target.RemoveZone = function(name)
     warnUser()
 end
+
+return Target

@@ -19,3 +19,5 @@ Notify.SendNotify = function(message, _type, time)
     time = time or 3000
     return exports.ox_lib:notify({ description = message, type = _type, position = 'center-left' })
 end
+
+return Notify

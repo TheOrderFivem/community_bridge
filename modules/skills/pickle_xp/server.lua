@@ -27,3 +27,5 @@ Skills.RemoveXp = function(src, skillName, amount)
     exports.pickle_xp:RemovePlayerXP(src, skillName, amount)
     return true
 end
+
+return Skills

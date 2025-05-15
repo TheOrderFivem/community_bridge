@@ -404,6 +404,98 @@ function Utility.RemovePoint(pointID)
     return Point.Remove(pointID)
 end
 
+---Simple switch-case function
+---@generic T
+---@param value T The value to match against the cases
+---@param cases table<T|false, fun(): any> Table with case functions and an optional default (false key)
+---@return any|false result The return value of the matched case function, or false if none matched
+function Utility.Switch(value, cases)
+    local caseFunc = cases[value] or cases[false]
+
+    if caseFunc and type(caseFunc) == "function" then
+        local ok, result = pcall(caseFunc)
+        return ok and result or false
+    end
+
+    return false
+end
+
+--[[
+local vehicleType = "boat"
+
+local result = Utility.Switch(vehicleType, {
+    car = function()
+        print("This is a Car")
+        -- Car-related logic here
+        return "Car logic executed"
+    end,
+    bike = function()
+        print("This is a Bike")
+        -- Bike-related logic here
+        return "Bike logic executed"
+    end,
+    [false] = function()
+        print("Unknown vehicle type. Running default logic.")
+        -- Default logic here
+        return "Default logic executed"
+    end,
+})
+
+print("Result:", result)
+
+]]
+
+
+--- Pattern match-like function
+---@generic T
+---@param value T The value to match
+---@param patterns table<T|fun(T):boolean|false, fun(): any> A list of matchers and their handlers
+---@return any|false result The result of the first matched case, or false if none
+function Utility.Match(value, patterns)
+    for pattern, handler in pairs(patterns) do
+        if type(pattern) == "function" then
+            local ok, matched = pcall(pattern, value)
+            if ok and matched then
+                local success, result = pcall(handler)
+                return success and result or false
+            end
+        elseif pattern == value then
+            local success, result = pcall(handler)
+            return success and result or false
+        end
+    end
+
+    if patterns[false] then
+        local ok, result = pcall(patterns[false])
+        return ok and result or false
+    end
+
+    return false
+end
+
+--[[
+local input = 42
+
+local result = Utility.Match(input, {
+    [function(v) return v < 0 end] = function()
+        print("Negative number")
+        return "Negative"
+    end,
+    [function(v) return v % 2 == 0 end] = function()
+        print("Even number")
+        return "Even"
+    end,
+    [false] = function()
+        print("No match")
+        return "Default"
+    end,
+})
+
+print("Result:", result)
+
+]]
+
+
 AddEventHandler('onResourceStop', function(resource)
     if resource ~= GetCurrentResourceName() then return end
     for _, blip in pairs(blipIDs) do

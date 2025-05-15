@@ -62,6 +62,8 @@ function ProgressBar.Open(options, cb, isQBInput)
     return success
 end
 
+return ProgressBar
+
 --[[
 RegisterCommand("progressbar", function()
     ProgressBar.Open({

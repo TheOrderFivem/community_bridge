@@ -8,7 +8,7 @@ function Bridge.RegisterModule(moduleName, moduleTable)
         return
     end
 
-    local wrappedModule = {}
+    local wrappedModule = Bridge[moduleName] or {}
     if type(moduleTable) == 'function' then
         Bridge[moduleName] = wrappedModule
         exports(moduleName, moduleTable)
@@ -21,7 +21,8 @@ function Bridge.RegisterModule(moduleName, moduleTable)
         print("^2 Registering module:", moduleName, "^0")
     end
     Bridge[moduleName] = wrappedModule
-
+    _ENV[moduleName] = wrappedModule -- Add to the ENV table the modules so is more easy and safe to call from inside
+    _ENV.Bridge = Bridge -- Add the bridge too to the _ENV
 
     exports(moduleName, function()
         return wrappedModule
@@ -55,23 +56,30 @@ Bridge.RegisterModule("Phone", Phone)
 Bridge.RegisterModule("Dispatch", Dispatch)
 Bridge.RegisterModule("Shops", Shops)
 Bridge.RegisterModule("Housing", Housing)
+Bridge.RegisterModule("Version", Version)
 
 --lib
-Bridge.RegisterModule("Tables", cLib.Tables)
-Bridge.RegisterModule("Math", cLib.Math)
-Bridge.RegisterModule("Prints", cLib.Prints)
-Bridge.RegisterModule("Callback", cLib.Callback)
+-- Bridge.RegisterModule("Tables", cLib.Tables)
+-- Bridge.RegisterModule("Math", cLib.Math)
+-- Bridge.RegisterModule("Prints", cLib.Prints)
+-- Bridge.RegisterModule("Callback", cLib.Callback)
 
---new
+-- --new
 Bridge.RegisterModule("Require", Require)
-Bridge.RegisterModule("Ids", cLib.Ids)
-Bridge.RegisterModule("ReboundEntities", cLib.ReboundEntities)
-Bridge.RegisterModule("LA", cLib.LA)
-Bridge.RegisterModule("Perlin", cLib.Perlin)
-Bridge.RegisterModule("Actions", cLib.Actions)
-Bridge.RegisterModule("Cache", cLib.Cache)
-Bridge.RegisterModule("Skills", Skills)
+-- Bridge.RegisterModule("Ids", cLib.Ids)
+-- Bridge.RegisterModule("ReboundEntities", cLib.ReboundEntities)
+-- Bridge.RegisterModule("LA", cLib.LA)
+-- Bridge.RegisterModule("Perlin", cLib.Perlin)
+-- Bridge.RegisterModule("Actions", cLib.Actions)
+-- Bridge.RegisterModule("Cache", cLib.Cache)
+-- Bridge.RegisterModule("Skills", Skills)
 
+
+for k, v in pairs(cLib) do
+    if v then
+        Bridge.RegisterModule(k, v)
+    end
+end
 
 exports('Bridge', function()
     return Bridge
@@ -80,14 +88,7 @@ end)
 -- ▄▀▀ ██▀ █▀▄ █ █ ██▀ █▀▄ 
 -- ▄█▀ █▄▄ █▀▄ ▀▄▀ █▄▄ █▀▄ 
 if not IsDuplicityVersion() then goto client end
-
-Bridge.RegisterModule("SQL", cLib.SQL)
-Bridge.RegisterModule("Logs", cLib.Logs)
-Bridge.RegisterModule("ItemsBuilder", cLib.ItemsBuilder)
-Bridge.RegisterModule("LootTables", cLib.LootTables)
-Bridge.RegisterModule("Version", Version)
-Bridge.RegisterModule("ServerEntity", cLib.ServerEntity)
-
+Bridge.RegisterModule('Version', Version)
 
 --    ▄▀▀ █   █ ██▀ █▄ █ ▀█▀ 
 --    ▀▄▄ █▄▄ █ █▄▄ █ ▀█  █  
@@ -105,33 +106,3 @@ Bridge.RegisterModule("Target", Target)
 Bridge.RegisterModule("Menu", Menu)
 Bridge.RegisterModule("Dialogue", Dialogue)
 Bridge.RegisterModule("Accessibility", Accessibility) -- new
-
-Bridge.RegisterModule("Utility", cLib.Utility)
-Bridge.RegisterModule("Placeable", cLib.Placeable)--new
-Bridge.RegisterModule("Gizmo", cLib.Gizmo)
-Bridge.RegisterModule("Scaleform", cLib.Scaleform)
-Bridge.RegisterModule("Raycast", cLib.Raycast)
-Bridge.RegisterModule("PlaceableObject", cLib.PlaceableObject)
-Bridge.RegisterModule("Point", cLib.Point)
-Bridge.RegisterModule("Object", cLib.Object)
-Bridge.RegisterModule("Particle", cLib.Particle)
-Bridge.RegisterModule("ClientEntity", cLib.ClientEntity)
-Bridge.RegisterModule("ClientEntityActions", cLib.ClientEntityActions)
-
--- Fill the bridge tables with player data.
-function FillBridgeTables()
-    PlayerLoaded = true
-    PlayerIdentifier = Framework.GetPlayerIdentifier()
-    PlayerJobName, PlayerJobLabel, PlayerJobGradeName, PlayerJobGradeLevel = Framework.GetPlayerJob()
-end
-
--- Clean the bridge tables.
-function ClearClientSideVariables()
-    PlayerLoaded = false
-    PlayerIdentifier = nil
-    PlayerJobName = nil
-    PlayerJobLabel = nil
-    PlayerJobGradeName = nil
-    PlayerJobGradeLevel = nil
-    StoredOldClothing = {}
-end

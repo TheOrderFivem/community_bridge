@@ -26,3 +26,5 @@ Fuel.SetFuel = function(vehicle, fuel, type)
     if not DoesEntityExist(vehicle) then return end
     return exports['Renewed-Fuel']:SetFuel(vehicle, fuel)
 end
+
+return Fuel

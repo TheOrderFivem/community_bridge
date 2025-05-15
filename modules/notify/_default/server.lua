@@ -31,3 +31,5 @@ end
 Notify.HideHelpText = function(src)
     return HelpText.HideHelpText(src)
 end
+
+return Notify

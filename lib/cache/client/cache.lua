@@ -54,10 +54,9 @@ local function GetWeapon()
     return GetSelectedPedWeapon(ped)
 end
 
-Cache.Create("Ped", GetPed, 1000)           -- Check ped every second (adjust as needed)
-Cache.Create("Vehicle", GetVehicle, 500)    -- Check vehicle every 500ms
-Cache.Create("Seat", GetVehicleSeat, 500)   -- Check if in vehicle every 500ms
-Cache.Create("Weapon", GetWeapon, 250)      -- Check weapon every 250ms
-Cache.Create("ServerId", GetServerId, 1000) -- Check server ID every second
-
+Cache.Create("Ped", GetPed, nil)           -- Check ped only once as param is nil
+Cache.Create("Vehicle", GetVehicle, 500)   -- Check vehicle every 500ms
+Cache.Create("Seat", GetVehicleSeat, 500)  -- Check if in vehicle every 500ms
+Cache.Create("Weapon", GetWeapon, 250)     -- Check weapon every 250ms
+Cache.Create("ServerId", GetServerId, nil) -- Check server ID only once as param is nil
 return Cache

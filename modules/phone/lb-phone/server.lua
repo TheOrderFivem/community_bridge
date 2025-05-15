@@ -34,3 +34,5 @@ RegisterNetEvent('community_bridge:Server:genericEmail', function(data)
     Prints.Debug('community_bridge:Server:genericEmail Hit')
     return Phone.SendEmail(src, data.email, data.title, data.message)
 end)
+
+return Phone

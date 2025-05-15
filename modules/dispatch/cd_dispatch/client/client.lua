@@ -22,3 +22,5 @@ Dispatch.SendAlert = function(data)
         }
     })
 end
+
+return Dispatch

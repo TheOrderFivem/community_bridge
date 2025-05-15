@@ -18,3 +18,5 @@ Notify.SendNotify = function(message, _type, time)
     time = time or 3000
     return exports.r_notify:notify({title = 'Notification', content = message, type = _type, icon = "fas fa-check", duration = time, position = 'top-right', sound = false})
 end
+
+return Notify

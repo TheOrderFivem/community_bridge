@@ -1,15 +1,15 @@
+---@diagnostic disable: duplicate-set-field
 if GetResourceState('origen_inventory') ~= 'started' then return end
-
 Inventory = Inventory or {}
-
 local origin = exports.origen_inventory
 
----comment
+---Return the item info in oxs format, {name, label, stack, weight, description, image}
 ---@param item string
 ---@return table
 Inventory.GetItemInfo = function(item)
     local itemData = origin:Items(item)
-    local repackedTable = {
+    if not itemData then return {} end
+    return {
         name = itemData.name or "Missing Name",
         label = itemData.label or "Missing Label",
         stack = itemData.unique or "false",
@@ -17,29 +17,25 @@ Inventory.GetItemInfo = function(item)
         description = itemData.description or "none",
         image = itemData.image or Inventory.GetImagePath(item),
     }
-    return repackedTable or {}
 end
 
----comment
+---Will return boolean if the player has the item.
 ---@param item string
 ---@return boolean
 Inventory.HasItem = function(item)
     return origin:HasItem(item)
 end
 
----comment
+---This will return th count of the item in the players inventory, if not found will return 0.
 ---@param item string
 ---@return number
 Inventory.GetItemCount = function(item)
-    local searchItem = origin:Search('slots', item)
-    local count = 0
-    for _, v in pairs(searchItem) do
-        count = count + v.count
-    end
-    return count
+    local inventory = origin:Search('count', item)
+    if not inventory then return 0 end
+    return inventory.count
 end
 
----comment
+---This will get the image path for this item, if not found will return placeholder.
 ---@param item string
 ---@return string
 Inventory.GetImagePath = function(item)
@@ -49,13 +45,14 @@ Inventory.GetImagePath = function(item)
     return imagePath or "https://avatars.githubusercontent.com/u/47620135"
 end
 
----comment
+---This will return the players inventory in the format of {name, label, count, slot, metadata}
 ---@return table
 Inventory.GetPlayerInventory = function()
-    local items = {}
+    local repack = {}
     local inventory = origin:GetInventory()
+    if not inventory then return {} end
     for _, v in pairs(inventory) do
-        table.insert(items, {
+        table.insert(repack, {
             name = v.name,
             label = v.label,
             count = v.count,
@@ -66,5 +63,11 @@ Inventory.GetPlayerInventory = function()
             weight = v.weight
         })
     end
-    return items
+    return repack
 end
+
+Inventory.OpenStash = function(id)
+    origin:openInventory('stash', id, { label = id, weight = 400000, slots = 100, })
+end
+
+return Inventory

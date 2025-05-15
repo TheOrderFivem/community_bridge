@@ -1,3 +1,4 @@
+---@diagnostic disable: duplicate-set-field
 if GetResourceState('rcore_doorlock') ~= 'started' then return end
 
 Doorlock = Doorlock or {}
@@ -18,3 +19,5 @@ Doorlock.GetClosestDoor = function()
     end
     return door
 end
+
+return Doorlock

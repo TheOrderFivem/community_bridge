@@ -18,3 +18,5 @@ end
 HelpText.HideHelpText = function()
     return exports['jg-textui']:HideText()
 end
+
+return HelpText

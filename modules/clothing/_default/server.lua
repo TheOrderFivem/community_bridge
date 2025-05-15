@@ -30,3 +30,5 @@ end)
 RegisterNetEvent('community_bridge:client:ReloadSkin', function()
     Clothing.ReloadSkin()
 end)
+
+return Clothing

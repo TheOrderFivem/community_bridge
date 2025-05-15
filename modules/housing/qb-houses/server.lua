@@ -7,3 +7,5 @@ RegisterNetEvent('qb-houses:server:SetInsideMeta', function(insideId, bool)
     insideId = bool and insideId or nil
     TriggerEvent('community_bridge:Server:_OnPlayerInside', src, insideId)
 end)
+
+return Housing

@@ -36,3 +36,5 @@ end
 Notify.ShowHelpText = function(message, position)
     return HelpText.ShowHelpText(message, position)
 end
+
+return Notify

@@ -13,3 +13,5 @@ Skills.GetSkillLevel = function(skillName)
     local skillData = exports.OT_skills:getSkill(skillName)
     return skillData.level or 0
 end
+
+return Skills

@@ -6,3 +6,5 @@ Weather = Weather or {}
 Weather.ToggleSync = function(toggle)
     LocalPlayer.state.syncWeather = toggle
 end
+
+return Weather

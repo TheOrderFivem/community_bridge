@@ -3,7 +3,7 @@ if GetResourceState('qbx_core') ~= 'started' then return end
 
 QBox = exports.qbx_core
 
-Framework = {}
+Framework = Framework or {}
 
 Framework.GetFrameworkName = function()
     return 'qbx_core'
@@ -18,7 +18,7 @@ Framework.GetFrameworkJobs = function()
 end
 
 Framework.GetPlayerDob = function()
-    local playerData = QBox.GetPlayerData()
+    local playerData = Framework.GetPlayerData()
     return playerData.charinfo.birthdate
 end
 
@@ -37,26 +37,47 @@ Framework.HideHelpText = function()
 end
 
 Framework.GetPlayerMetaData = function(metadata)
-    local playerData = QBox.GetPlayerData()
+    local playerData = Framework.GetPlayerData()
     return playerData.metadata[metadata]
 end
 
 Framework.GetPlayerIdentifier = function()
-    return QBox.GetPlayerData().citizenid
+    return Framework.GetPlayerData().citizenid
 end
 
 Framework.GetPlayerName = function()
-    local playerData = QBox.GetPlayerData()
+    local playerData = Framework.GetPlayerData()
     return playerData.charinfo.firstname, playerData.charinfo.lastname
 end
 
+---Depricated : This will return the players job name, job label, job grade label and job grade level
+---@return string
+---@return string
+---@return string
+---@return string
 Framework.GetPlayerJob = function()
-    local playerData = QBox.GetPlayerData()
+    local playerData = Framework.GetPlayerData()
     return playerData.job.name, playerData.job.label, playerData.job.grade.name, playerData.job.grade.level
 end
 
+---This will return the players job name, job label, job grade label job grade level, boss status, and duty status in a table
+---@return table
+Framework.GetPlayerJobData = function()
+    local playerData = Framework.GetPlayerData()
+    local jobData = playerData.job
+    return {
+        jobName = jobData.name,
+        jobLabel = jobData.label,
+        gradeName = jobData.grade.name,
+        gradeLabel = jobData.grade.name,
+        gradeRank = jobData.grade.level,
+        boss = jobData.isboss,
+        onDuty = jobData.onduty,
+    }
+end
+
 Framework.GetPlayerInventory = function()
-    return QBox.GetPlayerData().items
+    return Framework.GetPlayerData().items
 end
 
 ---comment
@@ -68,25 +89,21 @@ Framework.GetItemCount = function(item)
 end
 
 Framework.GetIsPlayerDead = function()
-    local platerData = QBox.GetPlayerData()
+    local platerData = Framework.GetPlayerData()
     return platerData.metadata["isdead"] or platerData.metadata["inlaststand"]
 end
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     Wait(1500)
-    FillBridgeTables()
     TriggerEvent('community_bridge:Client:OnPlayerLoaded')
 end)
 
 RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
-    ClearClientSideVariables()
-	TriggerEvent('community_bridge:Client:OnPlayerUnload')
+    TriggerEvent('community_bridge:Client:OnPlayerUnload')
 end)
 
 RegisterNetEvent('QBCore:Client:OnJobUpdate', function(data)
-    PlayerJobName = data.name
-    PlayerJobLabel = data.label
-    PlayerJobGradeName = data.grade.name
-    PlayerJobGradeLevel = data.grade.level
-    TriggerEvent('community_bridge:Client:OnPlayerJobUpdate',PlayerJobName, PlayerJobLabel, PlayerJobGradeName, PlayerJobGradeLevel)
+    TriggerEvent('community_bridge:Client:OnPlayerJobUpdate', data.name, data.label, data.grade.name, data.grade.level)
 end)
+
+return Framework

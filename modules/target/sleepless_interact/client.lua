@@ -139,3 +139,5 @@ AddEventHandler('onResourceStop', function(resource)
         targetZones = {}
     end
 end)
+
+return Target
