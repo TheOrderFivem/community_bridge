@@ -116,8 +116,8 @@ function Cache.Create(name, compare, waitTime)
     }
     Cache.Caches[_name] = newCache
     debugPrint(_name .. " created with initial value: " .. tostring(result))
-    for i = 1, #newCache.OnChange do
-        newCache.OnChange[i](newCache.Value, nil)
+    for _, onCache in pairs(newCache.OnChange) do
+      onChange(newCache.value,nil)
     end
     StartLoop()
     return newCache
@@ -166,9 +166,9 @@ function Cache.Update(name, newValue)
     local oldValue = cache.Value
     if oldValue ~= newValue then
         cache.Value = newValue
-        for i = 1, #cache.OnChange do
-            cache.OnChange[i](newValue, oldValue)
-        end
+     for _, onCache in pairs(cache.OnChange) do
+        onChange(cache.value,oldValue)
+    end
     end
 end
 
