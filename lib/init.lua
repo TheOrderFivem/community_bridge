@@ -47,6 +47,8 @@ cLib = {
     Math = Math or Require("lib/utility/shared/math.lua"),
     LA = LA or Require("lib/utility/shared/la.lua"),
     Perlin = Perlin or Require("lib/utility/shared/perlin.lua"),
+    String = StringUtil or Require("lib/utility/shared/string.lua"),
+    Utility = UtilityShared or Require("lib/utility/shared/utility.lua"),
     -- Action = Action or Require("lib/entities/shared/actions.lua"),
 }
 
