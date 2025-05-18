@@ -9,41 +9,7 @@ local charset = {
     special = "!@#$%^&*()_+-=[]{}|;:,.<>?"
 }
 
---- Generates a random string based on a pattern
---- Pattern options: 'n' for numbers, 'l' for lowercase, 'u' for uppercase, 's' for special chars
----@param pattern string Pattern to follow (e.g., "llnnn" for 2 letters + 3 numbers)
----@return string Random string following the pattern
-function StringUtil.RandomByPattern(pattern)
-    local result = ""
-    for i = 1, #pattern do
-        local char = pattern:sub(i, i)
-        local chars = char == 'n' and charset.numeric
-            or char == 'l' and charset.lower
-            or char == 'u' and charset.upper
-            or char == 's' and charset.special
-            or charset.lower
-        result = result .. chars:sub(math.random(1, #chars), math.random(1, #chars))
-    end
-    return result
-end
 
---- Generates a random string of specified length
----@param length number Length of the string to generate
----@param includeNumbers boolean? Include numbers (default: true)
----@param includeSpecial boolean? Include special characters (default: false)
----@return string Random string
-function StringUtil.Random(length, includeNumbers, includeSpecial)
-    local chars = charset.lower .. charset.upper
-    if includeNumbers ~= false then chars = chars .. charset.numeric end
-    if includeSpecial then chars = chars .. charset.special end
-
-    local result = ""
-    for i = 1, length do
-        local random = math.random(1, #chars)
-        result = result .. chars:sub(random, random)
-    end
-    return result
-end
 
 --- Formats a number with commas as thousands separators
 ---@param number number The number to format
