@@ -71,7 +71,7 @@ function Dialogue.Open( name, dialogue, characterOptions, dialogueOptions, onSel
         if not abs or abs > 0.5 then      
             local camAngle = (pedHeading + 180.0) % 360.0
             SetCamRot(cam, rotationOffset.x, rotationOffset.y, camAngle + rotationOffset.z, 2)
-            SetCamCoord(cam, endLocation.x, endLocation.y, endLocation.z)
+            SetCamCoord(cam, endLocation.x, endLocation.y + 1.0, endLocation.z)
             RenderScriptCams(true, true, 1000, true, false)
             SetCamActive(cam, true)
         end
