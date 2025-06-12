@@ -24,7 +24,13 @@ end
 ---@param item string
 ---@return boolean
 Inventory.HasItem = function(item)
-    return ox_inventory:Search('count', item) > 0
+    local itemCount = exports.ox_inventory:Search("count", item)
+    if type(itemCount) == "table" then
+        for k, v in pairs(itemCount) do
+            itemCount = v
+        end
+    end
+    return itemCount > 0
 end
 
 ---This will return th count of the item in the players inventory, if not found will return 0.
