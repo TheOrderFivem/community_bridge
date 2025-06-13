@@ -151,13 +151,7 @@ end
 ---@param item string
 ---@return boolean
 Inventory.HasItem = function(src, item)
-    local itemCount = ox_inventory:Search(src, "count", item)
-    if type(itemCount) == "table" then
-        for k, v in pairs(itemCount) do
-            itemCount = v
-        end
-    end
-    return itemCount > 0
+    return ox_inventory:GetItemCount(src, item, nil, false) > 0
 end
 
 ---This is to get if there is available space in the inventory, will return boolean.
