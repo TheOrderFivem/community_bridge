@@ -1,0 +1,93 @@
+-- All the this below should go in unit tests if we are to continue using them.
+-- RegisterCommand('clothing:debug', function(source, args, rawCommand)
+--     local src = source
+--     Clothing.SetAppearance(src, {
+--         components = {
+--             { component_id = 0,  drawable = math.random(0, 50), texture = 0 },
+--             { component_id = 1,  drawable = math.random(0, 50), texture = 0 },
+--             { component_id = 2,  drawable = math.random(0, 50), texture = 0 },
+--             { component_id = 3,  drawable = math.random(0, 50), texture = 0 },
+--             { component_id = 4,  drawable = math.random(0, 50), texture = 0 },
+--             { component_id = 5,  drawable = math.random(0, 50), texture = 0 },
+--             { component_id = 6,  drawable = math.random(0, 50), texture = 0 },
+--             { component_id = 7,  drawable = math.random(0, 50), texture = 0 },
+--             { component_id = 8,  drawable = math.random(0, 50), texture = 0 },
+--             { component_id = 9,  drawable = math.random(0, 50), texture = 0 },
+--             { component_id = 10, drawable = math.random(0, 50), texture = 0 },
+--             { component_id = 11, drawable = math.random(0, 50), texture = 0 },
+--         },
+--         props = {
+--             { prop_id = 0,  drawable = math.random(0, 50), texture = 0 },
+--             { prop_id = 1,  drawable = math.random(0, 50), texture = 0 },
+--             { prop_id = 2,  drawable = math.random(0, 50), texture = 0 },
+--             { prop_id = 3,  drawable = math.random(0, 50), texture = 0 },
+--             { prop_id = 4,  drawable = math.random(0, 50), texture = 0 },
+--             { prop_id = 5,  drawable = math.random(0, 50), texture = 0 },
+--             { prop_id = 6,  drawable = math.random(0, 50), texture = 0 },
+--             { prop_id = 7,  drawable = math.random(0, 50), texture = 0 },
+--             { prop_id = 8,  drawable = math.random(0, 50), texture = 0 },
+--             { prop_id = 9,  drawable = math.random(0, 50), texture = 0 },
+--             { prop_id = 10, drawable = math.random(0, 50), texture = 0 },
+--             { prop_id = 11, drawable = math.random(0, 50), texture = 0 },
+--             { prop_id = 12, drawable = math.random(0, 50), texture = 0 },
+--             { prop_id = 13, drawable = math.random(0, 50), texture = 0 },
+--         }
+--     }, false, true)
+-- end, false)
+
+
+-- RegisterCommand('clothing:revert', function(source, args, rawCommand)
+--     local src = source
+--     Clothing.Revert(src)
+-- end, false)
+
+
+-- RegisterCommand('clothing:current', function(source, args, rawCommand)
+--     local src = source
+--     local currentClothing = Clothing.GetAppearance(src)
+--     if not currentClothing then return end
+--     print(json.encode(currentClothing, { indent = true }))
+-- end, false)
+
+-- RegisterCommand('clothing:openmenu', function(source, args, rawCommand)
+--     local src = source
+--     Clothing.OpenMenu(src)
+-- end, false)
+
+
+-- RegisterCommand('clothing:crowley', function(source, args, rawCommand)
+--     local src = source
+--     Clothing.SetAppearance(src, {
+--         components = {
+--             { drawable = 0,  texture = 0, component_id = 0 },
+--             { drawable = 0,  texture = 0, component_id = 1 },
+--             { drawable = 19, texture = 0, component_id = 2 },
+--             { drawable = 6,  texture = 0, component_id = 3 },
+--             { drawable = 0,  texture = 0, component_id = 4 },
+--             { drawable = 0,  texture = 0, component_id = 5 },
+--             { drawable = 0,  texture = 0, component_id = 6 },
+--             { drawable = 0,  texture = 0, component_id = 7 },
+--             { drawable = 23, texture = 0, component_id = 8 },
+--             { drawable = 0,  texture = 0, component_id = 9 },
+--             { drawable = 0,  texture = 0, component_id = 10 },
+--             { drawable = 4,  texture = 2, component_id = 11 }
+--         },
+--         props = {
+--             { drawable = 27, prop_id = 0,  texture = 0 },
+--             { drawable = 0,  prop_id = 1,  texture = 0 },
+--             { drawable = 0,  prop_id = 2,  texture = 0 },
+--             { drawable = 0,  prop_id = 3,  texture = 0 },
+--             { drawable = 0,  prop_id = 4,  texture = 0 },
+--             { drawable = 0,  prop_id = 5,  texture = 0 },
+--             { drawable = 0,  prop_id = 6,  texture = 0 },
+--             { drawable = 0,  prop_id = 7,  texture = 0 },
+--             { drawable = 0,  prop_id = 8,  texture = 0 },
+--             { drawable = 0,  prop_id = 9,  texture = 0 },
+--             { drawable = 0,  prop_id = 10, texture = 0 },
+--             { drawable = 0,  prop_id = 11, texture = 0 },
+--             { drawable = 0,  prop_id = 12, texture = 0 },
+--             { drawable = 0,  prop_id = 13, texture = 0 }
+
+--         }
+--     }, false, true)
+-- end, false)

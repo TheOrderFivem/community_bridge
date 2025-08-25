@@ -1,6 +1,6 @@
 local Follow = {
     All = {},
-    tag = "follow",
+    property = "follow",
     default = {
         speed = 1.0,
         distance = 2.0

@@ -151,7 +151,7 @@ Inventory.RegisterStash = function(id, label, slots, weight, owner, groups, coor
         groups = groups,
         coords = coords
     }
-    ox_inventory:RegisterStash(id, label, slots, weight, owner, groups)
+    ox_inventory:RegisterStash(id, label, slots, weight, owner, groups, coords)
     return true, id
 end
 

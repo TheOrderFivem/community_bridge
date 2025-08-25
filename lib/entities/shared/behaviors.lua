@@ -5,10 +5,10 @@ Behaviors = {
 
 function Behaviors.Setup()
     if Behaviors.isSetup then return end
-    Behaviors.isSetup = true
-    local behaviors = Require("lib/entities/client/behaviors/init.lua")
-    for _, behavior in ipairs(behaviors) do
-        Behaviors.Create(behavior.tag, behavior)
+    Behaviors.isSetup = true    
+    local behaviors = Require("lib/entities/shared/init.lua")
+    for _, behavior in ipairs(behaviors or {}) do 
+        Behaviors.Create(behavior.property, behavior)
     end
 end
 
@@ -33,10 +33,13 @@ end
 
 function Behaviors.Trigger(actionName, clientEntityData, ...)
     if not clientEntityData or not actionName then return end
-    for tag, behavior in pairs(Behaviors.All) do
-        local hasBehaviorArgs = Behaviors.Has(tag, clientEntityData) -- this is everything that's contained inside the object's individual tag
+    for property, behavior in pairs(Behaviors.All) do
+        local hasBehaviorArgs = Behaviors.Has(property, clientEntityData) -- this is everything that's contained inside the object's individual property
         if hasBehaviorArgs and behavior[actionName] then
-            behavior[actionName](clientEntityData, hasBehaviorArgs, ...)
+            local success, result = pcall(behavior[actionName], clientEntityData, hasBehaviorArgs, ...)
+            if not success then
+                print(string.format("[ClientEntity] Behavior %s failed: %s", property, result))
+            end
         end
     end
 end

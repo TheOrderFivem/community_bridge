@@ -1,6 +1,6 @@
 Utility = Utility or Require("lib/utility/client/utility.lua")
 local ParticlesBehaviors = {
-    tag = "particles",
+    property = "particles",
     default = {
         dict = "cut_exile3",
         ptfx = "cs_ex3_wheel_spin",
@@ -75,10 +75,5 @@ function ParticlesBehaviors.OnMove(entityData)
     end
 end
 
-
--- function ParticlesBehaviors.OnUpdate(entityData)
---     if not entityData.particles then return end
-
--- end
 
 return ParticlesBehaviors

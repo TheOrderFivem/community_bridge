@@ -1,10 +1,10 @@
 ---@class CacheEntry
----@field Name string
+---@field name  string
 ---@field Compare fun(): any
----@field WaitTime integer | nil
----@field LastChecked integer|nil
+---@field wait integer | nil
+---@field lastChecked integer|nil
 ---@field OnChange fun(new:any, old:any)[]
----@field Value any
+---@field value any
 
 ---@class CacheModule
 ---@field Caches table<string, CacheEntry>
@@ -18,134 +18,58 @@ Cache = Cache or {} ---@type CacheModule -- <-- we use Cache as a global variabl
 Table = Table or Require('lib/utility/shared/tables.lua')
 Id = Id or Require('lib/utility/shared/ids.lua')
 
-local Config = Require("settings/sharedConfig.lua")
-local max = 5000
-local CreateThread = CreateThread
-local Wait = Wait
-local GetGameTimer = GetGameTimer
-
-local resourceCallbacks = {} -- Add callbacks from resources
-local resourceTracker = {
-    caches = {},
-    callbacks = {},
-    initialized = {}
-}
-
 Cache.Caches = Cache.Caches or {}
+Cache.Invoked = Cache.Invoked or {}
 Cache.LoopRunning = Cache.LoopRunning or false
 
----@param ... any
+
 local function debugPrint(...)
     if Config.DebugLevel == 0 then return end
     print("^2[Cache]^0", ...)
 end
 
-local function HasActiveCaches()
-    for _, cache in pairs(Cache.Caches) do
-        if cache.WaitTime ~= nil then
-            return true
-        end
-    end
-    return false
-end
-
-local function processCacheEntry(now, cache)
-    cache.LastChecked = cache.LastChecked or now
-    cache.WaitTime = tonumber(cache.WaitTime) or max
-    local elapsed = now - cache.LastChecked
-    local remaining = cache.WaitTime - elapsed
-
-    if remaining <= 0 then
-        local oldValue = cache.Value
-        cache.Value = cache.Compare()        
-        if not Table.Compare(cache.Value, oldValue) and cache.OnChange then
-            for i, onChange in pairs(cache.OnChange) do
-                onChange(cache.Value, oldValue)
-            end
-        end
-        cache.LastChecked = now
-        remaining = cache.WaitTime
-    end
-
-    return remaining
-end
-
-local function getNextWait(now)
-    local minWait = nil
-    for name, cache in pairs(Cache.Caches) do
-        if cache.Compare and cache.WaitTime ~= nil then
-            local remaining = processCacheEntry(now, cache)
-            if not minWait or remaining < minWait then
-                minWait = remaining
-                if minWait <= 0 then break end
-            end
-        end
-    end
-    return minWait
+local function sortByWaitTime(caches)
+    table.sort(caches, function(a, b)
+        return (a.wait or 0) < (b.wait or 0)
+    end)
 end
 
 local function StartLoop()
     if Cache.LoopRunning then return end
-    if not HasActiveCaches() then return end
     Cache.LoopRunning = true
     CreateThread(function()
+        local updateWaitTime = true
+        local minWait = nil
         while Cache.LoopRunning do
-            local now = GetGameTimer()
-            local minWait = getNextWait(now)
-            if minWait then
-                Wait(math.max(0, minWait))
-            else
-                Wait(max)
+            if updateWaitTime then
+                updateWaitTime = false
+                minWait = sortByWaitTime(Cache.Caches)
+                SetTimeout(10000, function() updateWaitTime = true end) -- recheck every 10 seconds
             end
-            if not HasActiveCaches() then
-                Cache.LoopRunning = false
+            
+            for _, cache in pairs(Cache.Caches) do
+                if not cache.lastChecked or (GetGameTimer() - cache.lastChecked) > (cache.wait or 0) then
+                    local oldValue = cache.value
+                    local newValue = cache.Compare()
+                    if newValue ~= oldValue then
+                        cache.value = newValue
+                        for _, onChange in pairs(cache.OnChange) do
+                            onChange(newValue, oldValue)
+                        end
+                    end
+                    cache.lastChecked = GetGameTimer()
+                end
+            end
+            
+            if minWait then
+                collectgarbage("collect")
+                Wait(math.max(0, minWait))
+                
+            else
+                Wait(5000)
             end
         end
     end)
-end
-
-local function trackResource(resourceName, type, data)
-    if not resourceName then return end
-
-    -- Initialize resource tracking if needed
-    if not resourceTracker.initialized[resourceName] then
-        resourceTracker.initialized[resourceName] = true
-        resourceTracker.caches[resourceName] = resourceTracker.caches[resourceName] or {}
-        resourceTracker.callbacks[resourceName] = resourceTracker.callbacks[resourceName] or {}
-
-        AddEventHandler('onResourceStop', function(stoppingResource)
-            if stoppingResource ~= resourceName then return end
-
-            -- Clean up caches
-            for _, cacheName in ipairs(resourceTracker.caches[resourceName] or {}) do
-                if Cache.Caches[cacheName] then
-                    Cache.Caches[cacheName] = nil
-                    debugPrint(("Removed cache '%s' - resource '%s' stopped"):format(cacheName, resourceName))
-                end
-            end
-
-            -- Clean up callbacks
-            for _, cb in ipairs(resourceTracker.callbacks[resourceName] or {}) do
-                local targetCache = Cache.Caches[cb.cacheName]
-                if targetCache then
-                    targetCache.OnChange[cb.index] = nil
-                    debugPrint(("Removed callback '%s' from cache '%s' - resource '%s' stopped"):format(cb.index, cb.cacheName, resourceName))
-                end
-            end
-
-            -- Clear tracking data
-            resourceTracker.caches[resourceName] = nil
-            resourceTracker.callbacks[resourceName] = nil
-            resourceTracker.initialized[resourceName] = nil
-        end)
-    end
-
-    -- Track the new item
-    if type == "cache" then
-        table.insert(resourceTracker.caches[resourceName], data)
-    elseif type == "callback" then
-        table.insert(resourceTracker.callbacks[resourceName], data)
-    end
 end
 
 ---@param name string
@@ -160,8 +84,8 @@ function Cache.Create(name, compare, waitTime)
     end
     local _name = tostring(name)
     local cache = Cache.Caches[_name]
-    if cache and cache.Compare == compare then
-        debugPrint(_name .. " already exists with the same comparison function.")
+    if cache then
+        debugPrint(name .. " already exists in cache, returning existing cache.")
         return cache
     end
     local ok, result = pcall(compare)
@@ -171,22 +95,22 @@ function Cache.Create(name, compare, waitTime)
     end
     ---@type CacheEntry
     local newCache = {
-        Name = _name,
+        name = _name,
         Compare = compare,
-        WaitTime = waitTime, -- can be nil
-        LastChecked = nil,
+        wait = waitTime or 5000, -- can be nil
+        lastChecked = nil,
         OnChange = {},
-        Value = result
+        value = result,
+        invoking = GetInvokingResource() or "unknown"
     }
 
     -- Track the cache with its resource
-    trackResource(GetInvokingResource(), "cache", _name)
-
+    Cache.Invoked[newCache.invoking] = Cache.Invoked[newCache.invoking] or {}
+    table.insert(Cache.Invoked[newCache.invoking], newCache)
     Cache.Caches[_name] = newCache
-
-    debugPrint(_name .. " created with initial value: " .. tostring(result))
     for _, onChange in pairs(newCache.OnChange) do
-        onChange(newCache.Value, 0)
+        debugPrint("Invoking OnChange callback for cache '" .. _name .. "'")
+        onChange(newCache.value, 0)
     end
     StartLoop()
     return newCache
@@ -198,7 +122,7 @@ function Cache.Get(name)
     assert(name, "Cache name is required.")
     local _name = tostring(name)
     local cache = Cache.Caches[_name]
-    return cache and cache.Value or nil
+    return cache
 end
 
 --- This add a callback to the cache entry that will be called when the value changes.
@@ -206,70 +130,42 @@ end
 --- you can call the value again to delete the callback.
 ---@param name string
 ---@param onChange fun(new:any, old:any)
+---@return string id
 function Cache.OnChange(name, onChange)
     assert(name, "Cache name is required.")
     local _name = tostring(name)
-    local cache = Cache.Caches[_name]
+    local cache = Cache.Get(name)
     assert(cache, "Cache with name '" .. _name .. "' does not exist.")
 
-    local id = Id.CreateUniqueId(Cache.Caches[_name]?.OnChange)
-    -- Figure out which resource is trying to register this callback
-    local invokingResource = GetInvokingResource()
-    if not invokingResource then return end
-    -- Add the new callback to our list
-    local callbackIndex = id
-    cache.OnChange[callbackIndex] = onChange
-
-    -- Track the callback with its resource
-    trackResource(GetInvokingResource(), "callback", {
-        cacheName = _name,
-        index = callbackIndex
-    })
-
-    debugPrint(("Added new OnChange callback to cache '%s' from resource '%s'"):format(_name, invokingResource))
-    return callbackIndex
+    local id = Id.CreateUniqueId(cache.OnChange)
+    cache.OnChange[id] = onChange
+    return id
 end
 
 function Cache.RemoveOnChange(name, id)
     assert(name, "Cache name is required.")
     local _name = tostring(name)
-    local cache = Cache.Caches[_name]
+    local cache = Cache.Get(name)
     assert(cache, "Cache with name '" .. _name .. "' does not exist.")
     if cache.OnChange[id] then
         cache.OnChange[id] = nil
         debugPrint("Removed OnChange callback from cache '" .. _name .. "' with ID: " .. id)
-    else
-        debugPrint("No OnChange callback found with ID: " .. id .. " in cache '" .. _name .. "'")
+        return true
     end
+    debugPrint("No OnChange callback found with ID: " .. id .. " in cache '" .. _name .. "'")
+    return false
 end
 
 ---@param name string
 function Cache.Remove(name)
     assert(name, "Cache name is required.")
     local _name = tostring(name)
-    local cache = Cache.Caches[_name]
-    if cache then
-        Cache.Caches[_name] = nil
-        debugPrint(_name .. " removed from cache.")
-        if next(Cache.Caches) == nil then
-            Cache.LoopRunning = false
-        end
-    end
-end
-
----@param name string
----@param newValue any
-function Cache.Update(name, newValue)
-    assert(name, "Cache name is required.")
-    local _name = tostring(name)
-    local cache = Cache.Caches[_name]
-    assert(cache, "Cache with name '" .. _name .. "' does not exist.")
-    local oldValue = cache.Value
-    if oldValue ~= newValue then
-        cache.Value = newValue
-        for _, onChange in pairs(cache.OnChange) do
-            onChange(newValue, oldValue)
-        end
+    local cache = Cache.Get(name)
+    if not cache then return end
+    Cache.Caches[_name] = nil
+    debugPrint(_name .. " removed from cache.")
+    if next(Cache.Caches) == nil then
+        Cache.LoopRunning = false
     end
 end
 

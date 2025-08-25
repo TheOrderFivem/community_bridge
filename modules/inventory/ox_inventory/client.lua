@@ -59,4 +59,10 @@ Inventory.GetPlayerInventory = function()
     return ox_inventory:GetPlayerItems()
 end
 
+RegisterNetEvent("community_bridge:server:OpenStash", function(id)
+    local src = source
+    if not src then return end
+    exports.ox_inventory:openInventory("stash", id)
+end)
+
 return Inventory

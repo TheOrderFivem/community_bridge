@@ -1,11 +1,11 @@
 Utility = Utility or Require("lib/utility/client/utility.lua")
 Ids = Ids or Require("lib/utility/shared/ids.lua")
 Point = Point or Require("lib/points/client/points.lua")
-Behaviors = Behaviors or Require("lib/entities/client/behaviors.lua")
+Behaviors = Behaviors or Require("lib/entities/shared/behaviors.lua")
 local Entities = {} -- Stores entity data received from server
 ClientEntity = {} -- Renamed from BaseEntity
 ClientEntity.Behaviors = Behaviors
-
+ClientEntity.Invoking = {}
 
 
 
@@ -36,8 +36,12 @@ local function SpawnEntity(entityData)
     if entity and model then
         entityData.spawned = entity
         SetModelAsNoLongerNeeded(model)
-        SetEntityAsMissionEntity(entity, true, true)
-        FreezeEntityPosition(entity, true)
+        -- SetEntityAsMissionEntity(entity, true, true)
+        if entityData.freeze == nil or entityData.freeze then
+            entityData.freeze = true
+        end
+        FreezeEntityPosition(entity, entityData.freeze)
+
     else
         SetModelAsNoLongerNeeded(model)
     end
@@ -58,10 +62,14 @@ local function RemoveEntity(entityData)
             return entityData.OnRemove(entityData)
         end)
     end
-    if entityData.spawned and DoesEntityExist(entityData.spawned) then
+    for k, v in pairs(entityData) do
+        print(k, v)
+    end
+    if entityData.spawned then
+        print(string.format("[ClientEntity] Removing entity %s", entityData.id))
         local entityHandle = entityData.spawned
         entityData.spawned = nil
-        SetEntityAsMissionEntity(entityHandle, true, true)
+        -- SetEntityAsMissionEntity(entityHandle, true, true)
         DeleteEntity(entityHandle)
     end
 end
@@ -110,10 +118,11 @@ function ClientEntity.Create(entityData)
     entityData.rotation = entityData.rotation or vector3(0.0, 0.0, entityData.heading or 0.0)
     entityData.oldCoords = entityData.oldCoords or vector3(0.0, 0.0, 0.0)
     entityData.oldRotation = entityData.rotation
- 
+    local invoking = entityData.invoking or GetInvokingResource() or "unknown"
     local entityPoint = Point.Register(entityData.id, entityData.coords, entityData.spawnDistance or 50.0, entityData, SpawnEntity, RemoveEntity, UpdateEntity)
     Entities[entityData.id] = entityPoint
-    Behaviors.Trigger("OnCreate", entityPoint)
+    ClientEntity.Invoking[invoking] = entityPoint
+    Behaviors.Trigger("OnCreate", entityPoint) 
     return entityPoint
 end
 
@@ -155,61 +164,6 @@ function ClientEntity.Set(id, key, value)
     -- TriggerServerEvent("community_bridge:server:UpdateEntity", id, {[key] = value})
 end
 
---- Updates the data for a registered entity.
--- @param id string|number The ID of the entity to update.
--- @param data table The data fields to update.
--- function ClientEntity.Update(id, data)
---     local entityData = ClientEntity.Get(id)
---     if not entityData then return end
-
---     local needsPointUpdate = false
---     for key, value in pairs(data) do
---         if key == 'coords' and #(entityData.coords - value) > 0.1 then
---              needsPointUpdate = true
---         end
---         if key == 'spawnDistance' and entityData.spawnDistance ~= value then
---              needsPointUpdate = true
---         end
---         entityData[key] = value
---     end
-
---     -- If entity is currently spawned, apply updates
---     if entityData.spawned and DoesEntityExist(entityData.spawned) then
---         if data.coords then
---             SetEntityCoords(entityData.spawned, entityData.coords.x, entityData.coords.y, entityData.coords.z, false, false, false, true)
---         end
---         if data.rotation then
---              if entityData.entityType == 'object' then
---                  SetEntityRotation(entityData.spawned, entityData.rotation.x, entityData.rotation.y, entityData.rotation.z, 2, true)
---              else -- Ped/Vehicle heading
---                  SetEntityHeading(entityData.spawned, type(entityData.rotation) == 'number' and entityData.rotation or entityData.rotation.z)
---              end
---         end
---         if data.freeze ~= nil then
---             FreezeEntityPosition(entityData.spawned, data.freeze)
---         end
---         -- Add other updatable properties as needed
---     end
-
---     -- Update Point registration if coords or distance changed
---     if needsPointUpdate then
---         Point.Remove(id)
---         Point.Register(
---             entityData.id,
---             entityData.coords,
---             entityData.spawnDistance or 50.0,
---             entityData,
---             SpawnEntity,
---             RemoveEntity,
---             OnUpdateEntity
---         )
---     end
-
---     if entityData.OnUpdate and type(entityData.OnUpdate) == 'function' then
---         entityData.OnUpdate(entityData, data)
---     end
--- end
-
 function ClientEntity.Get(id)
     return Entities[id]
 end
@@ -218,12 +172,8 @@ function ClientEntity.GetAll()
     return Entities
 end
 
-function ClientEntity.OnCreate(_type, func)
-    ClientEntity.OnCreates = ClientEntity.OnCreates or {}
-    if not ClientEntity.OnCreates[_type] then
-        ClientEntity.OnCreates[_type] = {}
-    end
-    table.insert(ClientEntity.OnCreates[_type], func)
+function ClientEntity.RegisterBehavior(property, behavior)
+    Behaviors.Create(property, behavior)
 end
 
 function ClientEntity.SetOnSpawn(id, func)
@@ -278,26 +228,46 @@ RegisterNetEvent("community_bridge:client:CreateEntities", function(entities)
 end)
 
 RegisterNetEvent("community_bridge:client:DeleteEntity", function(id)
-    ClientEntity.Unregister(id)
+    ClientEntity.Destroy(id)
+end)
+
+RegisterNetEvent("community_bridge:client:DeleteBulk", function(entityDatas)
+    for _, entityData in pairs(entityDatas) do
+        print("Deleting entity:", entityData.id)
+        ClientEntity.Destroy(entityData.id)
+    end
 end)
 
 RegisterNetEvent("community_bridge:client:UpdateEntity", function(id, data)
-    ClientEntity.Update(id, data)
+    for k, v in pairs(data) do
+        ClientEntity.Set(id, k, v)
+    end
+end)
+
+local Loaded = false
+AddEventHandler('community_bridge:Client:OnPlayerLoaded', function(resourceName)
+    if Loaded then return end
+    Loaded = true
+    Behaviors.Setup()
 end)
 
 AddEventHandler('onResourceStart', function(resourceName)
     if resourceName ~= GetCurrentResourceName() then return end
+    if Loaded then return end
+    Loaded = true
     Behaviors.Setup()
 end)
 
 -- Resource Stop Cleanup
 AddEventHandler('onResourceStop', function(resourceName)
-    if resourceName == GetCurrentResourceName() then
-        for id, entityData in pairs(Entities) do
-            Point.Remove(id) -- Clean up point registration
-            RemoveEntity(entityData) -- Clean up spawned game entity
-        end
-        Entities = {} -- Clear local cache
+    local invoked = ClientEntity.Invoking[resourceName] or {}
+    for id, entityData in pairs(invoked) do
+        ClientEntity.Destroy(id)
+    end   
+    ClientEntity.Invoking[resourceName] = nil
+    if resourceName ~= GetCurrentResourceName() then return end
+    for id, entityData in pairs(Entities) do
+        ClientEntity.Destroy(id)
     end
 end)
 

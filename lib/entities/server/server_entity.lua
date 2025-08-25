@@ -1,7 +1,10 @@
 Ids = Ids or Require("lib/utility/shared/ids.lua")
+Behaviors = Behaviors or Require("lib/entities/shared/behaviors.lua")
 
 local Entities = {}
 ServerEntity = {} -- Renamed from EntityRelay
+ServerEntity.Behaviors = Behaviors
+local Invoked = {}
 
 --- Creates a server-side representation of an entity and notifies clients.
 -- @param entityType string 'object', 'ped', or 'vehicle'
@@ -10,27 +13,28 @@ ServerEntity = {} -- Renamed from EntityRelay
 -- @param rotation vector3|number Heading for peds/vehicles, rotation for objects
 -- @param meta table Optional additional data
 -- @return table The created entity data
-function ServerEntity.New(id, entityType, model, coords, rotation, meta)
-    local self = meta or {}
+function ServerEntity.New(id, entityType, model, coords, rotation, args)
+    assert(entityType, "EntityType is required")
+    assert(model, "Model is required for entity creation")
+    assert(coords, "Coords are required for entity creation")
+    local self = args or {}
     self.id = id or Ids.CreateUniqueId(Entities)
     self.entityType = entityType
     self.model = model
     self.coords = coords
-    self.rotation = rotation or (entityType == 'object' and vector3(0.0, 0.0, 0.0) or 0.0) -- Default rotation or heading
-    self.resource = GetInvokingResource()
+    self.rotation = rotation or vector3(0.0, 0.0, 0.0)
+    local invoking = GetInvokingResource() or "unknown"
+    self.invoking = invoking
+    Invoked[invoking] = Invoked[invoking] or {}
+    table.insert(Invoked[invoking], self)
 
-    assert(self.id, "ID Failed to generate")
-    assert(self.entityType, "EntityType is required")
-    assert(self.model, "Model is required for entity creation")
-    assert(self.coords, "Coords are required for entity creation")
     ServerEntity.Add(self)
     return self
 end
-function ServerEntity.Create(id, entityType, model, coords, rotation, meta)
-    local self = ServerEntity.New(id, entityType, model, coords, rotation, meta)
-    if not self then
-        return nil
-    end
+function ServerEntity.Create(data)
+    local self = ServerEntity.New(data.id, data.entityType, data.model, data.coords, data.rotation or vector3(0.0, 0.0, data.heading or 0.0), data)
+    if not self then return nil end
+    Behaviors.Trigger("OnCreate", self)
     TriggerClientEvent("community_bridge:client:CreateEntity", -1, self)
     return self
 end
@@ -39,15 +43,9 @@ function ServerEntity.CreateBulk(entities)
     local createdEntities = {}
     for _, entityData in pairs(entities) do
         local id = entityData.id or Ids.CreateUniqueId(Entities)
-        local entity =  ServerEntity.New(
-            id,
-            entityData.entityType,
-            entityData.model,
-            entityData.coords,
-            entityData.rotation,
-            entityData.meta
-        )
+        local entity =  ServerEntity.New(id, entityData.entityType, entityData.model, entityData.coords, entityData.rotation, entityData)
         createdEntities[id] = entity
+        Behaviors.Trigger("OnCreate", entity)
     end
     TriggerClientEvent("community_bridge:client:CreateEntities", -1, createdEntities)
     return createdEntities
@@ -55,54 +53,19 @@ end
 
 --- Deletes a server-side entity representation and notifies clients.
 -- @param id string|number The ID of the entity to delete.
-function ServerEntity.Delete(id)
-    if Entities[id] then
-        ServerEntity.Remove(id)
-        TriggerClientEvent("community_bridge:client:DeleteEntity", -1, id)
-    end
+function ServerEntity.Destroy(id)
+    if not Entities[id] then return end
+    ServerEntity.Remove(id)
+    TriggerClientEvent("community_bridge:client:DeleteEntity", -1, id)    
 end
+ServerEntity.Delete = ServerEntity.Destroy
 
---- Updates data for a server-side entity and notifies clients.
--- @param id string|number The ID of the entity to update.
--- @param data table The data fields to update.
-function ServerEntity.Update(id, data)
-    local entity = Entities[id]
-    -- print("Updating entity: ", id, entity)
-    if not entity then return false end
-
-    for key, value in pairs(data) do
-        entity[key] = value
+function ServerEntity.DestroyBulk(entityDatas)
+    for _, entityData in pairs(entityDatas) do
+        ServerEntity.Remove(entityData.id)
     end
-    TriggerClientEvent("community_bridge:client:UpdateEntity", -1, id, data)
-    return true
-end
-
---- Triggers a specific action on the client-side entity.
--- Clients will only execute the action if the entity is currently spawned for them.
--- @param entityId string|number The ID of the entity.
--- @param actionName string The name of the action to trigger (must match a function in ClientEntityActions).
--- @param ... any Additional arguments for the action function.
-function ServerEntity.TriggerAction(entityId, actionName, endPosition, ...)
-    -- print("Triggering action: ", entityId, actionName, ...)
-    local entity = Entities[entityId]
-    if not entity then
-        print(string.format("[ServerEntity] Attempted to trigger action '%s' on non-existent entity %s", actionName, entityId))
-        return
-    end
-    TriggerClientEvent("community_bridge:client:TriggerEntityAction", -1, entityId, actionName, endPosition, ...)
-end
-
-function ServerEntity.TriggerActions(entityId, actions, endPosition)
-    local entity = Entities[entityId]
-    if not entity then
-        print(string.format("[ServerEntity] Attempted to trigger actions on non-existent entity %s", entityId))
-        return
-    end
-    TriggerClientEvent("community_bridge:client:TriggerEntityActions", -1, entityId, actions, endPosition)
-end
-
-function ServerEntity.GetAll()
-    return Entities
+    print("[ServerEntity] DestroyBulk: Removed", #entityDatas, "entities")
+    TriggerClientEvent("community_bridge:client:DeleteBulk", -1, entityDatas)
 end
 
 function ServerEntity.Get(id)
@@ -117,17 +80,35 @@ function ServerEntity.Remove(id)
     Entities[id] = nil
 end
 
+--- Updates data for a server-side entity and notifies clients.
+-- @param id string|number The ID of the entity to update.
+-- @param data table The data fields to update.
+function ServerEntity.Set(id, data)
+    local entity = Entities[id]
+    if not entity then return false end
+    for key, value in pairs(data) do
+        entity[key] = value
+    end
+    TriggerClientEvent("community_bridge:client:UpdateEntity", -1, id, data)
+    return true
+end
+
+AddEventHandler('onResourceStart', function(resourceName)
+    if resourceName ~= GetCurrentResourceName() then return end
+    Behaviors.Setup()
+end)
+
 -- Clean up entities associated with a stopped resource
 AddEventHandler('onResourceStop', function(resourceName)
-    local toDelete = {}
-    for id, entity in pairs(Entities) do
-        if entity.resource == resourceName then
-            table.insert(toDelete, id)
-        end
+    if Invoked[resourceName] then
+        ServerEntity.DestroyBulk(Invoked[resourceName])
+        Invoked[resourceName] = nil
     end
-    for _, id in pairs(toDelete) do
-        ServerEntity.Delete(id)
-    end
+end)
+
+AddEventHandler('community_bridge:Server:OnPlayerLoaded', function(source)
+    print("Player loaded:", source)
+    TriggerClientEvent("community_bridge:client:CreateEntities", source, Entities)
 end)
 
 

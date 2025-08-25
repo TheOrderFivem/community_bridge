@@ -1,6 +1,5 @@
-
 local Targets = {
-    tag = "targets",
+    property = "targets",
     default = {
         label = "Default Target Label",
         distance = 2,
@@ -34,19 +33,24 @@ end
 
 function Targets.OnUpdate(entityData)
     if not entityData.spawned or not entityData.newTargets then return end
-    for i, target in ipairs(entityData.oldTargets) do
-        local newTarget = entityData.targets.label
-        if newTarget then
-            entityData.newTargets = {entityData.targets}
+    local doesntMatch = false
+    for k, v in pairs(entityData.newTargets) do
+        if not entityData.oldTargets or not entityData.oldTargets[k] then
+            doesntMatch = true
+            break
         end
-        newTarget = entityData.newTargets[i]
-        if newTarget and target.label ~= newTarget.label
-            or target.distance ~= newTarget.distance
-            or target.description ~= newTarget.description
+        local old = entityData.oldTargets[k]
+        if old.label ~= v.label
+            or old.distance ~= v.distance
+            or old.description ~= v.description
         then
-            Targets.OnRemove(entityData)
-            Targets.OnSpawn(entityData)
+            doesntMatch = true
+            break
         end
+    end
+    if doesntMatch then
+        Targets.OnRemove(entityData)
+        Targets.OnSpawn(entityData)
     end
 end
 

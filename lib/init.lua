@@ -19,17 +19,17 @@ function Require(modulePath, resourceName)
 
     local file = LoadResourceFile(resourceName, modulePath)
     if not file then
-        error("Error loading file [" .. id .. "]")
+        return error("Error loading file [" .. id .. "]")
     end
 
     local chunk, loadErr = load(file, id)
     if not chunk then
-        error("Error wrapping module [" .. id .. "] Message: " .. loadErr)
+        return error("Error wrapping module [" .. id .. "] Message: " .. loadErr)
     end
 
     local success, result = pcall(chunk)
     if not success then
-        error("Error executing module [" .. id .. "] Message: " .. result)
+        return error("Error executing module [" .. id .. "] Message: " .. result)
     end
     loadedModules[id] = result
     return result
@@ -59,6 +59,7 @@ cLib.Cache = Cache or Require("lib/cache/shared/cache.lua")
 cLib.Marker = Marker or Require("lib/markers/server/server.lua")
 cLib.Particle = Particle or Require("lib/particles/server/particles.lua")
 cLib.Shell = Shells or Require("lib/shells/server/shells.lua")
+cLib.ServerEntity = ServerEntity or Require("lib/entities/server/server_entity.lua")
 if IsDuplicityVersion() then return cLib end
 ::client::
 

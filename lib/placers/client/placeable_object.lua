@@ -570,7 +570,7 @@ local function placementLoop()
                            
                     --     end
                     -- end
-                    coords = vector3(coords.x, coords.y, coords.z - 0.2) -- Adjust Z to ground level
+                    coords = vector3(coords.x, coords.y, coords.z) -- Adjust Z to ground level
                     local rotation = GetEntityRotation(state.currentEntity)
                     if state.promise then
                         state.promise:resolve({
@@ -623,25 +623,7 @@ local function placementLoop()
                 drawEntityBoundingBox(state.currentEntity, inBounds)
             end
 
-            -- Show help text for placement controls
-            -- local placementText = {
-            --     string.format(locale('placeable_object.place_object_place'), Bridge.Utility.GetCommandKey('+place_object')),
-            --     string.format(locale('placeable_object.place_object_cancel'), Bridge.Utility.GetCommandKey('+cancel_placement')),
-            --     -- string.format(locale('placeable_object.rotate_left'), Bridge.Utility.GetCommandKey('+rotate_left')),
-            --     -- string.format(locale('placeable_object.rotate_right'), Bridge.Utility.GetCommandKey('+rotate_right')),
-            --     string.format(locale('placeable_object.place_object_scroll_up'), Bridge.Utility.GetCommandKey('+scroll_up')),
-            --     string.format(locale('placeable_object.place_object_scroll_down'), Bridge.Utility.GetCommandKey('+scroll_down')),
-            --     string.format(locale('placeable_object.depth_modifier'), Bridge.Utility.GetCommandKey('+depth_modifier'))
-            -- }
             Bridge.Notify.ShowHelpText(type(placementText) == 'table' and table.concat(placementText))
-
-            -- -- Draw entity bounding box
-            -- drawEntityBoundingBox(state.currentEntity, checkMaterialAndBoundary())
-
-            -- -- Update instructional buttons
-            -- if state.scaleform then
-            --     Scaleform.RenderInstructionalButtons(state.scaleform)
-            -- end
         end
     end)
 end
