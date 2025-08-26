@@ -12,9 +12,9 @@ function Follow.PedWalkToPos(entityData)
     local entity = entityData.spawned
     local targetCoords = entityData.follow.target
     if type(targetCoords) == "number" then
-        local isPlayer = GetPlayerPed(targetCoords)
-        if isPlayer and isPlayer ~= 0 then
-            targetCoords = GetEntityCoords(isPlayer)
+        local player = GetPlayerFromServerId(targetCoords)
+        if player and player ~= -1 then
+            targetCoords = GetEntityCoords(GetPlayerPed(player))
         else
             targetCoords = GetEntityCoords(targetCoords)
         end

@@ -6,7 +6,6 @@ local Targets = {
     }
 }
 
-
 function Targets.OnSpawn(entityData)
     if not entityData.spawned or not entityData.target then return end
     if entityData.targets?.label then
