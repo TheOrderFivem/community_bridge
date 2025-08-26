@@ -32,7 +32,7 @@ function Targets.OnRemove(entityData)
 end
 
 function Targets.OnUpdate(entityData)
-    if not entityData.spawned or not entityData.newTargets then return end
+    if not entityData.spawned then return end
     local doesntMatch = false
     for k, v in pairs(entityData.newTargets) do
         if not entityData.oldTargets or not entityData.oldTargets[k] then
@@ -50,6 +50,7 @@ function Targets.OnUpdate(entityData)
     end
     if doesntMatch then
         Targets.OnRemove(entityData)
+        Wait(100)
         Targets.OnSpawn(entityData)
     end
 end

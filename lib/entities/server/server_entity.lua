@@ -23,7 +23,7 @@ function ServerEntity.New(id, entityType, model, coords, rotation, args)
     self.model = model
     self.coords = coords
     self.rotation = rotation or vector3(0.0, 0.0, 0.0)
-    local invoking = GetInvokingResource() or "unknown"
+    local invoking = GetInvokingResource() or "community_bridge"
     self.invoking = invoking
     Invoked[invoking] = Invoked[invoking] or {}
     table.insert(Invoked[invoking], self)
