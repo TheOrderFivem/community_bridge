@@ -1,9 +1,8 @@
 Particles = {}
 Particle = {}
+
 ---@diagnostic disable: duplicate-set-field
 Ids = Ids or Require("lib/utility/shared/ids.lua")
-local point =  Require("lib/points/client/points.lua")
-
 ---Loads a ptfx asset into memory.
 ---@param dict string
 ---@return boolean
@@ -93,8 +92,6 @@ function Particle.Stop(particle)
     Particles[tostring(particle)] = nil
 end
 
-
-
 RegisterNetEvent("community_bridge:Client:Particle", function(data)
     if not data then return end
     Particle.Create(data)
@@ -110,12 +107,12 @@ end)
 RegisterNetEvent("community_bridge:Client:ParticleRemove", function(id)
     local particle = Particles[id]
     if not particle then return end
-    Particle.Remove(Drawing[id])
+    Particle.Stop(id)
 end)
 
 RegisterNetEvent("community_bridge:Client:ParticleRemoveBulk", function(ids)
     for _, id in pairs(ids) do
-        Particle.Remove(id)
+        Particle.Stop(id)
     end
 end)
 
