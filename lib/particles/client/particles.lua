@@ -26,7 +26,7 @@ end
 --- @param scale number
 --- @param color vector3
 --- @param looped boolean
---- @param loopLength number|nil
+--- @param removeAfter number|nil
 --- @return number|nil ptfxHandle -- The handle of the particle effect, or nil if it failed to create.
 function Particle.Play(dict, ptfx, pos, rot, scale, color, looped, removeAfter)
     LoadPtfxAsset(dict)
