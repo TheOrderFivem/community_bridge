@@ -33,5 +33,10 @@
 		"object_scroll_up": "[%s] 右回転  \n",
 		"object_scroll_down": "[%s] 左回転  \n",
 		"depth_modifier": "[%s] 深度制御修飾子  \n"
+	},
+	"target": {
+		"interact": "[E] 操作する  \n",
+		"title": "オプション",
+		"description": "説明なし"
 	}
 }

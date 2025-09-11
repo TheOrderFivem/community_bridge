@@ -33,5 +33,10 @@
 		"rotate_clockwise": "[%s] Rotate Clockwise  \n",
 		"rotate_counter_clockwise": "[%s] Rotate Counter-Clockwise  \n",
 		"depth_modifier": "[%s] Depth Control Modifier  \n"
+	},
+	"target": {
+		"interact": "[E] Interact  \n",
+		"title": "Options",
+		"description": "No Description"
 	}
 }

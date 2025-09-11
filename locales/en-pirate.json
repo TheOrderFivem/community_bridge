@@ -33,5 +33,10 @@
 		"object_scroll_up": "[%s] Turn starboard  \n",
 		"object_scroll_down": "[%s] Turn port  \n",
 		"depth_modifier": "[%s] Depth Control, savvy?  \n"
+	},
+	"target": {
+		"interact": "[E] Ahoy, matey!  \n",
+		"title": "Ye Options",
+		"description": "No treasure map here!"
 	}
 }

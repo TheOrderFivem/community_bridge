@@ -33,5 +33,10 @@
 		"object_scroll_up": "[%s] Sağa döndür  \n",
 		"object_scroll_down": "[%s] Sola döndür  \n",
 		"depth_modifier": "[%s] Derinlik kontrol düzenleyicisi  \n"
+	},
+	"target": {
+		"interact": "[E] Etkileşim  \n",
+		"title": "Seçenekler",
+		"description": "Açıklama Yok"
 	}
 }

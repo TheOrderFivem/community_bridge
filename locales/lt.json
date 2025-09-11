@@ -33,5 +33,10 @@
 		"rotate_clockwise": "[%s] Sukti pagal laikrodžio rodyklę  \n",
 		"rotate_counter_clockwise": "[%s] Sukti prieš laikrodžio rodyklę  \n",
 		"depth_modifier": "[%s] Gylio kontrolės modifikatorius  \n"
+	},
+	"target": {
+		"interact": "[E] Sąveikauti  \n",
+		"title": "Parinktys",
+		"description": "Nėra aprašymo"
 	}
 }

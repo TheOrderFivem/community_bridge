@@ -33,5 +33,10 @@
 		"object_scroll_up": "[%s] Ruota a destra  \n",
 		"object_scroll_down": "[%s] Ruota a sinistra  \n",
 		"depth_modifier": "[%s] Modificatore controllo profondità  \n"
+	},
+	"target": {
+		"interact": "[E] Interagisci  \n",
+		"title": "Opzioni",
+		"description": "Nessuna Descrizione"
 	}
 }

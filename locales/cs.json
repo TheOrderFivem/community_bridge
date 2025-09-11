@@ -33,5 +33,10 @@
 		"object_scroll_up": "[%s] Otočit doprava  \n",
 		"object_scroll_down": "[%s] Otočit doleva  \n",
 		"depth_modifier": "[%s] Modifikátor kontroly hloubky  \n"
+	},
+	"target": {
+		"interact": "[E] Interakce  \n",
+		"title": "Možnosti",
+		"description": "Žádný popis"
 	}
 }

@@ -33,5 +33,10 @@
 		"object_scroll_up": "[%s] Draai regs  \n",
 		"object_scroll_down": "[%s] Draai links  \n",
 		"depth_modifier": "[%s] Diepte Beheer Wysiging  \n"
+	},
+	"target": {
+		"interact": "[E] Interakteer  \n",
+		"title": "Opsies",
+		"description": "Geen Beskrywing"
 	}
 }

@@ -33,5 +33,10 @@
 		"object_scroll_up": "[%s] दाएं मुड़ें  \n",
 		"object_scroll_down": "[%s] बाएं मुड़ें  \n",
 		"depth_modifier": "[%s] गहराई नियंत्रण संशोधक  \n"
+	},
+	"target": {
+		"interact": "[E] बातचीत करें  \n",
+		"title": "विकल्प",
+		"description": "कोई विवरण नहीं"
 	}
 }

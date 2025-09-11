@@ -33,5 +33,10 @@
 		"object_scroll_up": "[%s] หมุนไปทางขวา  \n",
 		"object_scroll_down": "[%s] หมุนไปทางซ้าย  \n",
 		"depth_modifier": "[%s] ตัวปรับเปลี่ยนการควบคุมความลึก  \n"
+	},
+	"target": {
+		"interact": "[E] โต้ตอบ  \n",
+		"title": "ตัวเลือก",
+		"description": "ไม่มีรายละเอียด"
 	}
 }

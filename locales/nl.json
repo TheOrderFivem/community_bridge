@@ -33,5 +33,10 @@
 		"object_scroll_up": "[%s] Rechtsom draaien  \n",
 		"object_scroll_down": "[%s] Linksom draaien  \n",
 		"depth_modifier": "[%s] Diepte controle modifier  \n"
+	},
+	"target": {
+		"interact": "[E] Interacteren  \n",
+		"title": "Opties",
+		"description": "Geen Beschrijving"
 	}
 }

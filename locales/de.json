@@ -33,5 +33,10 @@
 		"object_scroll_up": "[%s] Nach rechts drehen  \n",
 		"object_scroll_down": "[%s] Nach links drehen  \n",
 		"depth_modifier": "[%s] Tiefenkontrolle Modifikator  \n"
+	},
+	"target": {
+		"interact": "[E] Interagieren  \n",
+		"title": "Optionen",
+		"description": "Keine Beschreibung"
 	}
 }

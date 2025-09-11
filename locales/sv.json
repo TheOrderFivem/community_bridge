@@ -33,5 +33,10 @@
 		"object_scroll_up": "[%s] Vrid höger  \n",
 		"object_scroll_down": "[%s] Vrid vänster  \n",
 		"depth_modifier": "[%s] Djupkontroll modifierare  \n"
+	},
+	"target": {
+		"interact": "[E] Interagera  \n",
+		"title": "Alternativ",
+		"description": "Ingen beskrivning"
 	}
 }

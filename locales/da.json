@@ -33,5 +33,10 @@
 		"object_scroll_up": "[%s] Drej til højre  \n",
 		"object_scroll_down": "[%s] Drej til venstre  \n",
 		"depth_modifier": "[%s] Dybde kontrol modifier  \n"
+	},
+	"target": {
+		"interact": "[E] Interager  \n",
+		"title": "Muligheder",
+		"description": "Ingen beskrivelse"
 	}
 }

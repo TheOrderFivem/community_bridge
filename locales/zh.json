@@ -33,5 +33,10 @@
 		"object_scroll_up": "[%s] 向右转  \n",
 		"object_scroll_down": "[%s] 向左转  \n",
 		"depth_modifier": "[%s] 深度控制修改器  \n"
+	},
+	"target": {
+		"interact": "[E] 交互  \n",
+		"title": "选项",
+		"description": "无描述"
 	}
 }

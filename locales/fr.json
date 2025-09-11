@@ -33,5 +33,10 @@
 		"object_scroll_up": "[%s] Tourner à droite  \n",
 		"object_scroll_down": "[%s] Tourner à gauche  \n",
 		"depth_modifier": "[%s] Modificateur de contrôle de profondeur  \n"
+	},
+	"target": {
+		"interact": "[E] Interagir  \n",
+		"title": "Options",
+		"description": "Aucune Description"
 	}
 }

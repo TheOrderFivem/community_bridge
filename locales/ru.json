@@ -33,5 +33,10 @@
 		"object_scroll_up": "[%s] Повернуть вправо  \n",
 		"object_scroll_down": "[%s] Повернуть влево  \n",
 		"depth_modifier": "[%s] Модификатор контроля глубины  \n"
+	},
+	"target": {
+		"interact": "[E] Взаимодействовать  \n",
+		"title": "Опции",
+		"description": "Нет описания"
 	}
 }
