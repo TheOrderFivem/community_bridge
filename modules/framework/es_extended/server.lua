@@ -67,6 +67,18 @@ Framework.GetPlayerDob = function(src)
     return dob
 end
 
+
+-- Returns the player date of birth regardless if online or offline.
+---@param citizenid string
+---@return string|nil
+Framework.GetPlayerDobById = function(citizenid)
+    local result = MySQL.query.await('SELECT dateofbirth FROM users WHERE identifier = ?', { citizenid })
+    if result and result[1] then
+        return result[1].dateofbirth
+    end
+    return false
+end
+
 --- @description Returns the player data of the specified source in the framework defualt format
 --- @param src any
 --- @return table | nil
@@ -99,6 +111,16 @@ Framework.GetPlayerName = function(src)
     return xPlayer.variables.firstName, xPlayer.variables.lastName
 end
 
+--- @description This will return the full name of the player by their identifier.
+--- @param identifier string
+--- @return string|boolean returns the full name of the player or false if not found
+Framework.GetPlayerNameById = function(identifier)
+    local result = MySQL.query.await('SELECT firstname, lastname FROM users WHERE identifier = ?', { identifier })
+    if result and result[1] then
+        return result[1].firstname .. ' ' .. result[1].lastname
+    end
+    return false
+end
 --- @description This will return a table of all logged in players
 --- @return table
 Framework.GetPlayers = function()
@@ -291,6 +313,13 @@ Framework.GetPlayerPhone = function(src)
     return xPlayer.get("phone_number")
 end
 
+-- Returns the phone number of the player by citizen id.
+---@param citizenid string
+---@return string | nil
+Framework.GetPlayerPhoneById = function(citizenid)
+   -- TODO: implement, but idk about phone no. in esx
+end
+
 ---@deprecated This will return the job name, label, grade name, and grade level of the player.
 ---@param src number
 ---@return string | nil
@@ -319,6 +348,7 @@ Framework.GetPlayerJobData = function(src)
         gradeName = job.grade_name,
         gradeLabel = job.grade_label,
         gradeRank = job.grade,
+        pay = job.grade_salary,
         boss = isBoss,
         onDuty = job.onduty,
     }
@@ -384,6 +414,21 @@ Framework.AddAccountBalance = function(src, _type, amount)
     return true
 end
 
+--- this will add money based on the citizen id and type of account (money/bank) regardless of online status.
+--- @param citizenId string
+--- @param _type string
+--- @param amount number
+Framework.AddAccountBalanceById = function(citizenId, _type, amount)
+    if not citizenId or citizenId == '' then return end
+    if _type == 'cash' then _type = 'money' end
+    local jsonPath = string.format("$.%s", _type)
+    local add = MySQL.query.await('UPDATE users SET accounts = JSON_SET(accounts, ?, JSON_EXTRACT(accounts, ?) + ?) WHERE identifier = ?',
+        { jsonPath, jsonPath, amount, citizenId })
+    if add.affectedRows > 0 then
+        return true
+    end
+    return false
+end
 --- @description This will remove money based on the type of account (money/bank)
 --- @param src number
 --- @param _type string
@@ -397,6 +442,23 @@ Framework.RemoveAccountBalance = function(src, _type, amount)
     return true
 end
 
+
+--- this will remove money based on the citizen id and type of account (money/bank) regardless of online status.
+--- @param citizenId string
+--- @param _type string
+--- @param amount number
+Framework.RemoveAccountBalanceById = function(citizenId, _type, amount)
+    if not citizenId or citizenId == '' then return end
+    if _type == 'cash' then _type = 'money' end
+    local jsonPath = string.format("$.%s", _type)
+    local remove = MySQL.query.await('UPDATE users SET accounts = JSON_SET(accounts, ?, JSON_EXTRACT(accounts, ?) - ?) WHERE citizenid = ? AND JSON_EXTRACT(accounts, ?) >= ?',
+        { jsonPath, jsonPath, amount, citizenId, jsonPath, amount })
+    if remove.affectedRows > 0 then
+        return true
+    end
+    return false
+end
+
 --- @description This will get the account balance based on the type of account (money/bank)
 --- @param src number
 --- @param _type string
@@ -408,6 +470,22 @@ Framework.GetAccountBalance = function(src, _type)
     return xPlayer.getAccount(_type).money
 end
 
+
+--- @description This will get the account balance based on the type of account (money/bank) regardless of if the player is online or not
+--- @param citizenId string
+--- @param _type string
+--- @return string 
+Framework.GetAccountBalanceById = function(citizenId, _type)
+    if not citizenId or citizenId == '' then return end
+    if _type == 'cash' then _type = 'money' end
+    local jsonPath = string.format("$.%s", _type)
+    local result = MySQL.query.await('SELECT JSON_EXTRACT(accounts, ?) as accountBalance FROM users WHERE identifier = ?',
+        { jsonPath, citizenId })
+    if result and result[1] then
+        return tonumber(result[1].accountBalance) or 0
+    end
+    return 0
+end
 --- @description Adds the specified item to the player's inventory
 --- @param src number
 --- @param item string

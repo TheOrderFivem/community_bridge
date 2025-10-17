@@ -35,6 +35,13 @@ Framework.GetPlayerDob = function(src)
     return playerData.charinfo.birthdate
 end
 
+Framework.GetPlayerDobById = function(citizenid)
+    local player = QBox:GetPlayerByCitizenId(citizenid) or QBox:GetOfflinePlayer(citizenid)
+    if not player then return end
+    local playerData = player.PlayerData
+    return playerData.charinfo.birthdate
+end
+
 --- Returns the player data of the specified source.
 ---@param src any
 ---@return table | nil
@@ -81,6 +88,17 @@ Framework.GetPlayerName = function(src)
     if not player then return end
     local playerData = player.PlayerData
     return playerData.charinfo.firstname, playerData.charinfo.lastname
+end
+
+-- Framework.GetPlayerNameById(src)
+-- Returns the full name of the player.
+---@param citizenid number
+---@return string|nil, string|nil
+Framework.GetPlayerNameById = function(citizenid)
+    local player = QBox:GetPlayerByCitizenId(citizenid) or QBox:GetOfflinePlayer(citizenid)
+    if not player then return end
+    local playerData = player.PlayerData
+    return playerData.charinfo.firstname .. " " .. playerData.charinfo.lastname
 end
 
 ---Returns a table of items matching the specified name and if passed metadata from the player's inventory.
@@ -284,6 +302,16 @@ Framework.GetPlayerPhone = function(src)
     return playerData.charinfo.phone
 end
 
+-- Returns the phone number of the player by citizen id.
+---@param citizenid string
+---@return string | nil
+Framework.GetPlayerPhoneById = function(citizenid)
+    local player = QBox:GetPlayerByCitizenId(citizenid) or QBox:GetOfflinePlayerByCitizenId(citizenid)
+    if not player then return end
+    local playerData = player.PlayerData
+    return playerData.charinfo.phone
+end
+
 ---Returns the gang name of the player.
 ---@param src number
 ---@return string | nil
@@ -325,6 +353,7 @@ Framework.GetPlayerJobData = function(src)
         jobLabel = jobData.label,
         gradeName = jobData.grade.name,
         gradeLabel = jobData.grade.name,
+        pay = jobData.grade.payment,
         gradeRank = jobData.grade.level,
         boss = jobData.isboss,
         onDuty = jobData.onduty,
@@ -376,6 +405,26 @@ Framework.AddAccountBalance = function(src, _type, amount)
     return player.Functions.AddMoney(_type, amount)
 end
 
+--- this will add money based on the citizen id and type of account (money/bank) regardless of online status.
+--- @param citizenId string
+--- @param _type string
+--- @param amount number
+--- @return boolean | nil
+Framework.AddAccountBalanceById = function(citizenId, _type, amount)
+    if not citizenId or citizenId == '' then return end
+    if _type == 'money' then _type = 'cash' end
+    local player = QBox:GetPlayerByCitizenId(citizenId)
+    if not player then 
+        local jsonPath = string.format("$.%s", _type)
+        local add = MySQL.query.await('UPDATE players SET money = JSON_SET(money, ?, JSON_EXTRACT(money, ?) + ?) WHERE citizenid = ?',
+            { jsonPath, jsonPath, amount, citizenId })
+        if add.affectedRows > 0 then
+            return true
+        end
+        return false
+    end
+    return player.Functions.AddMoney(_type, amount)
+end
 ---Removes the specified amount from the player's account balance of the specified type.
 ---@param src number
 ---@param _type string
@@ -388,6 +437,25 @@ Framework.RemoveAccountBalance = function(src, _type, amount)
     return player.Functions.RemoveMoney(_type, amount)
 end
 
+--- this will remove money based on the citizen id and type of account (money/bank) regardless of online status.
+--- @param citizenId string
+--- @param _type string
+--- @param amount number
+Framework.RemoveAccountBalanceById = function(citizenId, _type, amount)
+    if not citizenId or citizenId == '' then return end
+    local player = QBox:GetPlayerByCitizenId(citizenId)
+    if _type == 'money' then _type = 'cash' end
+    if not player then
+        local jsonPath = string.format("$.%s", _type)
+        local remove = MySQL.query.await('UPDATE players SET money = JSON_SET(money, ?, JSON_EXTRACT(money, ?) - ?) WHERE citizenid = ? AND JSON_EXTRACT(money, ?) >= ?',
+            { jsonPath, jsonPath, amount, citizenId, jsonPath, amount })
+        if remove.affectedRows > 0 then
+            return true
+        end
+        return false
+    end
+    return player.Functions.RemoveMoney(_type, amount)
+end
 ---Returns the player's account balance of the specified type.
 ---@param src number
 ---@param _type string
@@ -396,9 +464,21 @@ Framework.GetAccountBalance = function(src, _type)
     local player = Framework.GetPlayer(src)
     if not player then return end
     local playerData = player.PlayerData
-    if _type == 'money' then _type = 'cash' end
     return playerData.money[_type]
 end
+
+--- This will get the account balance for the specified citizen id and account type (money/bank) regardless of online status.
+--- @param citizenId string
+--- @param _type string
+--- @return string | nil
+Framework.GetAccountBalanceById = function(citizenId, _type)
+    if not citizenId or citizenId == '' then return end
+    local player = QBCore.Functions.GetPlayerByCitizenId(citizenId) or QBCore.Functions.GetOfflinePlayerByCitizenId(citizenId)
+    if not player then return end
+    if _type == 'money' then _type = 'cash' end
+    return player.PlayerData.money[_type]
+end
+
 
 ---Adds the specified item to the player's inventory.
 ---@param src number
