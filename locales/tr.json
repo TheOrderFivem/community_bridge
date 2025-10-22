@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "Panoya kopyalandı"
 	},
+	"input": {
+		"submit_text": "Gönder"
+	},
 	"placeable_object": {
 		"no_prop_defined": "Yerleştirmek için herhangi bir nesne tanımlamadınız",
 		"cant_place_here": "Bu nesneyi buraya yerleştiremezsiniz",

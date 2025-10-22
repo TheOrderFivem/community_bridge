@@ -1,7 +1,6 @@
 Logs = Logs or {}
 local BridgeServerConfig = BridgeServerConfig or Require('settings/serverConfig.lua')
 
-
 local pendingLogs = {}
 local sendTimer = nil
 
@@ -52,10 +51,10 @@ local function queueLogForDiscord(message)
 end
 
 local logHandlers = {
-    fivemerr = function(logData)
+    fivemerr = function(message)
         local fivemerrData = {
             level = 'info',
-            message = tostring(logData),
+            message = tostring(message),
             resource = GetInvokingResource() or GetCurrentResourceName(),
 
         }
@@ -67,6 +66,11 @@ local logHandlers = {
             ['Content-Type'] = 'application/json',
             ['Authorization'] = BridgeServerConfig.FivemerrApiKey
         })
+    end,
+
+    fivemanage = function(message)
+        if GetResourceState("fmsdk") == "missing" then return print('^1Error:^0 fivemanage log system selected but fmsdk resource is missing.') end
+        exports.fmsdk:LogMessage('info', message)
     end,
 
     qb = function(message)
@@ -94,9 +98,10 @@ Logs.Notify = function(src, url, image, message)
     Logs.CreateLog(message)
 end
 
-Logs.CreateLog = function(logData)
+Logs.CreateLog = function(message)
     local handler = logHandlers[BridgeServerConfig.LogSystem]
-    if handler then handler(logData) end
+    if not handler then return end
+    handler(message)
 end
 
 exports('Logs', Logs)

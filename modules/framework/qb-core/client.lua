@@ -8,33 +8,33 @@ QBCore = exports['qb-core']:GetCoreObject()
 
 Framework.Shared = QBCore.Shared
 
----This will get the name of the framework being used (if a supported framework).
+---@description This will get the name of the framework being used (if a supported framework).
 ---@return string
 Framework.GetFrameworkName = function()
     return 'qb-core'
 end
 
----This will get the name of the in use resource.
+---@description This will get the name of the in use resource.
 ---@return string
 Framework.GetResourceName = function()
     return 'qb-core'
 end
 
----This will return true if the player is loaded, false otherwise.
+---@description This will return true if the player is loaded, false otherwise.
 ---This could be useful in scripts that rely on player loaded events and offer a debug mode to hit this function.
 ---@return boolean
 Framework.GetIsPlayerLoaded = function()
     return LocalPlayer.state.isLoggedIn or false
 end
 
----This will return a table of the player data, this will be in the framework format.
+---@description This will return a table of the player data, this will be in the framework format. 
 ---This is mainly for internal bridge use and should be avoided.
 ---@return table
 Framework.GetPlayerData = function()
     return QBCore.Functions.GetPlayerData()
 end
 
----This will return a table of all the jobs in the framework.
+---@description This will return a table of all the jobs in the framework.
 ---@return table
 Framework.GetFrameworkJobs = function()
     local jobs = {}
@@ -48,7 +48,7 @@ Framework.GetFrameworkJobs = function()
     return jobs
 end
 
----This will get the players birth date
+---@description This will get the players birth date
 ---@return string
 Framework.GetPlayerDob = function()
     local player = Framework.GetPlayerData()
@@ -56,14 +56,14 @@ Framework.GetPlayerDob = function()
     return playerData.charinfo.birthdate
 end
 
----This will return the players metadata for the specified metadata key.
+---@description This will return the players metadata for the specified metadata key.
 ---@param metadata table | string
 ---@return table | string | number | boolean
 Framework.GetPlayerMetaData = function(metadata)
     return Framework.GetPlayerData().metadata[metadata]
 end
 
----This will send a notification to the player.
+---@description This will send a notification to the player.
 ---@param message string
 ---@param type string
 ---@param time number
@@ -72,7 +72,7 @@ Framework.Notify = function(message, type, time)
     TriggerEvent('QBCore:Notify', message, 'primary', time)
 end
 
----Will Display the help text message on the screen
+---@description This will display the help text message on the screen
 ---@param message string
 ---@param _position unknown
 ---@return nil
@@ -80,14 +80,14 @@ Framework.ShowHelpText = function(message, _position)
     return exports['qb-core']:DrawText(message, _position)
 end
 
----This will hide the help text message on the screen
+---@description This will hide the help text message on the screen
 ---@return nil
 Framework.HideHelpText = function()
     return exports['qb-core']:HideText()
 end
 
----This will return the players money by type, I recommend not useing this as its the client and not secure or to be trusted.
----Use case is for a ui or a menu I guess.
+---@description This will return the players money by type, I recommend not using this
+---as its the client and not secure or to be trusted. Use case is for a ui or a menu I guess.
 ---@param _type string
 ---@return number
 Framework.GetAccountBalance = function(_type)
@@ -98,7 +98,7 @@ Framework.GetAccountBalance = function(_type)
     return account[_type] or 0
 end
 
----This will return the item data for the specified item.
+---@description This will return the item data for the specified item.
 ---@param item string
 ---@return table
 Framework.GetItemInfo = function(item)
@@ -115,27 +115,27 @@ Framework.GetItemInfo = function(item)
     return repackedTable
 end
 
----This will get the hunger of a player
+---@description This will get the hunger of a player
 ---@return number
 Framework.GetHunger = function()
     local hunger = Framework.GetPlayerMetaData("hunger") or 0
     return math.floor((hunger) + 0.5) or 0
 end
 
----This will get the thirst of a player
+---@description This will get the thirst of a player
 ---@return number
 Framework.GetThirst = function()
     local thirst = Framework.GetPlayerMetaData("thirst") or 0
     return math.floor((thirst) + 0.5) or 0
 end
 
----This will get the players identifier (citizenid) etc.
+---@description This will get the players identifier (citizenid) etc.
 ---@return string
 Framework.GetPlayerIdentifier = function()
     return Framework.GetPlayerData().citizenid
 end
 
----This will get the players name (first and last).
+---@description This will get the players name (first and last).
 ---@return string
 ---@return string
 Framework.GetPlayerName = function()
@@ -143,7 +143,7 @@ Framework.GetPlayerName = function()
     return playerData.charinfo.firstname, playerData.charinfo.lastname
 end
 
----Depricated : This will return the players job name, job label, job grade label and job grade level
+---@deprecated Deprecated: This will return the players job name, job label, job grade label and job grade level
 ---@return string
 ---@return string
 ---@return string
@@ -153,7 +153,7 @@ Framework.GetPlayerJob = function()
     return playerData.job.name, playerData.job.label, playerData.job.grade.name, playerData.job.grade.level
 end
 
----This will return the players job name, job label, job grade label job grade level, boss status, and duty status in a table
+---@description This will return the players job name, job label, job grade label job grade level, boss status, and duty status in a table
 ---@return table
 Framework.GetPlayerJobData = function()
     local playerData = Framework.GetPlayerData()
@@ -169,14 +169,14 @@ Framework.GetPlayerJobData = function()
     }
 end
 
----This will return if the player has the specified item in their inventory.
+---@description This will return if the player has the specified item in their inventory
 ---@param item string
 ---@return boolean
 Framework.HasItem = function(item)
 	return QBCore.Functions.HasItem(item)
 end
 
----This will return the item count for the specified item in the players inventory.
+---@description This will return the item count for the specified item in the players inventory
 ---@param item string
 ---@return number
 Framework.GetItemCount = function(item)
@@ -184,13 +184,13 @@ Framework.GetItemCount = function(item)
     local count = 0
     for _, v in pairs(frameworkInv) do
         if v.name == item then
-            count = count + v.amount
+            count = count + (v.amount or v.count)
         end
     end
     return count
 end
 
----This will return the players inventory as a table in the ox_inventory style flormat.
+---@description This will return the players inventory as a table in the ox_inventory style format
 ---@return table
 Framework.GetPlayerInventory = function()
     local items = {}
@@ -199,7 +199,7 @@ Framework.GetPlayerInventory = function()
         table.insert(items, {
             name = v.name,
             label = v.label,
-            count = v.amount,
+            count = v.amount or v.count,
             slot = v.slot,
             metadata = v.info,
             stack = v.unique,
@@ -210,7 +210,7 @@ Framework.GetPlayerInventory = function()
     return items
 end
 
----This will return the vehicle properties for the specified vehicle.
+---@description This will return the vehicle properties for the specified vehicle
 ---@param vehicle number
 ---@return table
 Framework.GetVehicleProperties = function(vehicle)
@@ -219,7 +219,7 @@ Framework.GetVehicleProperties = function(vehicle)
     return vehicleProps or {}
 end
 
----This will set the vehicle properties for the specified vehicle.
+---@description This will set the vehicle properties for the specified vehicle
 ---@param vehicle number
 ---@param properties table
 ---@return boolean
@@ -241,7 +241,7 @@ Framework.SetVehicleProperties = function(vehicle, properties)
     return true, QBCore.Functions.SetVehicleProperties(vehicle, properties)
 end
 
----This will get a players dead status.
+---@description This will get a players dead status
 ---@return boolean
 Framework.GetIsPlayerDead = function()
     local playerData = Framework.GetPlayerData()

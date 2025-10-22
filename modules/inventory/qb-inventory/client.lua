@@ -1,5 +1,7 @@
 ---@diagnostic disable: duplicate-set-field
 if GetResourceState('qb-inventory') ~= 'started' then return end
+if GetResourceState('codem-inventory') ~= 'missing' then return end
+if GetResourceState('origen_inventory') ~= 'missing' then return end
 local qb = exports['qb-inventory']
 
 Inventory = Inventory or {}

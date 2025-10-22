@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "Copiat în clipboard"
 	},
+	"input": {
+		"submit_text": "Trimit"
+	},
 	"placeable_object": {
 		"no_prop_defined": "Nu ai definit niciun obiect de plasat",
 		"cant_place_here": "Nu poți plasa acest obiect aici",

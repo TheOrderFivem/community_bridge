@@ -76,13 +76,12 @@ Target.AddLocalEntity = function(entities, _options)
     end
     for _, entity in pairs(entities) do
         local id = Ids.RandomString()
-        local menuData = { id = id, title = "Options", options = {} }
+        local title =  Language.Locale("target.title")
+        local menuData = { id = id, title = title, options = {} }
         for k, v in pairs(fixedOptions) do
             table.insert(menuData.options, {
-                title = ("Option " .. k),
-                description = "No Description",
-                icon = v.icon or "fas fa-code-pull-request",
-                args = {},
+                title = title .. " " .. k,
+                description = Language.Locale("target.description"),
                 onSelect = function(selected, secondary, args)
                     if v.onSelect then
                         v.onSelect(selected, secondary, args)
@@ -90,23 +89,25 @@ Target.AddLocalEntity = function(entities, _options)
                 end
             })
         end
-        Point.Register(id, entity, 5, args,
-        function()
+        Point.Register(id, entity, 5, nil, function()
             local coords = GetEntityCoords(entity)
             local sleep = 3000
-            while DoesEntityExist(entity) do
-                Wait(sleep)
-                local distance = #(coords - GetEntityCoords(PlayerPedId()))
-                if distance < 10 then
-                    sleep = 0
-                    Utility.Draw3DHelpText(coords, "Press [E] To Interact", 0.35)
-                    if IsControlJustPressed(0, 38) then
-                        Menu.Open(menuData, false)
+            local test = Language.Locale("target.interact")
+            CreateThread(function()
+                while DoesEntityExist(entity) do
+                    Wait(sleep)
+                    local distance = #(coords - GetEntityCoords(PlayerPedId()))
+                    if distance < 2 then
+                        sleep = 0
+                        Utility.Draw3DHelpText(coords, test, 0.35)
+                        if IsControlJustPressed(0, 38) then
+                            Menu.Open(menuData, false)
+                        end
+                    else
+                        sleep = 1000
                     end
-                else
-                    sleep = 3000
                 end
-            end
+            end)
         end,
         function()
             Point.Remove(id)
@@ -123,11 +124,12 @@ end
 Target.AddBoxZone = function(name, coords, size, heading, options)
     local fixedOptions = Target.FixOptions(_options)
     local id = Ids.RandomString()
-    local menuData = { id = id, title = "Options", options = {} }
+    local title =  Language.Locale("target.title")
+    local menuData = { id = id, title = title, options = {} }
     for k, v in pairs(fixedOptions) do
         table.insert(menuData.options, {
-            title = ("Option " .. k),
-            description = "No Description",
+            title = title .. " " .. k,
+            description = Language.Locale("target.description"),
             onSelect = function(selected, secondary, args)
                 if v.onSelect then
                     v.onSelect(selected, secondary, args)
@@ -135,22 +137,25 @@ Target.AddBoxZone = function(name, coords, size, heading, options)
             end
         })
     end
-    Point.Register(id, coords, 5, args,
-    function()
+    local inZone = false
+    local test = Language.Locale("target.interact")
+    Point.Register(id, coords, 5, nil, function()
         local sleep = 3000
-        while true do
-            Wait(sleep)
-            local distance = #(coords - GetEntityCoords(PlayerPedId()))
-            if distance < 10 then
-                sleep = 0
-                Utility.Draw3DHelpText(coords, "Press [E] To Interact", 0.35)
-                if IsControlJustPressed(0, 38) then
-                    Menu.Open(menuData, false)
+        CreateThread(function()
+            while inZone do
+                Wait(sleep)
+                local distance = #(coords - GetEntityCoords(PlayerPedId()))
+                if distance < 2 then
+                    sleep = 0
+                    Utility.Draw3DHelpText(coords, test, 0.35)
+                    if IsControlJustPressed(0, 38) then
+                        Menu.Open(menuData, false)
+                    end
+                else
+                    sleep = 1000
                 end
-            else
-                sleep = 3000
             end
-        end
+        end)
     end,
     function()
         Point.Remove(id)

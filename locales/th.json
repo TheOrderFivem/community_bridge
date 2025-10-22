@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "คัดลอกไปยังคลิปบอร์ด"
 	},
+	"input": {
+		"submit_text": "ส่ง"
+	},
 	"placeable_object": {
 		"no_prop_defined": "คุณไม่ได้กำหนดวัตถุใดๆ เพื่อวาง",
 		"cant_place_here": "คุณไม่สามารถวางวัตถุนี้ที่นี่",

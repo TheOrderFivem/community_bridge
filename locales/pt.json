@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "Copiado para a área de transferência"
 	},
+	"input": {
+		"submit_text": "Enviar"
+	},
 	"placeable_object": {
 		"no_prop_defined": "Você não definiu nenhum objeto para colocar",
 		"cant_place_here": "Você não pode colocar este objeto aqui",

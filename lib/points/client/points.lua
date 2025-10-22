@@ -1,6 +1,6 @@
 
-local GRIDE_SIZE_X = 8968.83 / 2 
-local GRIDE_SIZE_Y = 126200.40 / 2
+local GRIDE_SIZE_X = 8968.83 
+local GRIDE_SIZE_Y = 126200.40
 local CELL_SIZE = 500
 
 local Grid = {}

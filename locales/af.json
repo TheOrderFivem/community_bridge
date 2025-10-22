@@ -19,7 +19,10 @@
 		"locale-unit-test": "Dit is 'n toets string"
 	},
 	"clipboard": {
-		"copy": "Gekopieer na klipbord"
+		"copy": "Gekopieer na knipbord"
+	},
+	"input": {
+		"submit_text": "Indien"
 	},
 	"placeable_object": {
 		"no_prop_defined": "Jy het nie enige voorwerp gedefinieer om te plaas nie",
@@ -30,8 +33,13 @@
 		"place_object_scroll_down": "[Scroll Down] Draai links  \n",
 		"object_place": "[%s] Plaas  \n",
 		"object_cancel": "[%s] Kanselleer  \n",
-		"object_scroll_up": "[%s] Draai regs  \n",
-		"object_scroll_down": "[%s] Draai links  \n",
+		"rotate_clockwise": "[%s] Draai Kloksgewys  \n",
+		"rotate_counter_clockwise": "[%s] Draai Antikloksgewys  \n",
 		"depth_modifier": "[%s] Diepte Beheer Wysiging  \n"
+	},
+	"target": {
+		"interact": "[E] Interaksie",
+		"title": "Opsies",
+		"description": "Geen Beskrywing"
 	}
 }

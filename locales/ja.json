@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "クリップボードにコピーされました"
 	},
+	"input": {
+		"submit_text": "送信"
+	},
 	"placeable_object": {
 		"no_prop_defined": "配置するオブジェクトが定義されていません",
 		"cant_place_here": "このオブジェクトをここに配置することはできません",

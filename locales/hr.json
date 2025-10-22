@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "Kopirano u međuspremnik"
 	},
+	"input": {
+		"submit_text": "Pošalji"
+	},
 	"placeable_object": {
 		"no_prop_defined": "Niste definirali nijedan objekt za postavljanje",
 		"cant_place_here": "Ne možete postaviti ovaj objekt ovdje",

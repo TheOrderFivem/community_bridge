@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "클립보드에 복사됨"
 	},
+	"input": {
+		"submit_text": "제출"
+	},
 	"placeable_object": {
 		"no_prop_defined": "배치할 객체를 정의하지 않았습니다",
 		"cant_place_here": "이 객체를 여기에 배치할 수 없습니다",

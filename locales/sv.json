@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "Kopierat till urklipp"
 	},
+	"input": {
+		"submit_text": "Skicka"
+	},
 	"placeable_object": {
 		"no_prop_defined": "Du har inte definierat något objekt att placera",
 		"cant_place_here": "Du kan inte placera detta objekt här",

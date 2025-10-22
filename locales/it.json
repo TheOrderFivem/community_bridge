@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "Copiato negli appunti"
 	},
+	"input": {
+		"submit_text": "Invia"
+	},
 	"placeable_object": {
 		"no_prop_defined": "Non hai definito alcun oggetto da posizionare",
 		"cant_place_here": "Non puoi posizionare questo oggetto qui",

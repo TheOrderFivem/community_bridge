@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "Zkopírováno do schránky"
 	},
+	"input": {
+		"submit_text": "Odeslat"
+	},
 	"placeable_object": {
 		"no_prop_defined": "Nedefinovali jste žádný objekt k umístění",
 		"cant_place_here": "Tento objekt nemůžete umístit zde",

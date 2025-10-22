@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "क्लिपबोर्ड पर कॉपी किया गया"
 	},
+	"input": {
+		"submit_text": "प्रस्तुत करें"
+	},
 	"placeable_object": {
 		"no_prop_defined": "आपने रखने के लिए कोई वस्तु परिभाषित नहीं की है",
 		"cant_place_here": "आप इस वस्तु को यहां नहीं रख सकते",

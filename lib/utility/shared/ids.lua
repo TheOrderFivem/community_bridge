@@ -17,7 +17,7 @@ Ids.CreateUniqueId = function(tbl, len, pattern) -- both optional
             local charIndex = math.random(1, #pattern)
             char = pattern:sub(charIndex, charIndex)
         else
-            char = math.random(1, 2) == 1 and string.char(math.random(65, 90)) or math.random(0, 9) -- CAP letter and number
+            char = math.random(1, 2) == 1 and string.char(math.random(65, 90)) or string.format("%d", math.random(10) - 1) -- CAP letter and number
         end
         id = id .. char
     end

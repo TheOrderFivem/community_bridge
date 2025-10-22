@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "Skopiowano do schowka"
 	},
+	"input": {
+		"submit_text": "Wyślij"
+	},
 	"placeable_object": {
 		"no_prop_defined": "Nie zdefiniowałeś żadnego obiektu do umieszczenia",
 		"cant_place_here": "Nie możesz umieścić tego obiektu tutaj",

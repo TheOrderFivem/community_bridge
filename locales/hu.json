@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "Vágólapra másolva"
 	},
+	"input": {
+		"submit_text": "Elküld"
+	},
 	"placeable_object": {
 		"no_prop_defined": "Nem definiáltál semmilyen objektumot elhelyezésre",
 		"cant_place_here": "Nem helyezheted el ezt az objektumot itt",

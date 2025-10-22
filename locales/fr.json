@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "Copié dans le presse-papiers"
 	},
+	"input": {
+		"submit_text": "Soumettre"
+	},
 	"placeable_object": {
 		"no_prop_defined": "Vous n'avez défini aucun objet à placer",
 		"cant_place_here": "Vous ne pouvez pas placer cet objet ici",

@@ -2,6 +2,7 @@
 
 if GetResourceState('qb-clothing') == 'missing' then return end
 if GetResourceState('rcore_clothing') ~= 'missing' then return end
+if GetResourceState('17mov_CharacterSystem') ~= 'missing' then return end
 
 Clothing = Clothing or {}
 

@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "Gekopieerd naar klembord"
 	},
+	"input": {
+		"submit_text": "Indienen"
+	},
 	"placeable_object": {
 		"no_prop_defined": "Je hebt geen object gedefinieerd om te plaatsen",
 		"cant_place_here": "Je kunt dit object hier niet plaatsen",

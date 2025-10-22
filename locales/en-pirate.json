@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "Copied to ye clipboard, matey!"
 	},
+	"input": {
+		"submit_text": "Send forth!"
+	},
 	"placeable_object": {
 		"no_prop_defined": "Ye didn't pick any booty to place, ye scallywag!",
 		"cant_place_here": "Ye can't be plunderin' here!",

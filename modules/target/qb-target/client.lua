@@ -1,21 +1,20 @@
 ---@diagnostic disable: duplicate-set-field
 local resourceName = "qb-target"
 if GetResourceState(resourceName) == 'missing' then return end
-if GetResourceState("ox_target") == 'started' then return end
+if GetResourceState("ox_target") ~= 'missing' then return end
 
-local targetDebug = false
-local function detectDebugEnabled()
-    if BridgeSharedConfig.DebugLevel == 2 then
-        targetDebug = true
-    end
-end
-
-detectDebugEnabled()
+Target = Target or {}
+local targetDebug = BridgeSharedConfig and BridgeSharedConfig.DebugLevel == 2 or false
 
 local targetZones = {}
 
 Target = Target or {}
+
 local qb_target = exports['qb-target']
+
+Target.GetResourceName = function()
+    return "qb-target"
+end
 
 function GetLargestDistance(data)
     local largestDistance = -1
@@ -50,8 +49,8 @@ Target.FixOptions = function(options)
         options[k].action = select
         options[k].job = v.job or v.groups
         options[k].jobType = v.jobType
-        local optionsCanInteract = v.canInteract      
-        if optionsCanInteract then 
+        local optionsCanInteract = v.canInteract
+        if optionsCanInteract then
             local id = Target.CreateCanInteract(optionsCanInteract)
             v.canInteract = function(...)
                 return Target.CanInteract(id, ...)
@@ -188,6 +187,7 @@ Target.AddBoxZone = function(name, coords, size, heading, options, debug)
         distance = GetLargestDistance(options),
     })
     table.insert(targetZones, { name = name, creator = GetInvokingResource() })
+    return name
 end
 
 ---This will add a circle zone to the target system. This is useful for when you want to add target options to a specific area.
@@ -205,6 +205,7 @@ Target.AddSphereZone = function(name, coords, radius, options, debug)
         distance = GetLargestDistance(options),
     })
     table.insert(targetZones, { name = name, creator = GetInvokingResource() })
+    return name
 end
 
 ---This will remove target options from a specific zone.
@@ -229,9 +230,5 @@ AddEventHandler('onResourceStop', function(resource)
     end
     targetZones = {}
 end)
-
-Target.GetResourceName = function()
-    return "qb-target"
-end
 
 return Target

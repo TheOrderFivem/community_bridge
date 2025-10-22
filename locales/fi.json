@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "Kopioitu leikepöydälle"
 	},
+	"input": {
+		"submit_text": "Lähetä"
+	},
 	"placeable_object": {
 		"no_prop_defined": "Et ole määrittänyt mitään objektia sijoitettavaksi",
 		"cant_place_here": "Et voi sijoittaa tätä objektia tähän",

@@ -24,7 +24,6 @@ Inventory.GetResourceName = function()
     return "codem-inventory"
 end
 
-
 ---This will remove an item, and return true or false based on success
 ---@param src number
 ---@param item string
@@ -37,26 +36,26 @@ Inventory.RemoveItem = function(src, item, count, slot, metadata)
     return codem:RemoveItem(src, item, count, slot)
 end
 
+---This will return the entire items table from the inventory.
+---@return table 
+Inventory.Items = function()
+    return codem:GetItemList() or {}
+end
+
 ---This will return a table with the item info, {name, label, stack, weight, description, image}
 ---@param item string
 ---@return table
 Inventory.GetItemInfo = function(item)
-    local itemData = codem:GetItemList(item)
-    if not itemData then return {} end
+    local itemData = Inventory.Items()
+    if not itemData or not itemData[item] then return {} end
     return {
-        name = itemData.name or "Missing Name",
-        label = itemData.label or "Missing Label",
-        stack = itemData.unique or "false",
-        weight = itemData.weight or "0",
-        description = itemData.description or "none",
-        image = itemData.image or Inventory.GetImagePath(item),
+        name = itemData[item].name or "Missing Name",
+        label = itemData[item].label or "Missing Label",
+        stack = itemData[item].unique or "false",
+        weight = itemData[item].weight or "0",
+        description = itemData[item].description or "none",
+        image = itemData[item].image or Inventory.GetImagePath(item),
     }
-end
-
----This will return the entire items table from the inventory.
----@return table 
-Inventory.Items = function()
-    return codem:GetItemList()
 end
 
 ---This wil return the players inventory.
@@ -86,14 +85,14 @@ Inventory.GetItemBySlot = function(src, slot)
     local slotData = codem:GetItemBySlot(src, slot)
     if not slotData then return {} end
     return {
-        name = v.name,
-        label = v.label or v.name,
-        weight = v.weight,
-        slot = v.slot,
-        count = v.amount or v.count,
-        metadata = v.info or v.metadata,
-        stack = v.unique,
-        description = v.description
+        name = slotData.name,
+        label = slotData.label or slotData.name,
+        weight = slotData.weight,
+        slot = slotData.slot,
+        count = slotData.amount or slotData.count,
+        metadata = slotData.info or slotData.metadata,
+        stack = slotData.unique,
+        description = slotData.description
     }
 end
 

@@ -3,7 +3,7 @@ if GetResourceState('tk_dispatch') == 'missing' then return end
 Dispatch = Dispatch or {}
 
 Dispatch.SendAlert = function(data)
-    exports.tk_dispatch:addCall({
+    local alertData = {
         title = data.message,
         code = data.code or '10-80',
         priority = 'Priority 3',
@@ -17,7 +17,8 @@ Dispatch.SendAlert = function(data)
             scale = data.blipData.scale or 0.8,
         },
         jobs = data.jobs or {'police'},
-    })
+    }
+    exports.tk_dispatch:addCall(alertData)
 end
 
 ---This will get the name of the in use resource.

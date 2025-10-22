@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "In die Zwischenablage kopiert"
 	},
+	"input": {
+		"submit_text": "Absenden"
+	},
 	"placeable_object": {
 		"no_prop_defined": "Sie haben kein Objekt zum Platzieren definiert",
 		"cant_place_here": "Sie können dieses Objekt hier nicht platzieren",

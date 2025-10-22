@@ -7,13 +7,13 @@ local globalState = GlobalState
 
 globalState.jobcounts = {}
 
----This will get the name of the in use resource.
+---@description This will get the name of the in use resource.
 ---@return string
 Framework.GetResourceName = function()
     return 'default'
 end
 
----This is an internal function that will be used to retrieve job counts later.
+---@description This is an internal function that will be used to retrieve job counts later.
 ---@param jobName string
 ---@return number
 Framework.GetJobCount = function(jobName)
@@ -25,7 +25,7 @@ Framework.GetJobCount = function(jobName)
     return count
 end
 
----This will allow passing a table of job names and returning a sum of the total count.
+---@description This will allow passing a table of job names and returning a sum of the total count.
 ---@param tbl any
 ---@return number
 Framework.GetJobCountTotal = function(tbl)
@@ -36,7 +36,7 @@ Framework.GetJobCountTotal = function(tbl)
     return total
 end
 
----This will return a list of player sources for a given job.
+---@description This will return a list of player sources for a given job.
 ---@param jobName string
 ---@return table
 Framework.GetPlayerSourcesByJob = function(jobName)
@@ -48,7 +48,7 @@ Framework.GetPlayerSourcesByJob = function(jobName)
     return sources
 end
 
----This will update the cached tables for job counts.
+---@description This will update the cached tables for job counts.
 ---This is used to track how many players are in a job.
 ---@param src number
 ---@param jobName string
@@ -69,13 +69,13 @@ Framework.AddJobCount = function(src, jobName)
     return true
 end
 
----This will return the job name for a given source.
+---@description This will return the job name for a given source.
 ---@param src number
 Framework.SearchJobCountBySource = function(src)
     return invertedJobsRegisteredTable[src]
 end
 
----This will remove the job count for a given source.
+---@description This will remove the job count for a given source.
 ---@param src number
 ---@param jobName string | nil
 Framework.RemoveJobCount = function(src, jobName)
@@ -101,12 +101,17 @@ Framework.RemoveJobCount = function(src, jobName)
     return true
 end
 
+---@description Event handler for when a player's job changes, updates job counts accordingly
+---@param src number
+---@param newJobName string
 AddEventHandler('community_bridge:Server:OnPlayerJobChange', function(src, newJobName)
     local previousJob = invertedJobsRegisteredTable[src]
     if previousJob then Framework.RemoveJobCount(src, previousJob) end
     if newJobName then Framework.AddJobCount(src, newJobName) end
 end)
 
+---@description Event handler for when a player unloads, removes them from job counts
+---@param src number
 AddEventHandler('community_bridge:Server:OnPlayerUnload', function(src)
     Framework.RemoveJobCount(src)
 end)

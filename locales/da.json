@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "Kopieret til udklipsholder"
 	},
+	"input": {
+		"submit_text": "Indsend"
+	},
 	"placeable_object": {
 		"no_prop_defined": "Du har ikke defineret noget objekt at placere",
 		"cant_place_here": "Du kan ikke placere dette objekt her",

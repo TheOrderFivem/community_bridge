@@ -4,34 +4,33 @@ Inventory = Inventory or {}
 
 local codem = exports['codem-inventory']
 
----Return the item info in oxs format, {name, label, stack, weight, description, image}
----@param item string
----@return table
-Inventory.GetItemInfo = function(item)
-    local itemData = codem:GetItemList(item)
-    if not itemData then return {} end
-    local image = itemData.image and Inventory.GetImagePath(itemData.image) or Inventory.GetImagePath(item)
-    return {
-        name = itemData.name or "Missing Name",
-        label = itemData.label or "Missing Label",
-        stack = itemData.unique or "false",
-        weight = itemData.weight or "0",
-        description = itemData.description or "none",
-        image = image,
-    }
-end
-
 ---This will get the name of the in use resource.
 ---@return string
 Inventory.GetResourceName = function()
     return "codem-inventory"
 end
 
-
 ---This will return the entire items table from the inventory.
 ---@return table 
 Inventory.Items = function()
-    return codem:GetItemList()
+    return codem:GetItemList() or {}
+end
+
+---Return the item info in oxs format, {name, label, stack, weight, description, image}
+---@param item string
+---@return table
+Inventory.GetItemInfo = function(item)
+    local itemData = Inventory.Items()
+    if not itemData or not itemData[item] then return {} end
+    local image = Inventory.GetImagePath(itemData[item].image) or Inventory.GetImagePath(item)
+    return {
+        name = itemData[item].name or "Missing Name",
+        label = itemData[item].label or "Missing Label",
+        stack = itemData[item].unique or "false",
+        weight = itemData[item].weight or "0",
+        description = itemData[item].description or "none",
+        image = image,
+    }
 end
 
 ---This will get the image path for this item, if not found will return placeholder.

@@ -4,14 +4,13 @@ if GetResourceState(resourceName) == 'missing' then return end
 if GetResourceState("qb-fuel") == 'started' then return end
 Fuel = Fuel or {}
 
----Returns the name of the active fuel resource.
----If no supported resource is found, "default" will be returned.
+---@description Returns the name of the active fuel resource.
 ---@return string
 Fuel.GetResourceName = function()
     return resourceName
 end
 
----Returns the current fuel level of a vehicle.
+---@description Returns the current fuel level of a vehicle.
 ---@param vehicle number The vehicle entity handle.
 ---@return number The vehicle fuel level.
 Fuel.GetFuel = function(vehicle)
@@ -19,7 +18,7 @@ Fuel.GetFuel = function(vehicle)
     return exports['LegacyFuel']:GetFuel(vehicle)
 end
 
----Sets the fuel level of a vehicle.
+---@description Sets the fuel level of a vehicle.
 ---@param vehicle number The vehicle entity handle.
 ---@param fuel number The fuel level to assign.
 ---@param type? string The fuel type, used only in ti_fuel. (default: RON91)

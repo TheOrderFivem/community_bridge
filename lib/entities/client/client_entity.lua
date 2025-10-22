@@ -81,7 +81,7 @@ local function UpdateEntity(_entityData)
     local dist = #(coords - entityData.oldCoords)
     if entityData.oldCoords and dist > 0.5 then
         if entityData.spawned then 
-            SetEntityCoords(entityData.spawned, coords.x, coords.y, coords.z, false, false, false, true)
+            SetEntityCoords(entityData.spawned, coords.x, coords.y, coords.z, false, false, false, false)
         end    
         -- ClientEntity.UpdateCoords(entityData.id, entityData.coords)       
         if entityData.OnMove then

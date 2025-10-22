@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "تم النسخ إلى الحافظة"
 	},
+	"input": {
+		"submit_text": "إرسال"
+	},
 	"placeable_object": {
 		"no_prop_defined": "لم تحدد أي كائن للوضع",
 		"cant_place_here": "لا يمكنك وضع هذا الكائن هنا",

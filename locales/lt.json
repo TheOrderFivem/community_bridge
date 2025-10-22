@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "Nukopijuota į iškarpinę"
 	},
+	"input": {
+		"submit_text": "Pateikti"
+	},
 	"placeable_object": {
 		"no_prop_defined": "Nenurodėte jokio objekto, kurį reikia pastatyti",
 		"cant_place_here": "Čia negalite pastatyti šio objekto",

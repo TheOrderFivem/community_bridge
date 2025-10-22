@@ -3,18 +3,22 @@ Framework = Framework or {}
 
 local currentJobCounts = GlobalState.jobcounts or {}
 
+---@description State bag change handler to update job counts when global state changes
+---@param bagName string
+---@param key string
+---@param value table|nil
 AddStateBagChangeHandler('jobcounts', 'global', function(bagName, key, value)
     if not value then currentJobCounts = {} return end
     currentJobCounts = value
 end)
 
----This will get the name of the in use resource.
+---@description This will get the name of the in use resource.
 ---@return string
 Framework.GetResourceName = function()
     return 'default'
 end
 
----This is an internal function that will be used to retrieve job counts later.
+---@description This is an internal function that will be used to retrieve job counts later.
 ---@param jobName string
 ---@return number
 Framework.GetJobCount = function(jobName)
@@ -22,7 +26,7 @@ Framework.GetJobCount = function(jobName)
     return currentJobCounts[jobName]
 end
 
----This will allow passing a table of job names and returning a sum of the total count.
+---@description This will allow passing a table of job names and returning a sum of the total count.
 ---@param tbl table
 ---@return number
 Framework.GetJobCountTotal = function(tbl)

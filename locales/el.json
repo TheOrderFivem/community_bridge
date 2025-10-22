@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "Αντιγράφηκε στο clipboard"
 	},
+	"input": {
+		"submit_text": "Υποβολή"
+	},
 	"placeable_object": {
 		"no_prop_defined": "Δεν ορίσατε κανένα αντικείμενο για τοποθέτηση",
 		"cant_place_here": "Δεν μπορείτε να τοποθετήσετε αυτό το αντικείμενο εδώ",

@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "Copied to clipboard"
 	},
+	"input": {
+		"submit_text": "Submit"
+	},
 	"placeable_object": {
 		"no_prop_defined": "You didn't define any object to place",
 		"cant_place_here": "You can't place this object here",
@@ -33,5 +36,10 @@
 		"rotate_clockwise": "[%s] Rotate Clockwise  \n",
 		"rotate_counter_clockwise": "[%s] Rotate Counter-Clockwise  \n",
 		"depth_modifier": "[%s] Depth Control Modifier  \n"
+	},
+	"target": {
+		"interact": "[E] Interact",
+		"title": "Options",
+		"description": "No Description"
 	}
 }

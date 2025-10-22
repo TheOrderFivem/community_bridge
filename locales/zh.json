@@ -21,6 +21,9 @@
 	"clipboard": {
 		"copy": "已复制到剪贴板"
 	},
+	"input": {
+		"submit_text": "提交"
+	},
 	"placeable_object": {
 		"no_prop_defined": "您没有定义任何要放置的对象",
 		"cant_place_here": "您不能在此处放置此对象",
