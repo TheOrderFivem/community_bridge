@@ -42,13 +42,6 @@ Framework.GetPlayerDobById = function(citizenid)
     return playerData.charinfo.birthdate
 end
 
-Framework.GetPlayerDobById = function(citizenid)
-    local player = QBox:GetPlayerByCitizenId(citizenid) or QBox:GetOfflinePlayer(citizenid)
-    if not player then return end
-    local playerData = player.PlayerData
-    return playerData.charinfo.birthdate
-end
-
 ---@description Returns the player data of the specified source.
 ---@param src any
 ---@return table | nil
@@ -95,17 +88,6 @@ Framework.GetPlayerName = function(src)
     if not player then return end
     local playerData = player.PlayerData
     return playerData.charinfo.firstname, playerData.charinfo.lastname
-end
-
--- Framework.GetPlayerNameById(src)
--- Returns the full name of the player.
----@param citizenid number
----@return string|nil, string|nil
-Framework.GetPlayerNameById = function(citizenid)
-    local player = QBox:GetPlayerByCitizenId(citizenid) or QBox:GetOfflinePlayer(citizenid)
-    if not player then return end
-    local playerData = player.PlayerData
-    return playerData.charinfo.firstname .. " " .. playerData.charinfo.lastname
 end
 
 -- Framework.GetPlayerNameById(src)
@@ -329,16 +311,6 @@ Framework.GetPlayerPhoneById = function(citizenid)
     return playerData.charinfo.phone
 end
 
--- Returns the phone number of the player by citizen id.
----@param citizenid string
----@return string | nil
-Framework.GetPlayerPhoneById = function(citizenid)
-    local player = QBox:GetPlayerByCitizenId(citizenid) or QBox:GetOfflinePlayerByCitizenId(citizenid)
-    if not player then return end
-    local playerData = player.PlayerData
-    return playerData.charinfo.phone
-end
-
 ---@description Returns the gang name of the player.
 ---@param src number
 ---@return string | nil
@@ -505,20 +477,6 @@ Framework.GetAccountBalanceById = function(citizenId, _type)
     if _type == 'money' then _type = 'cash' end
     return player.PlayerData.money[_type]
 end
-
-
---- This will get the account balance for the specified citizen id and account type (money/bank) regardless of online status.
---- @param citizenId string
---- @param _type string
---- @return string | nil
-Framework.GetAccountBalanceById = function(citizenId, _type)
-    if not citizenId or citizenId == '' then return end
-    local player = QBCore.Functions.GetPlayerByCitizenId(citizenId) or QBCore.Functions.GetOfflinePlayerByCitizenId(citizenId)
-    if not player then return end
-    if _type == 'money' then _type = 'cash' end
-    return player.PlayerData.money[_type]
-end
-
 
 ---@description Adds the specified item to the player's inventory.
 ---@param src number
