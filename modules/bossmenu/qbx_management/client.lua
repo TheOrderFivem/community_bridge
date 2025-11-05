@@ -3,7 +3,7 @@ if GetResourceState('qbx_management') ~= 'started' then return end
 
 BossMenu = BossMenu or {}
 
----This will get the name of the module being used.
+---@description This will get the name of the module being used.
 ---@return string
 BossMenu.GetResourceName = function()
     return "qbx_management"

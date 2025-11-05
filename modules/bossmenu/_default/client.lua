@@ -1,7 +1,7 @@
 ---@diagnostic disable: duplicate-set-field
 BossMenu = BossMenu or {}
 
----This will get the name of the module being used.
+---@description This will get the name of the module being used.
 ---@return string
 BossMenu.GetResourceName = function()
     return "default"
