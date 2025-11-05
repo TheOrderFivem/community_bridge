@@ -13,4 +13,8 @@ BossMenu.OpenBossMenu = function(src, jobName, jobType)
     TriggerClientEvent("community_bridge:client:OpenBossMenu", src, jobName, jobType)
 end
 
+BossMenu.OpenGangMenu = function(src, gangName)
+    TriggerClientEvent("community_bridge:client:OpenGangMenu", src, gangName)
+end
+
 return BossMenu

@@ -48,6 +48,21 @@ Framework.GetFrameworkJobs = function()
     return jobs
 end
 
+---@description This will return a table of all the gangs in the framework.
+---@return table
+Framework.GetFrameworkGangs = function()
+    local gangs = {}
+    for k, v in pairs(QBCore.Shared.Gangs) do
+        table.insert(gangs, {
+            name = k,
+            label = v.label,
+            grade = v.grades
+        })
+    end
+    return gangs
+end
+
+
 ---@description This will get the players birth date
 ---@return string
 Framework.GetPlayerDob = function()
@@ -169,6 +184,23 @@ Framework.GetPlayerJobData = function()
     }
 end
 
+---@description This will return the players gang name, gang label, gang grade label gang grade level, boss status, and duty status in a table
+---@return table
+Framework.GetPlayerGangData = function()
+    local playerData = Framework.GetPlayerData()
+    local gangData = playerData.gang
+    return {
+        gangName = gangData.name,
+        gangLabel = gangData.label,
+        gradeName = gangData.grade.name,
+        gradeLabel = gangData.grade.name,
+        gradeRank = gangData.grade.level,
+        boss = gangData.isboss,
+        onDuty = gangData.onduty,
+    }
+end
+
+
 ---@description This will return if the player has the specified item in their inventory
 ---@param item string
 ---@return boolean
@@ -262,14 +294,7 @@ RegisterNetEvent('QBCore:Client:OnJobUpdate', function(data)
 end)
 
 RegisterNetEvent('QBCore:Client:OnGangUpdate', function(data)
-    -- Unsure what data is passed in this, but considering the gang data isnt updating I doubt this was tested.
-    --[[
-    PlayerJobName = data.name
-    PlayerJobLabel = data.label
-    PlayerJobGradeName = data.grade.name
-    PlayerJobGradeLevel = data.grade.level
-    TriggerEvent('community_bridge:Client:OnPlayerGangUpdate', PlayerGangName, PlayerGangLabel, PlayerGangGradeName, PlayerGangGradeLevel)
-    --]]
+     TriggerEvent('community_bridge:Client:OnPlayerGangUpdate', data.name, data.label, data.grade.name, data.grade.level)
 end)
 
 return Framework

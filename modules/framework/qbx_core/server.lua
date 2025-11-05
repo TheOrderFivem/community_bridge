@@ -50,6 +50,12 @@ Framework.GetFrameworkJobs = function()
     return QBox.GetJobs()
 end
 
+---@description Returns a table of the gangs in the framework.
+---@return table
+Framework.GetFrameworkGangs = function()
+    return QBox.GetGangs()
+end
+
 ---@description Returns the citizen ID of the player.
 ---@param src number
 ---@return string | boolean | nil
@@ -283,19 +289,18 @@ Framework.GetPlayerPhone = function(src)
     return playerData.charinfo.phone
 end
 
----@description Returns the gang name of the player.
----@param src number
----@return string | nil
-Framework.GetPlayerGang = function(src)
-    local player = Framework.GetPlayer(src).PlayerData
-    return player.gang.name
-end
-
 ---@description This will get a table of player sources that have the specified job name.
 ---@param job string
 ---@return table
 Framework.GetPlayersByJob = function(job)
     return Framework.GetPlayerSourcesByJob(job) or {}
+end
+
+---@description This will get a table of player sources that have the specified gang name.
+---@param gang string
+---@return table
+Framework.GetPlayersByGang = function(gang)
+    return Framework.GetPlayerSourcesByGang(gang) or {}
 end
 
 ---@Deprecated Deprecated: Returns the job name, label, grade name, and grade level of the player.
@@ -309,6 +314,14 @@ Framework.GetPlayerJob = function(src)
     if not player then return end
     local playerData = player.PlayerData
     return playerData.job.name, playerData.job.label, playerData.job.grade.name, playerData.job.grade.level
+end
+
+---@Deprecated Deprecated: Returns the gang name of the player.
+---@param src number
+---@return string | nil
+Framework.GetPlayerGang = function(src)
+    local player = Framework.GetPlayer(src).PlayerData
+    return player.gang.name
 end
 
 ---@description This will return the players job name, job label, job grade label job grade level, boss status, and duty status in a table
@@ -330,6 +343,24 @@ Framework.GetPlayerJobData = function(src)
     }
 end
 
+---@description This will return the players gang name, gang label, gang grade label gang grade level, and boss status in a table
+---@param src number
+---@return table | nil
+Framework.GetPlayerGangData = function(src)
+    local player = Framework.GetPlayer(src)
+    if not player then return end
+    local playerData = player.PlayerData
+    local gangData = playerData.gang
+    return {
+        gangName = gangData.name,
+        gangLabel = gangData.label,
+        gradeName = gangData.grade.name,
+        gradeLabel = gangData.grade.name,
+        gradeRank = gangData.grade.level,
+        boss = gangData.isboss,
+    }
+end
+
 ---@description Sets the player's job to the specified name and grade.
 ---@param src number
 ---@param name string
@@ -340,6 +371,18 @@ Framework.SetPlayerJob = function(src, name, grade)
     if not player then return end
     return player.Functions.SetJob(name, grade)
 end
+
+---@description Sets the player's gang to the specified name and grade.
+---@param src number
+---@param name string
+---@param grade string
+---@return boolean | nil
+Framework.SetPlayerGang = function(src, name, grade)
+    local player = Framework.GetPlayer(src)
+    if not player then return end
+    return player.Functions.SetGang(name, grade)
+end
+
 
 ---@description This will toggle the duty status of the player.
 ---@param src number
@@ -473,8 +516,14 @@ RegisterNetEvent("QBCore:Server:OnPlayerLoaded", function(src)
     src = src or source
     TriggerEvent("community_bridge:Server:OnPlayerLoaded", src)
     local jobData = Framework.GetPlayerJobData(src)
-    if not jobData then return end
-    Framework.AddJobCount(src, jobData.jobName)
+    if jobData then
+        Framework.AddJobCount(src, jobData.jobName)
+    end
+    
+    local gangData = Framework.GetPlayerGangData(src)
+    if gangData then
+        Framework.AddGangCount(src, gangData.gangName)
+    end
 end)
 
 RegisterNetEvent("QBCore:Server:OnPlayerUnload", function(src)
@@ -486,6 +535,12 @@ RegisterNetEvent("QBCore:Server:OnJobUpdate", function(src, job)
     src = src or source
     if not job then return end
     TriggerEvent("community_bridge:Server:OnPlayerJobChange", src, job.name)
+end)
+
+RegisterNetEvent("QBCore:Server:OnGangUpdate", function(src, gang)
+    src = src or source
+    if not gang then return end
+    TriggerEvent("community_bridge:Server:OnPlayerGangChange", src, gang.name)
 end)
 
 AddEventHandler("playerDropped", function()

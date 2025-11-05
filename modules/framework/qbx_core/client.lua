@@ -37,6 +37,12 @@ Framework.GetFrameworkJobs = function()
     return QBox.GetJobs()
 end
 
+---@description This will return a table of all the gangs in the framework.
+---@return table
+Framework.GetFrameworkGangs = function()
+    return QBox.GetGangs()
+end
+
 ---@descriptionThis will get the players birth date
 ---@return string
 Framework.GetPlayerDob = function()
@@ -129,6 +135,22 @@ Framework.GetPlayerJobData = function()
     }
 end
 
+---@description This will return the players gang name, gang label, gang grade label gang grade level, boss status,
+---and duty status in a table
+---@return table
+Framework.GetPlayerGangData = function()
+    local playerData = Framework.GetPlayerData()
+    local gangData = playerData.gang
+    return {
+        gangName = gangData.name,
+        gangLabel = gangData.label,
+        gradeName = gangData.grade.name,
+        gradeLabel = gangData.grade.name,
+        gradeRank = gangData.grade.level,
+        boss = gangData.isboss,
+    }
+end
+
 ---@description This will return the players inventory as a table in the ox_inventory style flormat.
 ---@return table
 Framework.GetPlayerInventory = function()
@@ -204,6 +226,10 @@ end)
 
 RegisterNetEvent('QBCore:Client:OnJobUpdate', function(data)
     TriggerEvent('community_bridge:Client:OnPlayerJobUpdate', data.name, data.label, data.grade.name, data.grade.level)
+end)
+
+RegisterNetEvent('QBCore:Client:OnGangUpdate', function(data)
+    TriggerEvent('community_bridge:Client:OnPlayerGangUpdate', data.name, data.label, data.grade.name, data.grade.level)
 end)
 
 return Framework

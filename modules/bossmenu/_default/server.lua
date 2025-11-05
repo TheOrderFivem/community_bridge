@@ -11,4 +11,8 @@ BossMenu.OpenBossMenu = function(src, jobName, jobType)
     print("You are using the community_bridge module for boss menus. Please ensure you have the correct dependencies installed.")
 end
 
+BossMenu.OpenGangMenu = function(src, gangName)
+    print("You are using the community_bridge module for gang menus. Please ensure you have the correct dependencies installed.")
+end
+
 return BossMenu

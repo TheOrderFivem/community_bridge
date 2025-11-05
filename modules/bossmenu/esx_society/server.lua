@@ -18,4 +18,8 @@ BossMenu.OpenBossMenu = function(src, jobName, jobType)
     TriggerClientEvent("community_bridge:client:OpenBossMenu", src, jobName, jobType)
 end
 
+BossMenu.OpenGangMenu = function(src, gangName)
+    print("ESX Society does not support gangs natively. Please use a different boss menu module for gang support.")
+end
+
 return BossMenu

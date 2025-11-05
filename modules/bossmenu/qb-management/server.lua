@@ -14,4 +14,8 @@ BossMenu.OpenBossMenu = function(src, jobName, jobType)
     TriggerClientEvent("qb-bossmenu:client:OpenMenu", src)
 end
 
+BossMenu.OpenGangMenu = function(src, gangName)
+    TriggerClientEvent("qb-gangmenu:client:OpenMenu", src)
+end
+
 return BossMenu

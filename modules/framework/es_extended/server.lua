@@ -1,6 +1,10 @@
 ---@diagnostic disable: duplicate-set-field
 if GetResourceState('es_extended') ~= 'started' then return end
 
+-- Currently esx doesn't support gangs natively, so some functions will just print a message.
+-- Already in contact with other resource creators to add the important exports to retrieve gang data.
+-- Later on we can update this module to support third-party-based gang systems.
+
 Prints = Prints or Require("lib/utility/shared/prints.lua")
 Callback = Callback or Require("lib/callback/shared/callback.lua")
 
@@ -89,6 +93,13 @@ end
 --- @return table in the format "{name = jobName, label = jobLabel, grade = {name = gradeName, level = gradeLevel}}"
 Framework.GetFrameworkJobs = function()
     return ESX.GetJobs()
+end
+
+--- @description This will return the gangs registered in the framework in a table. Currently ESX Extended does not natively support gangs.
+--- @return table in the format "{name = gangName, label = gangLabel, grade = {name = gradeName, level = gradeLevel}}" or empty table
+Framework.GetFrameworkGangs = function()
+    print("ESX Extended does not natively support gangs. Please use a different framework module for gang support.")
+    return {}
 end
 
 --- @description This will return the first and last name of the player.
@@ -324,6 +335,15 @@ Framework.GetPlayerJobData = function(src)
     }
 end
 
+--- @description This will return the players gang name, gang label, gang grade label gang grade level,
+--- and boss status in a table or empty table. Currently ESX Extended does not natively support gangs.
+--- @param src number
+--- @return table | nil
+Framework.GetPlayerGangData = function(src)
+    print("ESX Extended does not natively support gangs. Please use a different framework module for gang support.")
+    return {}
+end
+
 --- @description This will return the players duty status, true if on duty false otherwise
 --- @param src number
 --- @return boolean return the players duty status
@@ -354,6 +374,14 @@ end
 Framework.GetPlayersByJob = function(job)
     return Framework.GetPlayerSourcesByJob(job) or {}
 end
+
+--- @description This will get a table of player sources that have the specified gang name
+--- @param gang string
+--- @return table
+Framework.GetPlayersByGang = function(gang)
+    return Framework.GetPlayerSourcesByGang(gang) or {}
+end
+
 
 --- @description This will set the player's job to the specified name and grade
 --- @param src number
