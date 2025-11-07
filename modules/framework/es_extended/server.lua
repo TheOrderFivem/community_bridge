@@ -315,6 +315,19 @@ Framework.GetPlayerJob = function(src)
     return job.name, job.label, job.grade_label, job.grade
 end
 
+-- Surely not a good idea to introduce a deprecated function but for consistency we will.
+
+---@deprecated This will return the gang name, label, grade name, and grade level of the player.
+---@param src number
+---@return string | nil
+---@return string | nil
+---@return string | nil
+---@return string | nil
+Framework.GetPlayerGang = function(src)
+    print("ESX Extended does not support gangs natively. Please use a different framework for gang support.")
+    return nil, nil, nil, nil
+end
+
 --- @description This will return the players job name, job label, job grade label job grade level,
 --- boss status, and duty status in a table
 --- @param src number
@@ -382,7 +395,6 @@ Framework.GetPlayersByGang = function(gang)
     return Framework.GetPlayerSourcesByGang(gang) or {}
 end
 
-
 --- @description This will set the player's job to the specified name and grade
 --- @param src number
 --- @param name string
@@ -397,6 +409,16 @@ Framework.SetPlayerJob = function(src, name, grade)
     end
     xPlayer.setJob(name, grade, true)
     return true
+end
+
+---@description Sets the player's gang to the specified name and grade.
+---@param src number
+---@param name string
+---@param grade string
+---@return nil
+Framework.SetPlayerGang = function(src, name, grade)
+    print("ESX Extended does not support gangs natively. Please use a different framework for gang support.")
+    return
 end
 
 --- @description This will add money based on the type of account (money/bank)
@@ -512,6 +534,8 @@ RegisterNetEvent("esx:setJob", function(src, job, lastJob)
     TriggerEvent("community_bridge:Server:OnPlayerJobChange", src, job.name)
 end)
 
+-- Since es_extended does not natively support gangs we cannot trigger a gang change event
+
 AddEventHandler("playerDropped", function()
     local src = source
     TriggerEvent("community_bridge:Server:OnPlayerUnload", src)
@@ -519,6 +543,10 @@ end)
 
 Callback.Register('community_bridge:Callback:GetFrameworkJobs', function(source)
     return Framework.GetFrameworkJobs() or {}
+end)
+
+Callback.Register('community_bridge:Callback:GetFrameworkGangs', function(source)
+    return Framework.GetFrameworkGangs() or {}
 end)
 
 -- This is linked to an internal function, its an attempt to standardize the item list across frameworks.

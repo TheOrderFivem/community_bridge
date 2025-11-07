@@ -354,16 +354,6 @@ Framework.GetPlayerPhone = function(src)
     return playerData.charinfo.phone
 end
 
----@description Returns the gang name of the player.
----@param src number
----@return string | nil
-Framework.GetPlayerGang = function(src)
-    local player = Framework.GetPlayer(src)
-    if not player then return end
-    local playerData = player.PlayerData
-    return playerData.gang.name
-end
-
 ---@description This will get a table of player sources that have the specified job name.
 ---@param job string
 ---@return table
@@ -390,6 +380,21 @@ Framework.GetPlayerJob = function(src)
     if not player then return end
     local playerData = player.PlayerData
     return playerData.job.name, playerData.job.label, playerData.job.grade.name, playerData.job.grade.level
+end
+
+-- Surely not a good idea to introduce a deprecated function but for consistency we will.
+
+---@deprecated Deprecated: Returns the gang name, label, grade name, and grade level of the player.
+---@param src number
+---@return string | string | string | number | nil
+---@return string | string | string | number | nil
+---@return string | string | string | number | nil
+---@return string | string | string | number | nil
+Framework.GetPlayerGang = function(src)
+    local player = Framework.GetPlayer(src)
+    if not player then return end
+    local playerData = player.PlayerData
+    return playerData.gang.name, playerData.gang.label, playerData.gang.grade.name, playerData.gang.grade.level
 end
 
 ---@description This will return the players job name, job label, job grade label job grade level, boss status,

@@ -22,8 +22,8 @@ Framework.GetFrameworkName = function()
     return 'es_extended'
 end
 
----This will get the name of the in use resource.
----@return string
+--- @description This will get the name of the in use resource.
+--- @return string
 Framework.GetResourceName = function()
     return 'es_extended'
 end
@@ -47,6 +47,13 @@ end
 Framework.GetFrameworkJobs = function()
     local jobs = Callback.Trigger('community_bridge:Callback:GetFrameworkJobs', false)
     return jobs
+end
+
+--- @description This will return a table of all the gangs in the framework.
+--- @return table
+Framework.GetFrameworkGangs = function()
+    print("ESX Extended does not support gangs natively. Please use a different framework for gang support.")
+    return {}
 end
 
 --- @description This will return the players birth date
@@ -88,7 +95,7 @@ Framework.HideHelpText = function()
 end
 
 --- @description This will get the players identifier (citizenid) etc.
----@return string
+--- @return string
 Framework.GetPlayerIdentifier = function()
     local playerData = Framework.GetPlayerData()
     return playerData.identifier
@@ -130,7 +137,14 @@ Framework.GetPlayerJobData = function()
     }
 end
 
---This is an internal function to get status data
+--- @description This will return the players gang name, gang label, gang grade label gang grade level, boss status, and duty status in a table
+--- @return table
+Framework.GetPlayerGangData = function()
+    print("ESX Extended does not support gangs natively. Please use a different framework for gang support.")
+    return {}
+end
+
+--- @description This is an internal function to get status data
 --- @param search string
 Framework.GetStatusData = function(search)
     local playerData = Framework.GetPlayerData()
@@ -144,15 +158,15 @@ Framework.GetStatusData = function(search)
     return 0
 end
 
----This will get the hunger of a player
----@return number
+--- @description This will get the hunger of a player
+--- @return number
 Framework.GetHunger = function()
     local status = Framework.GetStatusData("hunger")
     return math.floor((status) + 0.5) or 0
 end
 
----This will get the thirst of a player
----@return number
+--- @description This will get the thirst of a player
+--- @return number
 Framework.GetThirst = function()
     local status = Framework.GetStatusData("thirst")
     return math.floor((status) + 0.5) or 0
@@ -257,5 +271,7 @@ end)
 RegisterNetEvent('esx:setJob', function(data)
     TriggerEvent('community_bridge:Client:OnPlayerJobUpdate', data.name, data.label, data.grade_label, data.grade)
 end)
+
+-- Due to es_extended not having gangs natively we cannot trigger a gang update event
 
 return Framework
