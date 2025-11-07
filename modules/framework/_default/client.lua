@@ -40,8 +40,8 @@ end
 ---@param gangName string
 ---@return number
 Framework.GetGangCount = function(gangName)
-    if not currentJobCounts[gangName] then return 0 end
-    return currentJobCounts[gangName]
+    if not currentGangCounts[gangName] then return 0 end
+    return currentGangCounts[gangName]
 end
 
 ---@description This will allow passing a table of job names and returning a sum of the total count.
