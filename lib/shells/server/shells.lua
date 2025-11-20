@@ -24,7 +24,6 @@ end
 
 function Shells.New(data)
     local id = data.id or Ids.CreateUniqueId(Shells.All)
-    local _type = data.type or "none"
     local model = data.model
     local size = data.size or vector3(10.0, 10.0, 10.0) -- Default size if not provided
     local coords = data.coords or vector3(0.0, 0.0, 0.0) -- Default coordinates if not provided
@@ -303,7 +302,6 @@ RegisterCommand('shells:create', function(source, args, rawCommand)
     end
     testShell = Shells.Create({
         id = Ids.CreateUniqueId(Shells.All),
-        type = "shell",
         model = "shell_garagem",
         coords = coords + vector3(0.0, 0.0, 100.0), -- Adjusted to place shell slightly below player
         rotation = vector3(0.0, 0.0, 0.0),
