@@ -88,7 +88,45 @@ end
 --- @description This will return the jobs registered in the framework in a table.
 --- @return table in the format "{name = jobName, label = jobLabel, grade = {name = gradeName, level = gradeLevel}}"
 Framework.GetFrameworkJobs = function()
-    return ESX.GetJobs()
+    local jobs = {}
+    for k, v in pairs(ESX.GetJobs() or {}) do
+        local data = {
+            name = k,
+            label = v.label,
+            grades = {}
+        }
+        for gradeNum, gradeData in pairs(v.grades) do
+            data.grades[gradeNum] = {
+                name = gradeData.name,
+                label = gradeData.label,
+                level = tonumber(gradeNum),
+            }
+        end
+        table.insert(jobs, data)
+    end
+    return jobs
+end
+
+--- @description This will return the gangs registered in the framework in a table. Currently ESX Extended does not natively support gangs.
+--- @return table in the format "{name = gangName, label = gangLabel, grade = {name = gradeName, level = gradeLevel}}" or empty table
+Framework.GetFrameworkGangs = function()
+    print("ESX Extended does not natively support gangs. Please use a different framework module for gang support.")
+    return {}
+end
+
+Framework.GetPlayerGang = function(src)
+    print("ESX Extended does not natively support gangs. Please use a different framework module for gang support.")
+    return nil
+end
+
+Framework.GetPlayerGangData = function(src)
+    print("ESX Extended does not natively support gangs. Please use a different framework module for gang support.")
+    return {}
+end
+
+Framework.SetPlayerGang = function(src, name, grade)
+    print("ESX Extended does not natively support gangs. Please use a different framework module for gang support.")
+    return false
 end
 
 --- @description This will return the first and last name of the player.
@@ -314,13 +352,18 @@ Framework.GetPlayerJobData = function(src)
     local job = xPlayer.getJob()
     local isBoss = (job.grade_name == "boss")
     return {
+        name = job.name,
+        label = job.label,
+        isBoss = isBoss,
+        onDuty = job.onduty,
+        grade = {name = job.grade_name, label = job.grade_label, level = job.grade},
+        --depricated [2025-11-20]
         jobName = job.name,
         jobLabel = job.label,
         gradeName = job.grade_name,
         gradeLabel = job.grade_label,
         gradeRank = job.grade,
         boss = isBoss,
-        onDuty = job.onduty,
     }
 end
 

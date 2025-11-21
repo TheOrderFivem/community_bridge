@@ -47,7 +47,45 @@ end
 ---@description Returns a table of the jobs in the framework.
 ---@return table
 Framework.GetFrameworkJobs = function()
-    return QBox.GetJobs()
+    local jobs = {}
+    for k, v in pairs(QBox.GetJobs()) do
+        local data = {
+            name = k,
+            label = v.label,
+            grades = {}
+        }
+        for gradeNum, gradeData in pairs(v.grades) do
+            data.grades[gradeNum] = {
+                name = gradeData.name,
+                label = gradeData.name,
+                level = tonumber(gradeNum),
+            }
+        end
+        table.insert(jobs, data)
+    end
+    return jobs
+end
+
+---@description Returns a table of the gangs in the framework.
+---@return table
+Framework.GetFrameworkGangs = function()
+    local gangs = {}
+    for k, v in pairs(QBox.GetGangs()) do
+        local data = {
+            name = k,
+            label = v.label,
+            grades = {}
+        }
+        for gradeNum, gradeData in pairs(v.grades) do
+            data.grades[gradeNum] = {
+                name = gradeData.name,
+                label = gradeData.name,
+                level = tonumber(gradeNum),
+            }
+        end
+        table.insert(gangs, data)
+    end
+    return gangs
 end
 
 ---@description Returns the citizen ID of the player.
@@ -283,13 +321,6 @@ Framework.GetPlayerPhone = function(src)
     return playerData.charinfo.phone
 end
 
----@description Returns the gang name of the player.
----@param src number
----@return string | nil
-Framework.GetPlayerGang = function(src)
-    local player = Framework.GetPlayer(src).PlayerData
-    return player.gang.name
-end
 
 ---@description This will get a table of player sources that have the specified job name.
 ---@param job string
@@ -311,6 +342,17 @@ Framework.GetPlayerJob = function(src)
     return playerData.job.name, playerData.job.label, playerData.job.grade.name, playerData.job.grade.level
 end
 
+---@Deprecated Deprecated: Returns the gang name of the player.
+---@param src number
+---@return string | string | string | number | nil
+---@return string | string | string | number | nil
+---@return string | string | string | number | nil
+---@return string | string | string | number | nil
+Framework.GetPlayerGang = function(src)
+    local player = Framework.GetPlayer(src).PlayerData
+    return player.gang.name
+end
+
 ---@description This will return the players job name, job label, job grade label job grade level, boss status, and duty status in a table
 ---@param src number
 ---@return table | nil
@@ -320,14 +362,42 @@ Framework.GetPlayerJobData = function(src)
     local playerData = player.PlayerData
     local jobData = playerData.job
     return {
+        name = jobData.name,
+        label = jobData.label,
+        isBoss = jobData.isboss,
+        onDuty = jobData.onduty,
+        grade = {name = jobData.grade.name, label = jobData.grade.name, level = jobData.grade.level},
+        --depricated [2025-11-20]
         jobName = jobData.name,
         jobLabel = jobData.label,
         gradeName = jobData.grade.name,
         gradeLabel = jobData.grade.name,
         gradeRank = jobData.grade.level,
         boss = jobData.isboss,
-        onDuty = jobData.onduty,
     }
+end
+
+---@description This will return the players gang name, gang label, gang grade label gang grade level, and boss status in a table
+---@param src number
+---@return table | nil
+Framework.GetPlayerGangData = function(src)
+    local player = Framework.GetPlayer(src)
+    if not player then return end
+    local playerData = player.PlayerData
+    local gangData = playerData.gang
+    return {
+        name = gangData.name,
+        label = gangData.label,
+        grade = {name = gangData.grade.name, label = gangData.grade.name, level = gangData.grade.level},
+        isBoss = gangData.isboss,
+    }
+end
+
+Framework.SetPlayerGang = function(src, name, grade)
+    assert(src, "No source provided to SetPlayerGang")
+    assert(name, "No gang name provided to SetPlayerGang")
+    assert(grade, "No gang grade provided to SetPlayerGang")
+    return QBox:SetGang(src, name, grade)
 end
 
 ---@description Sets the player's job to the specified name and grade.

@@ -49,6 +49,23 @@ Framework.GetFrameworkJobs = function()
     return jobs
 end
 
+--- @description This will return the gangs registered in the framework in a table. Currently ESX Extended does not natively support gangs.
+--- @return table in the format "{name = gangName, label = gangLabel, grade = {name = gradeName, level = gradeLevel}}" or empty table
+Framework.GetFrameworkGangs = function()
+    print("ESX Extended does not natively support gangs. Please use a different framework module for gang support.")
+    return {}
+end
+
+Framework.GetPlayerGang = function(src)
+    print("ESX Extended does not natively support gangs. Please use a different framework module for gang support.")
+    return nil
+end
+
+Framework.GetPlayerGangData = function(src)
+    print("ESX Extended does not natively support gangs. Please use a different framework module for gang support.")
+    return {}
+end
+
 --- @description This will return the players birth date
 --- @return string
 Framework.GetPlayerDob = function()
@@ -120,13 +137,18 @@ Framework.GetPlayerJobData = function()
     local jobData = playerData.job
     local isBoss = (jobData.grade_name == "boss")
     return {
+        name = jobData.name,
+        label = jobData.label,
+        isBoss = isBoss,
+        onDuty = jobData.onduty,
+        grade = {name = jobData.grade_name, label = jobData.grade_label, level = jobData.grade},
+        --depricated [2025-11-20]
         jobName = jobData.name,
         jobLabel = jobData.label,
         gradeName = jobData.grade_name,
         gradeLabel = jobData.grade_label,
         gradeRank = jobData.grade,
         boss = isBoss,
-        onDuty = jobData.onduty,
     }
 end
 

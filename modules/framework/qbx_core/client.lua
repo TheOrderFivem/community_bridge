@@ -34,7 +34,46 @@ end
 ---@description This will return a table of all the jobs in the framework.
 ---@return table
 Framework.GetFrameworkJobs = function()
-    return QBox.GetJobs()
+    local jobs = {}
+    for k, v in pairs(QBox.GetJobs()) do
+        local data = {
+            name = k,
+            label = v.label,
+            grades = {}
+        }
+        for gradeNum, gradeData in pairs(v.grades) do
+            data.grades[gradeNum] = {
+                name = gradeData.name,
+                label = gradeData.name,
+                level = tonumber(gradeNum),
+            }
+        end
+        table.insert(jobs, data)
+    end
+
+    return jobs
+end
+
+---@description This will return a table of all the gangs in the framework.
+---@return table
+Framework.GetFrameworkGangs = function()
+    local gangs = {}
+    for k, v in pairs(QBox.GetGangs()) do
+        local data = {
+            name = k,
+            label = v.label,
+            grades = {}
+        }
+        for gradeNum, gradeData in pairs(v.grades) do
+            data.grades[gradeNum] = {
+                name = gradeData.name,
+                label = gradeData.name,
+                level = tonumber(gradeNum),
+            }
+        end
+        table.insert(gangs, data)
+    end
+    return gangs
 end
 
 ---@descriptionThis will get the players birth date
@@ -119,13 +158,32 @@ Framework.GetPlayerJobData = function()
     local playerData = Framework.GetPlayerData()
     local jobData = playerData.job
     return {
+        name = jobData.name,
+        label = jobData.label,
+        isBoss = jobData.isboss,
+        onDuty = jobData.onduty,
+        grade = {name = jobData.grade.name, label = jobData.grade.name, level = jobData.grade.level},
+        --depricated [2025-11-20]
         jobName = jobData.name,
         jobLabel = jobData.label,
         gradeName = jobData.grade.name,
         gradeLabel = jobData.grade.name,
         gradeRank = jobData.grade.level,
         boss = jobData.isboss,
-        onDuty = jobData.onduty,
+    }
+end
+
+---@description This will return the players gang name, gang label, gang grade label gang grade level, boss status,
+---and duty status in a table
+---@return table
+Framework.GetPlayerGangData = function()
+    local playerData = Framework.GetPlayerData()
+    local gangData = playerData.gang
+    return {
+        name = gangData.name,
+        label = gangData.label,
+        grade = {name = gangData.grade.name, label = gangData.grade.name, level = gangData.grade.level},
+        isBoss = gangData.isboss,
     }
 end
 

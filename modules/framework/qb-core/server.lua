@@ -52,13 +52,43 @@ end
 Framework.GetFrameworkJobs = function()
     local jobs = {}
     for k, v in pairs(QBCore.Shared.Jobs) do
-        table.insert(jobs, {
+       local data = {
             name = k,
             label = v.label,
-            grade = v.grades
-        })
+            grades = {}
+        }
+        for gradeNum, gradeData in pairs(v.grades) do
+            data.grades[gradeNum] = {
+                name = gradeData.name,
+                label = gradeData.name,
+                level = tonumber(gradeNum),
+            }
+        end
+        table.insert(jobs, data)
     end
     return jobs
+end
+
+---@description This will return the gangs registered in the framework in a table.
+---@return table {name = gangName, label = gangLabel, grade = {name = gradeName, level = gradeLevel}}
+Framework.GetFrameworkGangs = function()
+    local gangs = {}
+    for k, v in pairs(QBCore.Shared.Gangs) do
+        local data = {
+            name = k,
+            label = v.label,
+            grades = {}
+        }
+        for gradeNum, gradeData in pairs(v.grades) do
+            data.grades[gradeNum] = {
+                name = gradeData.name,
+                label = gradeData.name,
+                level = tonumber(gradeNum),
+            }
+        end
+        table.insert(gangs, data)
+    end
+    return gangs
 end
 
 ---@description Returns the first and last name of the player.
@@ -380,15 +410,46 @@ Framework.GetPlayerJobData = function(src)
     local playerData = player.PlayerData
     local jobData = playerData.job
     return {
+        name = jobData.name,
+        label = jobData.label,
+        isBoss = jobData.isboss,
+        onDuty = jobData.onduty,
+        grade = {name = jobData.grade.name, label = jobData.grade.name, level = jobData.grade.level},
+        --depricated [2025-11-20]
         jobName = jobData.name,
         jobLabel = jobData.label,
         gradeName = jobData.grade.name,
         gradeLabel = jobData.grade.name,
         gradeRank = jobData.grade.level,
         boss = jobData.isboss,
-        onDuty = jobData.onduty,
     }
 end
+
+---@description This will return the players gang name, gang label, gang grade label gang grade level, boss status, and duty status in a table
+---@param src number
+---@return table | nil
+Framework.GetPlayerGangData = function(src)
+    local player = Framework.GetPlayer(src)
+    if not player then return end
+    local playerData = player.PlayerData
+    local gangData = playerData.gang
+    return {
+        name = gangData.name,
+        label = gangData.label,
+        grade = {name = gangData.grade.name, label = gangData.grade.name, level = gangData.grade.level},
+        isBoss = gangData.isboss,
+    }
+end
+
+Framework.SetPlayerGang = function(src, name, grade)
+    assert(src, "No source provided to SetPlayerGang")
+    assert(name, "No gang name provided to SetPlayerGang")
+    assert(grade, "No gang grade provided to SetPlayerGang")
+    local player = Framework.GetPlayer(src)
+    if not player then return end
+    return player.Functions.SetGang(name, grade)
+end
+
 
 ---@description Returns the players duty status.
 ---@param src number
