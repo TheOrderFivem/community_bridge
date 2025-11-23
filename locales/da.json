@@ -35,6 +35,14 @@
 		"object_cancel": "[%s] Annuller  \n",
 		"object_scroll_up": "[%s] Drej til højre  \n",
 		"object_scroll_down": "[%s] Drej til venstre  \n",
-		"depth_modifier": "[%s] Dybde kontrol modifier  \n"
+		"rotate_clockwise": "[%s] Roter med uret  \n",
+		"rotate_counter_clockwise": "[%s] Roter mod uret  \n",
+		"depth_modifier": "[%s] Dybde kontrol modifier  \n",
+		"toggle_vertical": "[%s] Skift vertikal placering  \n"
+	},
+	"target": {
+		"interact": "[E] Interager",
+		"title": "Muligheder",
+		"description": "Ingen beskrivelse"
 	}
 }

@@ -35,6 +35,14 @@
 		"object_cancel": "[%s] Abbrechen  \n",
 		"object_scroll_up": "[%s] Nach rechts drehen  \n",
 		"object_scroll_down": "[%s] Nach links drehen  \n",
-		"depth_modifier": "[%s] Tiefenkontrolle Modifikator  \n"
+		"rotate_clockwise": "[%s] Im Uhrzeigersinn drehen  \n",
+		"rotate_counter_clockwise": "[%s] Gegen den Uhrzeigersinn drehen  \n",
+		"depth_modifier": "[%s] Tiefenkontrolle Modifikator  \n",
+		"toggle_vertical": "[%s] Vertikale Platzierung umschalten  \n"
+	},
+	"target": {
+		"interact": "[E] Interagieren",
+		"title": "Optionen",
+		"description": "Keine Beschreibung"
 	}
 }

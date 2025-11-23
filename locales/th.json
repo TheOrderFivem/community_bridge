@@ -35,6 +35,14 @@
 		"object_cancel": "[%s] ยกเลิก  \n",
 		"object_scroll_up": "[%s] หมุนไปทางขวา  \n",
 		"object_scroll_down": "[%s] หมุนไปทางซ้าย  \n",
-		"depth_modifier": "[%s] ตัวปรับเปลี่ยนการควบคุมความลึก  \n"
+		"rotate_clockwise": "[%s] หมุนตามเข็มนาฬิกา  \n",
+		"rotate_counter_clockwise": "[%s] หมุนทวนเข็มนาฬิกา  \n",
+		"depth_modifier": "[%s] ตัวปรับเปลี่ยนการควบคุมความลึก  \n",
+		"toggle_vertical": "[%s] สลับการวางแนวตั้ง  \n"
+	},
+	"target": {
+		"interact": "[E] โต้ตอบ",
+		"title": "ตัวเลือก",
+		"description": "ไม่มีคำอธิบาย"
 	}
 }

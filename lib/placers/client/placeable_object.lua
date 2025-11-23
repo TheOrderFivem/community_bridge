@@ -129,7 +129,6 @@ RegisterCommand('-depth_modifier', function()
 end, false)
 
 RegisterCommand('+toggle_vertical', function()
-    print("toggle vertical pressed")
     if not state.settings.allowVertical then return end
     if state.snapToGround then return end
     state.verticle = true

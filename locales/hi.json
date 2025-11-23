@@ -35,6 +35,14 @@
 		"object_cancel": "[%s] रद्द करें  \n",
 		"object_scroll_up": "[%s] दाएं मुड़ें  \n",
 		"object_scroll_down": "[%s] बाएं मुड़ें  \n",
-		"depth_modifier": "[%s] गहराई नियंत्रण संशोधक  \n"
+		"rotate_clockwise": "[%s] घड़ी की दिशा में घुमाएं  \n",
+		"rotate_counter_clockwise": "[%s] घड़ी की विपरीत दिशा में घुमाएं  \n",
+		"depth_modifier": "[%s] गहराई नियंत्रण संशोधक  \n",
+		"toggle_vertical": "[%s] ऊर्ध्वाधर प्लेसमेंट टॉगल करें  \n"
+	},
+	"target": {
+		"interact": "[E] बातचीत करें",
+		"title": "विकल्प",
+		"description": "कोई विवरण नहीं"
 	}
 }

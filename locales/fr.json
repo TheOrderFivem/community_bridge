@@ -35,6 +35,14 @@
 		"object_cancel": "[%s] Annuler  \n",
 		"object_scroll_up": "[%s] Tourner à droite  \n",
 		"object_scroll_down": "[%s] Tourner à gauche  \n",
-		"depth_modifier": "[%s] Modificateur de contrôle de profondeur  \n"
+		"rotate_clockwise": "[%s] Pivoter dans le sens horaire  \n",
+		"rotate_counter_clockwise": "[%s] Pivoter dans le sens antihoraire  \n",
+		"depth_modifier": "[%s] Modificateur de contrôle de profondeur  \n",
+		"toggle_vertical": "[%s] Basculer le placement vertical  \n"
+	},
+	"target": {
+		"interact": "[E] Interagir",
+		"title": "Options",
+		"description": "Aucune description"
 	}
 }

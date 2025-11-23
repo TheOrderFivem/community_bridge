@@ -35,6 +35,14 @@
 		"object_cancel": "[%s] İptal  \n",
 		"object_scroll_up": "[%s] Sağa döndür  \n",
 		"object_scroll_down": "[%s] Sola döndür  \n",
-		"depth_modifier": "[%s] Derinlik kontrol düzenleyicisi  \n"
+		"rotate_clockwise": "[%s] Saat yönünde döndür  \n",
+		"rotate_counter_clockwise": "[%s] Saat yönünün tersine döndür  \n",
+		"depth_modifier": "[%s] Derinlik kontrol düzenleyicisi  \n",
+		"toggle_vertical": "[%s] Dikey yerleştirmeyi değiştir  \n"
+	},
+	"target": {
+		"interact": "[E] Etkileşim",
+		"title": "Seçenekler",
+		"description": "Açıklama yok"
 	}
 }

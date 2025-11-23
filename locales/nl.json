@@ -35,6 +35,14 @@
 		"object_cancel": "[%s] Annuleren  \n",
 		"object_scroll_up": "[%s] Rechtsom draaien  \n",
 		"object_scroll_down": "[%s] Linksom draaien  \n",
-		"depth_modifier": "[%s] Diepte controle modifier  \n"
+		"rotate_clockwise": "[%s] Met de klok mee draaien  \n",
+		"rotate_counter_clockwise": "[%s] Tegen de klok in draaien  \n",
+		"depth_modifier": "[%s] Diepte controle modifier  \n",
+		"toggle_vertical": "[%s] Verticale plaatsing wisselen  \n"
+	},
+	"target": {
+		"interact": "[E] Interactie",
+		"title": "Opties",
+		"description": "Geen beschrijving"
 	}
 }

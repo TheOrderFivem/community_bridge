@@ -35,6 +35,14 @@
 		"object_cancel": "[%s] Ακύρωση  \n",
 		"object_scroll_up": "[%s] Περιστροφή δεξιά  \n",
 		"object_scroll_down": "[%s] Περιστροφή αριστερά  \n",
-		"depth_modifier": "[%s] Τροποποιητής ελέγχου βάθους  \n"
+		"rotate_clockwise": "[%s] Περιστροφή δεξιόστροφα  \n",
+		"rotate_counter_clockwise": "[%s] Περιστροφή αριστερόστροφα  \n",
+		"depth_modifier": "[%s] Τροποποιητής ελέγχου βάθους  \n",
+		"toggle_vertical": "[%s] Εναλλαγή κάθετης τοποθέτησης  \n"
+	},
+	"target": {
+		"interact": "[E] Αλληλεπίδραση",
+		"title": "Επιλογές",
+		"description": "Χωρίς περιγραφή"
 	}
 }

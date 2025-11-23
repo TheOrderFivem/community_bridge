@@ -35,6 +35,14 @@
 		"object_cancel": "[%s] Annulla  \n",
 		"object_scroll_up": "[%s] Ruota a destra  \n",
 		"object_scroll_down": "[%s] Ruota a sinistra  \n",
-		"depth_modifier": "[%s] Modificatore controllo profondità  \n"
+		"rotate_clockwise": "[%s] Ruota in senso orario  \n",
+		"rotate_counter_clockwise": "[%s] Ruota in senso antiorario  \n",
+		"depth_modifier": "[%s] Modificatore controllo profondità  \n",
+		"toggle_vertical": "[%s] Attiva posizionamento verticale  \n"
+	},
+	"target": {
+		"interact": "[E] Interagire",
+		"title": "Opzioni",
+		"description": "Nessuna descrizione"
 	}
 }

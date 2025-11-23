@@ -35,6 +35,14 @@
 		"object_cancel": "[%s] Otkažи  \n",
 		"object_scroll_up": "[%s] Okreni desno  \n",
 		"object_scroll_down": "[%s] Okreni lijevo  \n",
-		"depth_modifier": "[%s] Modifikator kontrole dubine  \n"
+		"rotate_clockwise": "[%s] Rotiraj u smjeru kazaljke na satu  \n",
+		"rotate_counter_clockwise": "[%s] Rotiraj suprotno od kazaljke na satu  \n",
+		"depth_modifier": "[%s] Modifikator kontrole dubine  \n",
+		"toggle_vertical": "[%s] Uključi/isključi vertikalno postavljanje  \n"
+	},
+	"target": {
+		"interact": "[E] Interakcija",
+		"title": "Opcije",
+		"description": "Bez opisa"
 	}
 }

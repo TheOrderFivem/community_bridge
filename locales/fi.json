@@ -35,6 +35,14 @@
 		"object_cancel": "[%s] Peruuta  \n",
 		"object_scroll_up": "[%s] Käännä oikealle  \n",
 		"object_scroll_down": "[%s] Käännä vasemmalle  \n",
-		"depth_modifier": "[%s] Syvyyshallinnan muokkaaja  \n"
+		"rotate_clockwise": "[%s] Kierrä myötäpäivään  \n",
+		"rotate_counter_clockwise": "[%s] Kierrä vastapäivään  \n",
+		"depth_modifier": "[%s] Syvyyshallinnan muokkaaja  \n",
+		"toggle_vertical": "[%s] Vaihda pystysuora sijoitus  \n"
+	},
+	"target": {
+		"interact": "[E] Vuorovaikuta",
+		"title": "Vaihtoehdot",
+		"description": "Ei kuvausta"
 	}
 }

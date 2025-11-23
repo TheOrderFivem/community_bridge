@@ -35,6 +35,14 @@
 		"object_cancel": "[%s] 取消  \n",
 		"object_scroll_up": "[%s] 向右转  \n",
 		"object_scroll_down": "[%s] 向左转  \n",
-		"depth_modifier": "[%s] 深度控制修改器  \n"
+		"rotate_clockwise": "[%s] 顺时针旋转  \n",
+		"rotate_counter_clockwise": "[%s] 逆时针旋转  \n",
+		"depth_modifier": "[%s] 深度控制修改器  \n",
+		"toggle_vertical": "[%s] 切换垂直放置  \n"
+	},
+	"target": {
+		"interact": "[E] 互动",
+		"title": "选项",
+		"description": "无描述"
 	}
 }

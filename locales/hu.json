@@ -35,6 +35,14 @@
 		"object_cancel": "[%s] Mégse  \n",
 		"object_scroll_up": "[%s] Jobbra fordítás  \n",
 		"object_scroll_down": "[%s] Balra fordítás  \n",
-		"depth_modifier": "[%s] Mélység vezérlő módosító  \n"
+		"rotate_clockwise": "[%s] Forgatás óramutató járásával  \n",
+		"rotate_counter_clockwise": "[%s] Forgatás óramutató járásával szemben  \n",
+		"depth_modifier": "[%s] Mélység vezérlő módosító  \n",
+		"toggle_vertical": "[%s] Függőleges elhelyezés váltása  \n"
+	},
+	"target": {
+		"interact": "[E] Interakció",
+		"title": "Lehetőségek",
+		"description": "Nincs leírás"
 	}
 }

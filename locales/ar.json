@@ -35,6 +35,14 @@
 		"object_cancel": "[%s] إلغاء  \n",
 		"object_scroll_up": "[%s] استدارة يمين  \n",
 		"object_scroll_down": "[%s] استدارة يسار  \n",
-		"depth_modifier": "[%s] تعديل التحكم بالعمق  \n"
+		"rotate_clockwise": "[%s] دوران مع عقارب الساعة  \n",
+		"rotate_counter_clockwise": "[%s] دوران عكس عقارب الساعة  \n",
+		"depth_modifier": "[%s] تعديل التحكم بالعمق  \n",
+		"toggle_vertical": "[%s] تبديل الوضع العمودي  \n"
+	},
+	"target": {
+		"interact": "[E] تفاعل",
+		"title": "خيارات",
+		"description": "لا يوجد وصف"
 	}
 }

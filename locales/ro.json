@@ -35,6 +35,14 @@
 		"object_cancel": "[%s] Anulează  \n",
 		"object_scroll_up": "[%s] Rotește la dreapta  \n",
 		"object_scroll_down": "[%s] Rotește la stânga  \n",
-		"depth_modifier": "[%s] Modificator control adâncime  \n"
+		"rotate_clockwise": "[%s] Rotește în sens orar  \n",
+		"rotate_counter_clockwise": "[%s] Rotește în sens antiorar  \n",
+		"depth_modifier": "[%s] Modificator control adâncime  \n",
+		"toggle_vertical": "[%s] Comută plasarea verticală  \n"
+	},
+	"target": {
+		"interact": "[E] Interacționează",
+		"title": "Opțiuni",
+		"description": "Fără descriere"
 	}
 }

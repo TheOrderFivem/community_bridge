@@ -35,6 +35,12 @@
 		"object_cancel": "[%s] Atšaukti  \n",
 		"rotate_clockwise": "[%s] Sukti pagal laikrodžio rodyklę  \n",
 		"rotate_counter_clockwise": "[%s] Sukti prieš laikrodžio rodyklę  \n",
-		"depth_modifier": "[%s] Gylio kontrolės modifikatorius  \n"
+		"depth_modifier": "[%s] Gylio kontrolės modifikatorius  \n",
+		"toggle_vertical": "[%s] Perjungti vertikalų padėjimą  \n"
+	},
+	"target": {
+		"interact": "[E] Sąveikauti",
+		"title": "Parinktys",
+		"description": "Nėra aprašymo"
 	}
 }

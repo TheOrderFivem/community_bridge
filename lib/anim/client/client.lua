@@ -44,8 +44,7 @@ function Anim.Start()
                         local entity = animData.entity
                         local onComplete = animData.onComplete
                         if not DoesEntityExist(entity) then
-                            if onComplete then onComplete(false, "despawned") end
-                            Anim.Active[id] = nil
+                            Anim.Stop(id)
                         elseif animData.status == "pending_task" then
                             TaskPlayAnim(entity, animData.animDict, animData.animName, animData.blendIn, animData.blendOut, animData.duration, animData.flag, animData.playbackRate, false, false, false)
                             animData.startTime = GetGameTimer()
@@ -88,10 +87,7 @@ end
 function Anim.Play(id, entity, animDict, animName, blendIn, blendOut, duration, flag, playbackRate, onComplete)
     local newId = id or Ids.CreateUniqueId(Anim.Active)
     if Anim.Active[newId] then
-        if onComplete then
-            onComplete(false, "id_in_use")
-        end
-        return newId
+        Anim.Stop(id)
     end
 
     if not entity or not DoesEntityExist(entity) or not IsEntityAPed(entity) then
@@ -100,14 +96,12 @@ function Anim.Play(id, entity, animDict, animName, blendIn, blendOut, duration, 
         end
         return nil
     end
-
     if not Anim.RequestDict(animDict) then
         if onComplete then
             onComplete(false, "dict_load_failed")
         end
         return nil
     end
-
     Anim.Active[newId] = {
         entity = entity,
         animDict = animDict,
@@ -141,7 +135,7 @@ function Anim.Stop(id)
     end
 
     if animData.onComplete then
-        animData.onComplete(false, "stopped_by_id")
+        pcall(animData.onComplete, false, "stopped_by_id")
     end
 
     Anim.Active[id] = nil

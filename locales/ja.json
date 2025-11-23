@@ -35,6 +35,14 @@
 		"object_cancel": "[%s] キャンセル  \n",
 		"object_scroll_up": "[%s] 右回転  \n",
 		"object_scroll_down": "[%s] 左回転  \n",
-		"depth_modifier": "[%s] 深度制御修飾子  \n"
+		"rotate_clockwise": "[%s] 時計回りに回転  \n",
+		"rotate_counter_clockwise": "[%s] 反時計回りに回転  \n",
+		"depth_modifier": "[%s] 深度制御修飾子  \n",
+		"toggle_vertical": "[%s] 垂直配置の切り替え  \n"
+	},
+	"target": {
+		"interact": "[E] 相互作用",
+		"title": "オプション",
+		"description": "説明なし"
 	}
 }

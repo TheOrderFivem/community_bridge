@@ -35,6 +35,14 @@
 		"object_cancel": "[%s] Avbryt  \n",
 		"object_scroll_up": "[%s] Snu til høyre  \n",
 		"object_scroll_down": "[%s] Snu til venstre  \n",
-		"depth_modifier": "[%s] Dybdekontroll modifikator  \n"
+		"rotate_clockwise": "[%s] Roter med klokken  \n",
+		"rotate_counter_clockwise": "[%s] Roter mot klokken  \n",
+		"depth_modifier": "[%s] Dybdekontroll modifikator  \n",
+		"toggle_vertical": "[%s] Bytt vertikal plassering  \n"
+	},
+	"target": {
+		"interact": "[E] Samhandle",
+		"title": "Alternativer",
+		"description": "Ingen beskrivelse"
 	}
 }

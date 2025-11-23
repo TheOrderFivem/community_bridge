@@ -35,6 +35,14 @@
 		"object_cancel": "[%s] Zrušit  \n",
 		"object_scroll_up": "[%s] Otočit doprava  \n",
 		"object_scroll_down": "[%s] Otočit doleva  \n",
-		"depth_modifier": "[%s] Modifikátor kontroly hloubky  \n"
+		"rotate_clockwise": "[%s] Otočit po směru hodinových ručiček  \n",
+		"rotate_counter_clockwise": "[%s] Otočit proti směru hodinových ručiček  \n",
+		"depth_modifier": "[%s] Modifikátor kontroly hloubky  \n",
+		"toggle_vertical": "[%s] Přepnout vertikální umístění  \n"
+	},
+	"target": {
+		"interact": "[E] Interakce",
+		"title": "Možnosti",
+		"description": "Žádný popis"
 	}
 }

@@ -35,6 +35,14 @@
 		"object_cancel": "[%s] Abandon Ship!  \n",
 		"object_scroll_up": "[%s] Turn starboard  \n",
 		"object_scroll_down": "[%s] Turn port  \n",
-		"depth_modifier": "[%s] Depth Control, savvy?  \n"
+		"rotate_clockwise": "[%s] Spin starboard, ye scallywag  \n",
+		"rotate_counter_clockwise": "[%s] Spin port, matey  \n",
+		"depth_modifier": "[%s] Depth Control, savvy?  \n",
+		"toggle_vertical": "[%s] Toggle Vertical Plunderin'  \n"
+	},
+	"target": {
+		"interact": "[E] Parley",
+		"title": "Choices, arrr!",
+		"description": "No words to tell"
 	}
 }

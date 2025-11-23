@@ -35,6 +35,14 @@
 		"object_cancel": "[%s] 취소  \n",
 		"object_scroll_up": "[%s] 오른쪽으로 회전  \n",
 		"object_scroll_down": "[%s] 왼쪽으로 회전  \n",
-		"depth_modifier": "[%s] 깊이 제어 수정자  \n"
+		"rotate_clockwise": "[%s] 시계 방향으로 회전  \n",
+		"rotate_counter_clockwise": "[%s] 시계 반대 방향으로 회전  \n",
+		"depth_modifier": "[%s] 깊이 제어 수정자  \n",
+		"toggle_vertical": "[%s] 수직 배치 전환  \n"
+	},
+	"target": {
+		"interact": "[E] 상호작용",
+		"title": "옵션",
+		"description": "설명 없음"
 	}
 }
