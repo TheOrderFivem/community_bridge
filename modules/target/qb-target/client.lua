@@ -177,12 +177,12 @@ end
 Target.AddBoxZone = function(name, coords, size, heading, options, debug)
     options = Target.FixOptions(options)
     if not next(options) then return end
-    qb_target:AddBoxZone(name, coords, size.x, size.y, {
+    qb_target:AddBoxZone(name, coords, size[1], size[2], {
         name = name,
         debugPoly = debug or targetDebug,
         heading = heading,
-        minZ = coords.z - (size.z * 0.5),
-        maxZ = coords.z + (size.z * 0.5),
+        minZ = coords.z - (size[3] * 0.5),
+        maxZ = coords.z + (size[3] * 0.5),
     }, {
         options = options,
         distance = GetLargestDistance(options),
