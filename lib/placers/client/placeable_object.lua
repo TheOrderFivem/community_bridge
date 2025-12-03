@@ -335,14 +335,6 @@ local function handleNormalMode()
         end
     end
 
-    -- Height controls (only if vertical movement allowed and not snapped to ground)
-    -- if state.settings.allowVertical and not state.snapToGround then
-    --     if IsControlPressed(0, 16) then -- Q
-    --         state.height = state.height + (state.settings.heightStep or 0.5)
-    --     elseif IsControlPressed(0, 17) then -- E
-    --         state.height = state.height - (state.settings.heightStep or 0.5)
-    --     end
-    -- end
     -- Toggle ground snap
     if state.settings.allowVertical and IsControlJustPressed(0, 19) then -- Alt
         state.snapToGround = not state.snapToGround
