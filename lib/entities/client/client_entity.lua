@@ -236,11 +236,26 @@ function ClientEntity.ChangeModel(id, model)
     local entityData = Entities[id]
     if not entityData then return print(string.format("[ClientEntity] ChangeModel: Entity %s does not exist", id)) end
 
-    entityData.model = model
-    if not entityData.spawned or not DoesEntityExist(entityData.spawned) then return end
-
-    RemoveEntity(entityData)
-    SpawnEntity(entityData)
+    if not entityData.spawned or not DoesEntityExist(entityData.spawned) then 
+        entityData.model = model
+        return 
+    end
+    
+    if entityData.entityType == 'object' then
+        local oldModel = entityData.model
+        local loaded, newModelHandle = Utility.LoadModel(model)
+        if not loaded then
+            print(string.format("[ClientEntity] Failed to load model %s for entity %s", model, id))
+            return
+        end
+        CreateModelSwap(entityData.coords.x, entityData.coords.y, entityData.coords.z, 10, oldModel, model, true)
+        entityData.model = model
+        SetModelAsNoLongerNeeded(newModelHandle)
+    else
+        RemoveEntity(entityData)
+        entityData.model = model
+        SpawnEntity(entityData)
+    end
 end
 
 
