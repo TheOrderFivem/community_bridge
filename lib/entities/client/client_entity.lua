@@ -38,8 +38,8 @@ local function SpawnEntity(entityData)
             SetModelAsNoLongerNeeded(model)
             SetEntityAsMissionEntity(entity, true, true)
             FreezeEntityPosition(entity, entityData.freeze)
-            SetEntityInvincible(entity, entityData.invencible)
-            if entityData.ignoreShoots then SetBlockingOfNonTemporaryEvents(entity, true) end
+            SetEntityInvincible(entity, entityData.invincible)
+            if entityData.ignoreGunshots then SetBlockingOfNonTemporaryEvents(entity, true) end
         else
             SetModelAsNoLongerNeeded(model)
         end
@@ -121,8 +121,8 @@ function ClientEntity.Create(entityData)
     entityData.invoked =  entityData.invoked or GetInvokingResource() or "community_bridge"
     local entityPoint = Point.Register(entityData.id, entityData.coords, entityData.spawnDistance or 50.0, entityData, SpawnEntity, RemoveEntity, UpdateEntity)
     entityData.freeze = entityData.freeze or true
-    entityData.ignoreShoots = entityData.ignoreShoots or false
-    entityData.invencible = entityData.invencible or false
+    entityData.ignoreGunshots = entityData.ignoreGunshots or false
+    entityData.invincible = entityData.invincible or false
     Entities[entityData.id] = entityPoint
    
     ClientEntity.Invoked[entityData.invoked] = ClientEntity.Invoked[entityData.invoked] or {}
