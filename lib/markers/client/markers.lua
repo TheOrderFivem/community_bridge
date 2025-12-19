@@ -1,6 +1,6 @@
 ---@diagnostic disable: duplicate-set-field
 Marker = {}
-local Created = setmetatable({}, { __mode = "k" }) --what is mode?
+local Created = setmetatable({}, { __mode = "k" }) --what is mode? << entries are automatically removed when the key has no strong references
 local Ids = Ids or Require("lib/utility/shared/ids.lua")
 local point =  Point or Require("lib/points/client/points.lua")
 local loopRunning = false
