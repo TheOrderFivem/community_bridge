@@ -108,13 +108,19 @@ function Anim.Play(id, entity, animDict, animName, blendIn, blendOut, duration, 
         return nil
     end
 
+    local animDurationMs = GetAnimDuration(animDict, animName)
+    
+    animDurationMs = animDurationMs > 0 and animDurationMs * 1000 or -1
+    
+    local finalDuration = tonumber(duration) or (animDurationMs > 0 and animDurationMs) or -1
+
     Anim.Active[newId] = {
         entity = entity,
         animDict = animDict,
         animName = animName,
         blendIn = blendIn or 8.0,
         blendOut = blendOut or -8.0,
-        duration = duration or -1,
+        duration = finalDuration
         flag = flag or 1,
         playbackRate = playbackRate or 0.0,
         onComplete = onComplete,
