@@ -10,6 +10,11 @@ local Drawing = {}
 --- @param data table{position: vector3, offset: vector3, rotation: vector3, size: vector3, color: vector3, alpha: number, bobUpAndDown: boolean, marker: number, interaction: function}
 --- @return boolean
 local function validateMarkerData(data)
+    if not type(data) == "table" then 
+        print(("Invalid data type. Must be a table and is a type: %s"):format(type(table)))
+        return false 
+    end 
+
     if not data.position or not data.position.x or not data.position.y or not data.position.z then
         print("Invalid marker position. Must be a vector3 with x, y, and z coordinates.")
         return false

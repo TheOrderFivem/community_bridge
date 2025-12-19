@@ -17,6 +17,18 @@ function LoadPtfxAsset(dict)
     return HasNamedPtfxAssetLoaded(dict)
 end
 
+--- Check Ownership of entity
+--- This is not a security measure, just prevent spam.
+---@param entity string|number Entity
+---@return boolean
+local function IsNetworkOwner(entity)
+    if not DoesEntityExist(entity) then return false end
+    if not NetworkGetEntityIsNetworked(entity) then return false end
+    local ownerPlayer = NetworkGetEntityOwner(entity)
+    return ownerPlayer == PlayerId()
+end
+
+
 --- Create a particle effect at the specified position and rotation.
 --- @param dict string
 --- @param ptfx string
@@ -119,6 +131,11 @@ end)
 
 
 function Particle.CreateOnEntity(dict, ptfx, entity, offset, rot, scale, color, looped, loopLength)
+    if not IsNetworkOwner(entity) then
+        print("[CreateOnEntity] Trying to play a particle on a non owned entity")
+        return false
+    end
+
     LoadPtfxAsset(dict)
     UseParticleFxAssetNextCall(dict)
     SetParticleFxNonLoopedColour(color.x, color.y, color.z)
@@ -137,6 +154,11 @@ function Particle.CreateOnEntity(dict, ptfx, entity, offset, rot, scale, color, 
 end
 
 function Particle.CreateOnEntityBone(dict, ptfx, entity, bone,  offset, rot, scale, color, looped, loopLength)
+    if not IsNetworkOwner(entity) then
+        print("[CreateOnEntityBone] Trying to play a particle on a non owned entity")
+        return false
+    end
+
     LoadPtfxAsset(dict)
     UseParticleFxAssetNextCall(dict)
     SetParticleFxNonLoopedColour(color.x, color.y, color.z)
