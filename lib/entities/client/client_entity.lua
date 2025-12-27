@@ -12,7 +12,7 @@ ClientEntity.Behaviors = Behaviors
 
 local function SpawnEntity(entityData)
     if entityData.spawned and DoesEntityExist(entityData.spawned) then return end -- Already spawned
-    if entityData.model then 
+    if entityData.model then
         local loaded, model = Utility.LoadModel(entityData.model)
         if not loaded then
             print(string.format("[ClientEntity] Failed to load model %s for entity %s", entityData.model, entityData.id))
@@ -47,7 +47,7 @@ local function SpawnEntity(entityData)
     if entityData.OnSpawn then
         pcall(function (...)
             return entityData.OnSpawn(entityData)
-        end)        
+        end)
     end
     Behaviors.Trigger("OnSpawn", entityData)
 end
@@ -82,10 +82,6 @@ local function UpdateEntity(_entityData)
     entityData.oldCoords = entityData.oldCoords and vector3(entityData.oldCoords.x, entityData.oldCoords.y, entityData.oldCoords.z) or coords
     local dist = #(coords - entityData.oldCoords)
     if entityData.oldCoords and dist > 0.5 then
-        -- if entityData.spawned then 
-        --     SetEntityCoords(entityData.spawned, coords.x, coords.y, coords.z, false, false, false, false)
-        -- end    
-        -- ClientEntity.UpdateCoords(entityData.id, entityData.coords)       
         if entityData.OnMove then
             pcall(function (...)
                 return entityData.OnMove(entityData)
@@ -104,10 +100,6 @@ local function UpdateEntity(_entityData)
         end
         entityData.oldRotation = entityData.rotation
     end
-
-    if entityData.freeze ~= nil and entityData.spawned and IsEntityPositionFrozen(entityData.spawned) then
-        FreezeEntityPosition(entityData.spawned, entityData.freeze)
-    end
 end
 
 --- Registers an entity received from the server and sets up proximity spawning.
@@ -120,11 +112,11 @@ function ClientEntity.Create(entityData)
     entityData.oldRotation = entityData.rotation
     entityData.invoked =  entityData.invoked or GetInvokingResource() or "community_bridge"
     local entityPoint = Point.Register(entityData.id, entityData.coords, entityData.spawnDistance or 50.0, entityData, SpawnEntity, RemoveEntity, UpdateEntity)
-    entityData.freeze = entityData.freeze or true
+    entityData.freeze = entityData.freeze == nil and true or entityData.freeze
     entityData.ignoreGunshots = entityData.ignoreGunshots or false
     entityData.invincible = entityData.invincible or false
     Entities[entityData.id] = entityPoint
-   
+
     ClientEntity.Invoked[entityData.invoked] = ClientEntity.Invoked[entityData.invoked] or {}
     ClientEntity.Invoked[entityData.invoked][entityData.id] = entityData
     Behaviors.Trigger("OnCreate", entityPoint)
@@ -155,7 +147,7 @@ function ClientEntity.Destroy(id)
     if not entityData then return end
     Behaviors.Trigger("OnDestroy", entityData)
     Point.Remove(id)
-    RemoveEntity(entityData)    
+    RemoveEntity(entityData)
     Entities[id] = nil
 end
 ClientEntity.Unregister = ClientEntity.Destroy
@@ -174,18 +166,18 @@ function ClientEntity.Set(id, key, value)
     if not entityData then return print(string.format("[ClientEntity] SetKey: Entity %s does not exist", id)) end
     local oldData = entityData[key]
     if oldData == value then return end
-    if entityData.OnSet then 
+    if entityData.OnSet then
         pcall(function (...)
             return entityData.OnSet(entityData, key, value, oldData)
         end)
     end
-    if value then 
+    if value then
         entityData[key] = value
-        Behaviors.Trigger("OnSet", entityData, key, value, oldData)  
-        return 
-    end        
+        Behaviors.Trigger("OnSet", entityData, key, value, oldData)
+        return
+    end
     Behaviors.Trigger("OnSet", entityData, key, value, oldData)
-    entityData[key] = nil      
+    entityData[key] = nil
 end
 
 function ClientEntity.Get(id)
@@ -229,18 +221,18 @@ function ClientEntity.UpdateCoords(id, coords)
         return
     end
     entityData.coords = coords
-    Point.UpdateCoords(id, coords) 
+    Point.UpdateCoords(id, coords)
 end
 
 function ClientEntity.ChangeModel(id, model)
     local entityData = Entities[id]
     if not entityData then return print(string.format("[ClientEntity] ChangeModel: Entity %s does not exist", id)) end
 
-    if not entityData.spawned or not DoesEntityExist(entityData.spawned) then 
+    if not entityData.spawned or not DoesEntityExist(entityData.spawned) then
         entityData.model = model
-        return 
+        return
     end
-    
+
     if entityData.entityType == 'object' then
         local oldModel = entityData.model
         local loaded, newModelHandle = Utility.LoadModel(model)
