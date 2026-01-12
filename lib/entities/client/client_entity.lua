@@ -203,12 +203,13 @@ function ClientEntity.SetKey(id, key, value)
     local oldData = entityData[key]
     local handlerKey = "On" .. key:sub(1, 1):upper() .. key:sub(2)
     local handler = rawget(entityData, handlerKey)
+    entityData[key] = value
     if handler then
         pcall(function()
             handler(entityData, key, value, oldData)
         end)
     end
-    entityData[key] = value
+
 end
 
 --- Gets a registered ClientEntity entry.
@@ -290,6 +291,25 @@ function ClientEntity.UpdateCoords(id, coords)
     end
     entityData.coords = coords
     Point.UpdateCoords(id, coords)
+    if entityData.spawned and DoesEntityExist(entityData.spawned) then
+        print(coords.x, coords.y, coords.z)
+        SetEntityCoords(entityData.spawned, coords.x, coords.y, coords.z, false, false, false, true)
+    end
+end
+
+function ClientEntity.UpdateRotation(id, rotation)
+    local entityData = ClientEntity.All[id]
+    if not entityData then
+        print(string.format("[ClientEntity] UpdateRotation: Entity %s does not exist", id))
+        return
+    end
+    if type(rotation) == "number" or type(rotation) == "string" then
+        rotation = vector3(0.0, 0.0, tonumber(rotation))
+    end
+    entityData.rotation = rotation
+    if entityData.spawned and DoesEntityExist(entityData.spawned) then
+        SetEntityRotation(entityData.spawned, rotation.x, rotation.y, rotation.z, 2, true)
+    end
 end
 
 --- Changes the model used by a ClientEntity and respawns it if currently spawned.
