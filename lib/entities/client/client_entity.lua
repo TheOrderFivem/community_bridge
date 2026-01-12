@@ -5,7 +5,7 @@ ClientEntity = {
     All = {},
     Invoked = {},
     OnCreates = {}
-} -- Renamed from BaseEntity
+}
 ----------------------------------------
 
 ---@alias ClientEntityId string|number
@@ -44,7 +44,9 @@ ClientEntity = {
 ---@field OnRemove fun(entityData: EntityData)|nil
 ---@field spawned EntityHandle|nil FiveM entity handle created when the entry is in-range.
 
--- Set the entity and apply any relevant properties such as freezing and targets.
+--- Set the entity and apply any relevant properties such as freezing and targets
+--- @param id The entities id
+--- @return nil
 local function SetEntityProperties(id)
     local entityData = ClientEntity.Get(id)
     if not entityData then return end
@@ -58,9 +60,6 @@ local function SetEntityProperties(id)
         SetEntityInvincible(entity, entityData.invincible)
     end
     if entityData.targets then
-        for k, v in pairs(entityData.targets) do
-            print(v.label)
-        end
         ClientEntity.SetTargets(id, entityData.targets)
     end
     if entityData.anim then
@@ -71,6 +70,8 @@ local function SetEntityProperties(id)
     end
 end
 
+--- Spawns an entity
+--- @param entityData EntityData
 local function SpawnEntity(entityData)
     if entityData.spawned and DoesEntityExist(entityData.spawned) then return end -- Already spawned
     if entityData.model then
@@ -104,6 +105,8 @@ local function SpawnEntity(entityData)
     end)
 end
 
+--- Removes an entity
+--- @param entityData EntityData
 local function RemoveEntity(entityData)
     entityData = entityData and entityData.args or entityData
     if not entityData then return end
@@ -141,7 +144,6 @@ function ClientEntity.Create(entityData)
             end
         end
     end
-
 
     local entityPoint = Point.Register(entityData.id, entityData.coords, entityData.spawnDistance or 50.0, entityData, SpawnEntity, RemoveEntity, UpdateEntity)
     ClientEntity.All[entityData.id] = entityPoint
@@ -233,10 +235,8 @@ function ClientEntity.SetAnim(id, anim)
     if not entityData then return print(string.format("[ClientEntity] SetAnim: Entity %s does not exist", id)) end
     local entity = entityData.spawned
     if not entity or not DoesEntityExist(entity) then return end
-    if not anim then
-        return Bridge.Anim.Stop(nil, entity)
-    end
-    Bridge.Anim.Play(nil, entity, anim.dict, anim.name, anim.blendIn or 8.0, anim.blendOut or -8.0, anim.duration, anim.flags, anim.playbackRate or 0.0, anim.onComplete)
+    if not anim then return Bridge.Anim.Stop(id) end
+    Bridge.Anim.Play(id, entity, anim.dict, anim.name, anim.blendIn or 8.0, anim.blendOut or -8.0, anim.duration, anim.flags, anim.playbackRate or 0.0, anim.onComplete)
 end
 
 --- Attaches the spawned FiveM entity for a ClientEntity to a target, or detaches when nil.
@@ -292,11 +292,14 @@ function ClientEntity.UpdateCoords(id, coords)
     entityData.coords = coords
     Point.UpdateCoords(id, coords)
     if entityData.spawned and DoesEntityExist(entityData.spawned) then
-        print(coords.x, coords.y, coords.z)
         SetEntityCoords(entityData.spawned, coords.x, coords.y, coords.z, false, false, false, true)
     end
 end
 
+--- Updates the rotation for a registered entity
+--- @param id ClientEntityId ClientEntity id.
+--- @param rotation number|string
+--- @return nil
 function ClientEntity.UpdateRotation(id, rotation)
     local entityData = ClientEntity.All[id]
     if not entityData then
