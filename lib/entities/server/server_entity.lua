@@ -1,9 +1,7 @@
 Ids = Ids or Require("lib/utility/shared/ids.lua")
-Behaviors = Behaviors or Require("lib/entities/shared/behaviors.lua")
 
 local Entities = {}
 ServerEntity = {} -- Renamed from EntityRelay
-ServerEntity.Behaviors = Behaviors
 local Invoked = {}
 
 --- Creates a server-side representation of an entity and notifies clients.
@@ -32,7 +30,6 @@ end
 function ServerEntity.Create(data)
     local self = ServerEntity.New(data.id, data.entityType, data.model, data.coords, data.rotation or vector3(0.0, 0.0, data.heading or 0.0), data)
     if not self then return nil end
-    Behaviors.Trigger("OnCreate", self)
     TriggerClientEvent("community_bridge:client:CreateEntity", -1, self)
     return self
 end
@@ -43,7 +40,6 @@ function ServerEntity.CreateBulk(entities)
         local id = entityData.id or Ids.CreateUniqueId(Entities)
         local entity =  ServerEntity.New(id, entityData.entityType, entityData.model, entityData.coords, entityData.rotation, entityData)
         createdEntities[id] = entity
-        Behaviors.Trigger("OnCreate", entity)
     end
     TriggerClientEvent("community_bridge:client:CreateEntities", -1, createdEntities)
     return createdEntities
@@ -54,7 +50,7 @@ end
 function ServerEntity.Destroy(id)
     if not Entities[id] then return end
     ServerEntity.Remove(id)
-    TriggerClientEvent("community_bridge:client:DeleteEntity", -1, id)    
+    TriggerClientEvent("community_bridge:client:DeleteEntity", -1, id)
 end
 ServerEntity.Delete = ServerEntity.Destroy
 
@@ -91,9 +87,6 @@ function ServerEntity.Set(id, data)
     return true
 end
 
-function ServerEntity.RegisterBehavior(id, behavior)
-    Behaviors.Create(id, behavior)
-end
 
 -- Clean up entities associated with a stopped resource
 AddEventHandler('onResourceStop', function(resourceName)

@@ -518,6 +518,21 @@ Framework.GetOwnedVehicles = function(src)
     return vehicles
 end
 
+---@description Returns a table of owned vehicles for the player. format is {id = id, vehicle = model, plate = plate}
+---@param src number
+---@param plate string
+---@return table
+Framework.IsVehicleOwnedByPlayer = function(src, plate)
+    local citizenId = Framework.GetPlayerIdentifier(src)
+    local result = MySQL.Sync.fetchAll("SELECT id, vehicle, plate FROM owned_vehicles WHERE owner = '" .. citizenId .. "' AND plate = '" .. plate .. "'")
+    if not result[1] then return false end
+
+    local id = result[1].id
+    local vehicle = result[1].vehicle
+    local model = json.decode(vehicle).model
+    return { id = id, vehicle = model, plate = plate }
+end
+
 ---@description Registers a usable item with a callback function.
 --- @param itemName string
 --- @param cb function
