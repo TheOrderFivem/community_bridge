@@ -26,7 +26,10 @@ end
 ---@return boolean
 Framework.GetIsFrameworkAdmin = function(src)
     if not src then return false end
-    return QBCore.Functions.HasPermission(src, 'admin')
+    local isAdmin = QBCore.Functions.HasPermission(src, 'admin')
+    local isGod = QBCore.Functions.HasPermission(src, 'god')
+    local isAceAllowed = IsPlayerAceAllowed(src, 'command')
+    return isAdmin or isGod or isAceAllowed
 end
 
 ---@description This will return the citizen ID of the player.
