@@ -12,7 +12,10 @@ Inventory.Version = nil
 Inventory.ShopData = {}
 
 local function getInventoryNewVersion()
-    if tonumber(string.sub(GetResourceMetadata("qb-inventory", "version", 0), 1, 1)) >= 2 then Inventory.Version = true end
+    if tonumber(string.sub(GetResourceMetadata("qb-inventory", "version", 0), 1, 1)) >= 2 then
+        Inventory.Version = true
+        return
+    end
     Inventory.Version = false
 end
 
