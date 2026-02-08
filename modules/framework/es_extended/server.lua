@@ -78,6 +78,25 @@ Framework.GetPlayer = function(src)
     return xPlayer
 end
 
+---@description Returns the player data of the specified identifier in the framework defualt format.
+---@param citizenid string
+---@return table | nil
+Framework.GetPlayerByIdentifier = function(citizenid)
+    local player = ESX.GetPlayerFromIdentifier(citizenid)
+    if not player then return end
+    return player
+end
+
+---@description This will return the player source of the specified citizen ID.
+---@param citizenid string
+---@return number | nil
+Framework.GetPlayerSource = function(citizenid)
+    local player = Framework.GetPlayerByIdentifier(citizenid)
+    if not player then return end
+    return player.source
+end
+
+
 --- @description Returns the citizen ID of the player.
 --- @param src number
 --- @return string | nil returns the citizen ID of the player if it exists
