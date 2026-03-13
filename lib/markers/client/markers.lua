@@ -114,7 +114,7 @@ function Marker.Run()
                 )
                 ::continue::
             end
-            Wait(3)
+            Wait(2)
         end
     end)
 end

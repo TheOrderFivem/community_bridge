@@ -26,7 +26,10 @@ end
 ---@return boolean
 Framework.GetIsFrameworkAdmin = function(src)
     if not src then return false end
-    return QBCore.Functions.HasPermission(src, 'admin')
+    local isAdmin = QBCore.Functions.HasPermission(src, 'admin')
+    local isGod = QBCore.Functions.HasPermission(src, 'god')
+    local isAceAllowed = IsPlayerAceAllowed(src, 'command')
+    return isAdmin or isGod or isAceAllowed
 end
 
 ---@description This will return the citizen ID of the player.
@@ -46,6 +49,25 @@ Framework.GetPlayer = function(src)
     local player = QBCore.Functions.GetPlayer(src)
     if not player then return end
     return player
+end
+
+
+---@description Returns the player data of the specified identifier in the framework defualt format.
+---@param citizenid string
+---@return table | nil
+Framework.GetPlayerByIdentifier = function(citizenid)
+    local player = QBCore.Functions.GetPlayerByCitizenId(citizenid)
+    if not player then return end
+    return player
+end
+
+---@description This will return the player source of the specified citizen ID.
+---@param citizenid string
+---@return number | nil
+Framework.GetPlayerSource = function(citizenid)
+    local player = Framework.GetPlayerByIdentifier(citizenid)
+    if not player then return end
+    return player.PlayerData.source
 end
 
 ---@description This will return the jobs registered in the framework in a table.

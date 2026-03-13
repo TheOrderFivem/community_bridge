@@ -44,6 +44,25 @@ Framework.GetPlayer = function(src)
     return player
 end
 
+
+---@description Returns the player data of the specified identifier in the framework defualt format.
+---@param citizenid string
+---@return table | nil
+Framework.GetPlayerByIdentifier = function(citizenid)
+    local player = QBox:GetPlayerByCitizenId(citizenid)
+    if not player then return end
+    return player
+end
+
+---@description This will return the player source of the specified citizen ID.
+---@param citizenid string
+---@return number | nil
+Framework.GetPlayerSource = function(citizenid)
+    local player = Framework.GetPlayerByIdentifier(citizenid)
+    if not player then return end
+    return player.PlayerData.source
+end
+
 ---@description Returns a table of the jobs in the framework.
 ---@return table
 Framework.GetFrameworkJobs = function()
