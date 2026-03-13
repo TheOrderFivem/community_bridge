@@ -209,7 +209,7 @@ Inventory.UpdatePlate = function(oldplate, newplate)
     qbInventory:SetInventory('glovebox-'..newplate, storedGloveBox.items, "Community Bridge Moving Items In GloveBox")
     qbInventory:CreateInventory('trunk-'..newplate, {label = 'trunk-'..newplate, slots = storedTrunk.slots, maxweight = storedTrunk.maxweight})
     qbInventory:SetInventory('trunk-'..newplate, storedTrunk.items, "Community Bridge Moving Items In Trunk")
-    if GetResourceState('jg-mechanic') ~= 'started' then return true end
+    if GetResourceState('jg-mechanic') == 'missing' then return true end
     return true, exports["jg-mechanic"]:vehiclePlateUpdated(oldplate, newplate)
 end
 
@@ -272,7 +272,7 @@ Inventory.Old.UpdatePlate = function(oldplate, newplate)
     }
     local values = { newplate = newplate, oldplate = oldplate }
     MySQL.transaction.await(queries, values)
-    if GetResourceState('jg-mechanic') ~= 'started' then return true end
+    if GetResourceState('jg-mechanic') == 'missing' then return true end
     return true, exports["jg-mechanic"]:vehiclePlateUpdated(oldplate, newplate)
 end
 

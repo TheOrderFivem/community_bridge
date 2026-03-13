@@ -179,7 +179,7 @@ end
 Inventory.UpdatePlate = function(oldplate, newplate)
     ox_inventory:UpdateVehicle(oldplate, newplate)
     -- ox standard doesnt return anything so probably shouldnt return so everything else has the same standard. Yeaaaa probably should change this.
-    if GetResourceState('jg-mechanic') ~= 'missing' then return true end
+    if GetResourceState('jg-mechanic') == 'missing' then return true end
     return true, exports["jg-mechanic"]:vehiclePlateUpdated(oldplate, newplate)
 end
 

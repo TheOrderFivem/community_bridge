@@ -235,7 +235,7 @@ Inventory.UpdatePlate = function(oldplate, newplate)
         trunk_oldplate = 'trunk-' .. oldplate
     }
     MySQL.transaction.await(queries, values)
-    if GetResourceState('jg-mechanic') ~= 'started' then return true end
+    if GetResourceState('jg-mechanic') == 'missing' then return true end
     return true, exports["jg-mechanic"]:vehiclePlateUpdated(oldplate, newplate)
 end
 

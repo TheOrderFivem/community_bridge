@@ -122,7 +122,7 @@ Inventory.UpdatePlate = function(oldplate, newplate)
     local values = { newplate = newplate, oldplate = oldplate }
     MySQL.transaction.await(queries, values)
     -- ox standard doesnt return anything so probably shouldnt return so everything else has the same standard. Yeaaaa probably should change this.
-    if GetResourceState('jg-mechanic') ~= 'started' then return true end
+    if GetResourceState('jg-mechanic') == 'missing' then return true end
     return true, exports["jg-mechanic"]:vehiclePlateUpdated(oldplate, newplate)
 end
 

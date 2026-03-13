@@ -155,7 +155,7 @@ Inventory.UpdatePlate = function(oldplate, newplate)
     local values = { newplate = newplate, oldplate = oldplate }
     MySQL.transaction.await(queries, values)
     tgiann:UpdateVehicle(oldplate, newplate)
-    if GetResourceState('jg-mechanic') ~= 'started' then return true end
+    if GetResourceState('jg-mechanic') == 'missing' then return true end
     return true, exports["jg-mechanic"]:vehiclePlateUpdated(oldplate, newplate)
 end
 
