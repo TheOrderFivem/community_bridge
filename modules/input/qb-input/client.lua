@@ -33,6 +33,7 @@ function Input.Open(title, data, isQBFormat, submitText)
 
     for i, v in pairs(returnData) do
         local index = i and tonumber(i)
+        v = tostring(v) == "true" and true or (tostring(v) == "false" and false or v)
         if not index then
             table.insert(convertedData, v)
         else
