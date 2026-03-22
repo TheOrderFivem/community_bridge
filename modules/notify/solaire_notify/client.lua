@@ -48,6 +48,7 @@ Notify.SendNotification = function(title, message, _type, time, props)
         position = props.position or "top-right",
         sound = props.sound,
         item = props.item,
+        volume = props.volume
     })
 end
 
