@@ -20,7 +20,7 @@ local placeHolderText = locale("Notifications.PlaceholderTitle")
 Notify.SendNotify = function(message, _type, time)
     time = time or 3000
 
-    return exports.solaire_notify:Notify({
+    return exports.solaire_notify:Notify({ type = _type or "info", message = message, duration = time })
         type = _type or "info",
         message = message,
         duration = time,
