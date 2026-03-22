@@ -3,7 +3,7 @@ Notify = Notify or {}
 local resourceName = "solaire_notify"
 local configValue = BridgeSharedConfig.Notify
 
-if (configValue == "auto" and GetResourceState(resourceName) ~= "started")
+if (configValue == "auto" and GetResourceState(resourceName) ~= "started") or (configValue ~= "auto" and configValue ~= resourceName) then return end
     or (configValue ~= "auto" and configValue ~= resourceName)
 then
     return
