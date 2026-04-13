@@ -18,6 +18,10 @@ RegisterNetEvent('community_bridge:client:OpenBossMenu', function(jobName, jobTy
         end, {wash = false})
     elseif BossMenu.GetResourceName() == "qbx_management" then
         exports.qbx_management:OpenBossMenu(jobType)
+    elseif BossMenu.GetResourceName() == "tk_bosstablet" then
+        exports.tk_bosstablet:openBossMenu()
+    elseif BossMenu.GetResourceName() == "zat-bossmenu" then
+        exports['zat-bossmenu']:OpenBossMenu(jobType or 'job')
     end
 end)
 
