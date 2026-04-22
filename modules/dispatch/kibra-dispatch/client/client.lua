@@ -17,9 +17,7 @@ Dispatch.SendAlert = function(data)
     
     local blipId = (data.blipData and data.blipData.sprite) or 161
     
-    pcall(function()
-        exports["kibra-dispatch"]:SendAlert(label, code, icon, receivers, blipId)
-    end)
+    exports["kibra-dispatch"]:SendAlert(label, code, icon, receivers, blipId)
 end
 
 

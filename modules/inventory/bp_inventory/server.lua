@@ -12,20 +12,14 @@ end
 
 ---@description This will add an item, and return true or false based on success
 Inventory.AddItem = function(src, item, count, slot, metadata)
-    local success = false
-    pcall(function()
-        success = exports['bp_inventory']:AddItem(src, item, count, metadata, slot)
-    end)
+    local success = exports['bp_inventory']:AddItem(src, item, count, metadata, slot)
     return success or false
 end
 
 ---@description This will remove an item, and return true or false based on success
 Inventory.RemoveItem = function(src, item, count, slot, metadata)
     item = type(item) == "table" and item.name or item
-    local success = false
-    pcall(function()
-        success = exports['bp_inventory']:RemoveItem(src, item, count, slot)
-    end)
+    local success = exports['bp_inventory']:RemoveItem(src, item, count, slot)
     return success or false
 end
 
@@ -33,16 +27,14 @@ end
 Inventory.HasItem = function(src, item, requiredCount)
     requiredCount = requiredCount or 1
     local hasIt = false
-    pcall(function()
-        local itemData = exports['bp_inventory']:hasItem(src, item)
-        if type(itemData) == "table" and ((itemData.amount or itemData.count or 0) >= requiredCount) then
-            hasIt = true
-        elseif type(itemData) == "number" and itemData >= requiredCount then
-            hasIt = true
-        elseif itemData == true and requiredCount == 1 then
-            hasIt = true
-        end
-    end)
+    local itemData = exports['bp_inventory']:hasItem(src, item)
+    if type(itemData) == "table" and ((itemData.amount or itemData.count or 0) >= requiredCount) then
+        hasIt = true
+    elseif type(itemData) == "number" and itemData >= requiredCount then
+        hasIt = true
+    elseif itemData == true and requiredCount == 1 then
+        hasIt = true
+    end
     return hasIt
 end
 

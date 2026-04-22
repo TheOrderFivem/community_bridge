@@ -34,9 +34,7 @@ end
 ---@return boolean
 Banking.AddAccountMoney = function(account, amount, reason)
     -- exports['RxBanking']:AddSocietyMoney(society, amount, type, reason, fromIban)
-    local success = pcall(function()
-        exports['RxBanking']:AddSocietyMoney(account, amount, 'deposit', reason or 'Unknown Reason')
-    end)
+    local success = exports['RxBanking']:AddSocietyMoney(account, amount, 'deposit', reason or 'Unknown Reason')
     return success
 end
 
@@ -47,9 +45,7 @@ end
 ---@return boolean
 Banking.RemoveAccountMoney = function(account, amount, reason)
      -- exports['RxBanking']:RemoveSocietyMoney(society, amount, type, reason, toIban)
-     local success = pcall(function()
-        exports['RxBanking']:RemoveSocietyMoney(account, amount, 'withdraw', reason or 'Unknown Reason')
-    end)
+     local success = exports['RxBanking']:RemoveSocietyMoney(account, amount, 'withdraw', reason or 'Unknown Reason')
     return success
 end
 

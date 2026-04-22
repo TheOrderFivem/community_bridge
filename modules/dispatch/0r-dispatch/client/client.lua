@@ -27,17 +27,15 @@ Dispatch.SendAlert = function(data)
     local takePhoto = false
     
     -- Tries to call the export
-    pcall(function()
-        exports['0r-dispatch']:SendAlert(
-            alertLabel,
-            code,
-            icon,
-            blipData,
-            takePhoto,
-            jobs,
-            coords
-        )
-    end)
+    exports['0r-dispatch']:SendAlert(
+        alertLabel,
+        code,
+        icon,
+        blipData,
+        takePhoto,
+        jobs,
+        coords
+    )
 end
 
 

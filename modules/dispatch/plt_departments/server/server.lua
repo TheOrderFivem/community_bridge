@@ -6,15 +6,13 @@ Dispatch = Dispatch or {}
 RegisterNetEvent('community_bridge:Server:plt_departments:SendAlert', function(alertData)
     local src = source
     -- Sending the call to the export
-    pcall(function()
-        exports['plt_departments']:CreateDispatchCall({
-            code = alertData.code or '10-90',
-            title = alertData.title or 'Unknown Call',
-            location = alertData.location or 'Unknown',
-            coords = alertData.coords or vector3(0.0, 0.0, 0.0),
-            info = alertData.info or ''
-        })
-    end)
+    exports['plt_departments']:CreateDispatchCall({
+        code = alertData.code or '10-90',
+        title = alertData.title or 'Unknown Call',
+        location = alertData.location or 'Unknown',
+        coords = alertData.coords or vector3(0.0, 0.0, 0.0),
+        info = alertData.info or ''
+    })
 end)
 
 

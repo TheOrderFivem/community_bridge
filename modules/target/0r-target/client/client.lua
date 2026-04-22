@@ -129,9 +129,7 @@ end
 
 function Target.RemoveModel(model)
     -- Using fallback due to typo in original docs for 0r-target mentioning qb-target
-    pcall(function()
-        or_target:removeTargetModel(model)
-    end)
+    or_target:removeTargetModel(model)
 end
 
 function Target.AddBoxZone(name, coords, size, heading, options, debug)
