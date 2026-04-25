@@ -4,10 +4,6 @@ local resourceName = "solaire_notify"
 local configValue = BridgeSharedConfig.Notify
 
 if (configValue == "auto" and GetResourceState(resourceName) ~= "started") or (configValue ~= "auto" and configValue ~= resourceName) then return end
-    or (configValue ~= "auto" and configValue ~= resourceName)
-then
-    return
-end
 
 Notify.GetResourceName = function()
     return resourceName
@@ -21,10 +17,6 @@ Notify.SendNotify = function(message, _type, time)
     time = time or 3000
 
     return exports.solaire_notify:Notify({ type = _type or "info", message = message, duration = time })
-        type = _type or "info",
-        message = message,
-        duration = time,
-    })
 end
 
 ---This will send a notify message of the type and time passed
