@@ -7,6 +7,11 @@ local targetDebug = BridgeSharedConfig and BridgeSharedConfig.DebugLevel == 2 or
 local ox_target = exports.ox_target
 local targetZones = {}
 
+local resourceTargets = {}
+resourceTargets.models = {}
+resourceTargets.entities = {}
+resourceTargets.networkedEntities = {}
+
 Target.GetResourceName = function()
     return "ox_target"
 end
@@ -99,6 +104,9 @@ end
 function Target.AddLocalEntity(entities, options)
     options = Target.FixOptions(options)
     ox_target:addLocalEntity(entities, options)
+    local resource = GetInvokingResource() 
+    resourceTargets.entities[resource] = resourceTargets.entities[resource] or {}
+    table.insert(resourceTargets.entities[resource], { entities = entities})
 end
 
 ---This will remove the target options from a local entity. This is useful for when you want to remove target options from a specific entity.
@@ -114,6 +122,9 @@ end
 function Target.AddNetworkedEntity(netids, options)
     options = Target.FixOptions(options)
     ox_target:addEntity(netids, options)
+    local resource = GetInvokingResource() 
+    resourceTargets.networkedEntities[resource] = resourceTargets.networkedEntities[resource] or {}
+    table.insert(resourceTargets.networkedEntities[resource], { netids = netids})
 end
 
 ---This will remove a networked entity from the target system.
@@ -129,6 +140,9 @@ end
 function Target.AddModel(models, options)
     options = Target.FixOptions(options)
     ox_target:addModel(models, options)
+    local resource = GetInvokingResource() 
+    resourceTargets.models[resource] = resourceTargets.models[resource] or {}
+    table.insert(resourceTargets.models[resource], { models = models})
 end
 
 ---This will remove target options from all specified models.
@@ -189,13 +203,32 @@ function Target.RemoveZone(name)
 end
 
 AddEventHandler('onResourceStop', function(resource)
-    if resource ~= GetCurrentResourceName() then return end
     for _, target in pairs(targetZones) do
         if target.creator == resource then
             ox_target:removeZone(target.id)
         end
     end
     targetZones = {}
+    if resourceTargets.entities[resource] and #resourceTargets.entities[resource] > 0 then
+        for _, data in pairs(resourceTargets.entities[resource]) do
+            Target.RemoveLocalEntity(data.entities)
+        end
+    end
+    resourceTargets.entities[resource] = nil
+    if resourceTargets.networkedEntities[resource] and #resourceTargets.networkedEntities[resource] > 0 then
+        for _, data in pairs(resourceTargets.networkedEntities[resource]) do        
+            Target.RemoveNetworkedEntity(data.netids)
+        end
+    end
+    resourceTargets.networkedEntities[resource] = nil
+    if resourceTargets.models[resource] and #resourceTargets.models[resource] > 0 then
+        for _, data in pairs(resourceTargets.models[resource]) do
+            for _, model in pairs(data.models) do
+                ox_target:removeModel(model)
+            end
+        end
+    end
+    resourceTargets.models[resource] = nil
 end)
 
 return Target
