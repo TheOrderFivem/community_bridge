@@ -579,5 +579,3 @@ Framework.Commands.Add = function(name, help, arguments, argsrequired, callback,
 end
 
 return Framework
-
-return Framework
