@@ -547,4 +547,35 @@ AddEventHandler("playerDropped", function()
     TriggerEvent("community_bridge:Server:OnPlayerUnload", src)
 end)
 
+AddEventHandler("playerDropped", function()
+    local src = source
+    TriggerEvent("community_bridge:Server:OnPlayerUnload", src)
+end)
+
+Framework.Commands = Framework.Commands or {}
+
+---@description Adds a command to the Qbox framework
+---@param name string
+---@param help string
+---@param arguments table
+---@param argsrequired boolean
+---@param callback function
+---@param permission string
+---@param ... any
+Framework.Commands.Add = function(name, help, arguments, argsrequired, callback, permission, ...)
+    lib.addCommand(name, {
+        help = help or "",
+        params = arguments or {},
+        restricted = false
+    }, function(source, args, raw)
+        if permission and permission ~= "user" then
+            if not Framework.GetIsFrameworkAdmin(source) then
+                return
+            end
+        end
+
+        callback(source, args or {}, raw)
+    end)
+end
+
 return Framework
