@@ -66,6 +66,12 @@ Join the Community Bridge Discord server for support, discussion, and contributi
 
 ---
 
+## Contributing
+
+Want to add an integration or improve the bridge? Please read the [Contributing Guidelines](CONTRIBUTING.md) first. They cover resource relevance, deprecation handling, documentation and testing expectations, and the pull request workflow.
+
+---
+
 ## About Community Bridge
 
 community_bridge is developed by The Order of the Sacred Framework, a collaborative team focused on improving interoperability and reducing development friction in the FiveM ecosystem. The project is open source and licensed under GPLv3.
