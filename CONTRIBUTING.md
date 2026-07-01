@@ -2,7 +2,7 @@
 
 Thanks for your interest in contributing to `community_bridge`. This project grows through community contributions, and these guidelines exist to keep it consistent, usable, and maintainable over the long run.
 
-These are proposed guidelines rather than strict rules. Feedback is welcome, and the goal is a balanced structure with sensible checks and balances. If something here does not fit your situation, open a discussion in the [Community Discord](https://discord.gg/MukwBuJjP7) and we will figure it out together.
+These are proposed guidelines rather than strict rules. Feedback is welcome, and the goal is a balanced structure with sensible checks and balances. If something here does not fit your situation, open a discussion in the [Community Discord](https://discord.gg/NxnyzSAwhd) and we will figure it out together.
 
 ---
 
@@ -60,4 +60,4 @@ Maintainers and members are expected to review pull requests and give feedback, 
 
 ## Questions
 
-If anything is unclear or you want to discuss an exception before you start, join the [Community Discord](https://discord.gg/MukwBuJjP7). These guidelines are meant to grow with the project, so input from contributors is always welcome.
+If anything is unclear or you want to discuss an exception before you start, join the [Community Discord](https://discord.gg/NxnyzSAwhd). These guidelines are meant to grow with the project, so input from contributors is always welcome.
