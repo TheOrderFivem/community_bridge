@@ -62,7 +62,7 @@ Complete developer documentation is available at:
 ## Community and Support
 
 Join the Community Bridge Discord server for support, discussion, and contributions:
-[Community Discord](https://discord.gg/MukwBuJjP7)
+[Community Discord](https://discord.gg/NxnyzSAwhd)
 
 ---
 
