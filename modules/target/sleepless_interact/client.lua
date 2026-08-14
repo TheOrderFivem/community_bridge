@@ -27,8 +27,8 @@ function Target.FixOptions(options)
         end
         options[k].onSelect = select
         options[k].groups = v.job or v.groups
-        local optionsCanInteract = v.canInteract      
-        if optionsCanInteract then 
+        local optionsCanInteract = v.canInteract
+        if optionsCanInteract then
             local id = Target.CreateCanInteract(optionsCanInteract)
             v.canInteract = function(...)
                 return Target.CanInteract(id, ...)
@@ -142,7 +142,7 @@ function Target.AddBoxZone(name, coords, size, heading, options)
         coords = coords,
         options = options,
     })
-    table.insert(targetZones, { name = name, id = target, creator = GetInvokingResource() })
+    table.insert(targetZones, { name = name, id = target, creator = GetInvokingResource() or GetCurrentResourceName() })
     return target
 end
 
@@ -160,7 +160,7 @@ function Target.AddSphereZone(name, coords, radius, options, debug)
         debug = targetDebug or debug,
         options = options
     })
-    table.insert(targetZones, { name = name, id = target, creator = GetInvokingResource() })
+    table.insert(targetZones, { name = name, id = target, creator = GetInvokingResource() or GetCurrentResourceName() })
     return target
 end
 

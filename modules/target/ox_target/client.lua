@@ -22,7 +22,7 @@ end
 function Target.FixOptions(options)
     for _, v in pairs(options) do
         local action = v.onSelect or v.action
-        if not action then 
+        if not action then
             local _type = v.type
             if _type and _type == "server" then
                 v.serverEvent = v.event
@@ -104,7 +104,7 @@ end
 function Target.AddLocalEntity(entities, options)
     options = Target.FixOptions(options)
     ox_target:addLocalEntity(entities, options)
-    local resource = GetInvokingResource() 
+    local resource = GetInvokingResource() or GetCurrentResourceName()
     resourceTargets.entities[resource] = resourceTargets.entities[resource] or {}
     table.insert(resourceTargets.entities[resource], { entities = entities})
 end
@@ -122,7 +122,7 @@ end
 function Target.AddNetworkedEntity(netids, options)
     options = Target.FixOptions(options)
     ox_target:addEntity(netids, options)
-    local resource = GetInvokingResource() 
+    local resource = GetInvokingResource() or GetCurrentResourceName()
     resourceTargets.networkedEntities[resource] = resourceTargets.networkedEntities[resource] or {}
     table.insert(resourceTargets.networkedEntities[resource], { netids = netids})
 end
@@ -140,7 +140,7 @@ end
 function Target.AddModel(models, options)
     options = Target.FixOptions(options)
     ox_target:addModel(models, options)
-    local resource = GetInvokingResource() 
+    local resource = GetInvokingResource() or GetCurrentResourceName()
     resourceTargets.models[resource] = resourceTargets.models[resource] or {}
     table.insert(resourceTargets.models[resource], { models = models})
 end
@@ -167,7 +167,7 @@ function Target.AddBoxZone(name, coords, size, heading, options, debug)
         debug = debug or targetDebug,
         options = options,
     })
-    table.insert(targetZones, { name = name, id = target, creator = GetInvokingResource() })
+    table.insert(targetZones, { name = name, id = target, creator = GetInvokingResource() or GetCurrentResourceName() })
     return target
 end
 
@@ -185,7 +185,7 @@ function Target.AddSphereZone(name, coords, radius, options, debug)
         debug = targetDebug or debug,
         options = options
     })
-    table.insert(targetZones, { name = name, id = target, creator = GetInvokingResource() })
+    table.insert(targetZones, { name = name, id = target, creator = GetInvokingResource() or GetCurrentResourceName() })
     return target
 end
 
@@ -216,7 +216,7 @@ AddEventHandler('onResourceStop', function(resource)
     end
     resourceTargets.entities[resource] = nil
     if resourceTargets.networkedEntities[resource] and #resourceTargets.networkedEntities[resource] > 0 then
-        for _, data in pairs(resourceTargets.networkedEntities[resource]) do        
+        for _, data in pairs(resourceTargets.networkedEntities[resource]) do
             Target.RemoveNetworkedEntity(data.netids)
         end
     end

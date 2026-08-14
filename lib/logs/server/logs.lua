@@ -74,11 +74,11 @@ local logHandlers = {
     end,
 
     qb = function(message)
-        TriggerEvent('qb-log:server:CreateLog', GetCurrentResourceName(), GetInvokingResource(), 'green', message, false)
+        TriggerEvent('qb-log:server:CreateLog', GetCurrentResourceName(), GetInvokingResource() or GetCurrentResourceName(), 'green', message, false)
     end,
 
     ox_lib = function(message)
-        lib.logger(GetInvokingResource(), GetCurrentResourceName(), message)
+        lib.logger(GetInvokingResource() or GetCurrentResourceName(), GetCurrentResourceName(), message)
     end,
 
     ['built-in'] = function(message)
