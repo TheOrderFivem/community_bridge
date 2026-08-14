@@ -452,22 +452,22 @@ end
 
 -- Deprecated point functions (no changes) 12/14/25
 function Utility.RegisterPoint(pointID, pointCoords, pointDistance, _onEnter, _onExit)
-    print("^6 community_bridge ^: ^3Utility.RegisterPoint is deprecated. Please use Point.Register instead. ^0")
+    --print("^6 community_bridge ^: ^3Utility.RegisterPoint is deprecated. Please use Point.Register instead. ^0")
     return Point.Register(pointID, pointCoords, pointDistance, nil, _onEnter, _onExit)
 end
 
 function Utility.GetPointById(pointID)
-    print("^6 community_bridge ^: ^3Utility.GetPointById is deprecated. Please use Point.Get instead. ^0")
+    --print("^6 community_bridge ^: ^3Utility.GetPointById is deprecated. Please use Point.Get instead. ^0")
     return Point.Get(pointID)
 end
 
 function Utility.GetActivePoints()
-    print("^6 community_bridge ^: ^3Utility.GetActivePoints is deprecated. Please use Point.GetAll instead. ^0")
+    --print("^6 community_bridge ^: ^3Utility.GetActivePoints is deprecated. Please use Point.GetAll instead. ^0")
     return Point.GetAll()
 end
 
 function Utility.RemovePoint(pointID)
-    print("^6 community_bridge ^: ^3Utility.RemovePoint is deprecated. Please use Point.Remove instead. ^0")
+    --print("^6 community_bridge ^: ^3Utility.RemovePoint is deprecated. Please use Point.Remove instead. ^0")
     return Point.Remove(pointID)
 end
 

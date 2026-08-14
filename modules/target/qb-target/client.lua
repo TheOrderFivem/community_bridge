@@ -182,7 +182,7 @@ function Target.AddBoxZone(name, coords, size, heading, options, debug)
         options = options,
         distance = getLargestDistance(options),
     })
-    table.insert(targetZones, { name = name, creator = GetInvokingResource() })
+    table.insert(targetZones, { name = name, creator = GetInvokingResource() or GetCurrentResourceName() })
     return name
 end
 
@@ -200,7 +200,7 @@ function Target.AddSphereZone(name, coords, radius, options, debug)
         options = options,
         distance = getLargestDistance(options),
     })
-    table.insert(targetZones, { name = name, creator = GetInvokingResource() })
+    table.insert(targetZones, { name = name, creator = GetInvokingResource() or GetCurrentResourceName() })
     return name
 end
 

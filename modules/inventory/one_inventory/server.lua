@@ -92,7 +92,6 @@ end
 ---@return table {weight, name, metadata, slot, label, count}
 Inventory.GetItemBySlot = function(src, slot)
     local slotData = inv:GetSlot(src, slot)
-    print("GetItemBySlot".. json.encode(slotData), {indent = true})
     if not slotData then return {} end
     return {
         name = slotData.name,
