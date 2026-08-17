@@ -147,7 +147,7 @@ function Clothing.OpenMenu(src)
 end
 
 ---Callback handler for retrieving a player's appearance data
-Callback.Register('community_bridge:cb:GetAppearance', function(source)
+lib.callback.register('community_bridge:cb:GetAppearance', function(source)
     local src = source
     return Clothing.GetAppearance(src)
 end)

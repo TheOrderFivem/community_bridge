@@ -21,7 +21,7 @@ end)
 Shops.FinalizeCheckOut = function(shopName, item, itemLabel, price, amount)
     if not shopName and not item and not itemLabel and not price then return end
     local mathStuff = (tonumber(price) * tonumber(amount))
-    local generatedID = Ids.CreateUniqueId()
+    local generatedID = lib.string.random('Aa1A', 8) -- Generate a random ID if not provided
     local buildMenu = {
         {
             title = locale('Shops.PayByCash', tostring(mathStuff)),
@@ -72,7 +72,7 @@ end
 ---@return nil
 Shops.OpenShop = function(shopName, shopData)
     if not shopName and not shopData then return print("^6 No Shop Name or Shop Data Passed ^0") end
-    local generatedID = Ids.CreateUniqueId()
+    local generatedID = lib.string.random('Aa1A', 8) -- Generate a random ID if not provided
     local buildMenu = {}
     for _, v in pairs(shopData) do
         local getItemName = Inventory.GetItemInfo(v.name).label

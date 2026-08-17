@@ -35,6 +35,17 @@ Framework.GetPlayerDob = function(src)
     return playerData.charinfo.birthdate
 end
 
+---@description Returns the player date of birth.
+---@param id string
+---@return string|nil
+Framework.GetPlayerDobByIdentifier = function(id)
+    local player = Framework.GetPlayerByIdentifier(id) or QBox:GetOfflinePlayer(id)
+    if not player then return end
+    local playerData = player.PlayerData
+    return playerData.charinfo.birthdate
+end
+
+
 ---@description Returns the player data of the specified source.
 ---@param src any
 ---@return table | nil
@@ -97,6 +108,17 @@ end
 ---@return string | nil
 Framework.GetPlayerName = function(src)
     local player = Framework.GetPlayer(src)
+    if not player then return end
+    local playerData = player.PlayerData
+    return playerData.charinfo.firstname, playerData.charinfo.lastname
+end
+
+---@description Returns the first and last name of the player.
+---@param src number
+---@return string | nil
+---@return string | nil
+Framework.GetPlayerNameByIdentifier = function(src)
+    local player = Framework.GetPlayerByIdentifier(src) or QBox:GetOfflinePlayer(src)
     if not player then return end
     local playerData = player.PlayerData
     return playerData.charinfo.firstname, playerData.charinfo.lastname
@@ -350,12 +372,34 @@ Framework.GetPlayerPhone = function(src)
     return playerData.charinfo.phone
 end
 
+---@description Returns the phone number of the player.
+---@param src number
+---@return string | nil
+Framework.GetPlayerPhoneByIdentifier = function(src)
+    local player = Framework.GetPlayerByIdentifier(src) or QBox:GetOfflinePlayer(src)
+    if not player then return end
+    local playerData = player.PlayerData
+    return playerData.charinfo.phone
+end
+
+
 ---@description Returns the gang name of the player.
 ---@param src number
 ---@return string | nil
 Framework.GetPlayerGang = function(src)
     local player = Framework.GetPlayer(src).PlayerData
     return player.gang.name
+end
+
+
+---@description Returns the gang name of the player.
+---@param id number
+---@return string | nil
+Framework.GetPlayerGangByIdentifier = function(id)
+    local player = Framework.GetPlayerByIdentifier(id) or QBox:GetOfflinePlayer(id)
+    if not player then return end
+    local playerData = player.PlayerData
+    return playerData.gang.name
 end
 
 ---@description This will get a table of player sources that have the specified job name.
@@ -445,6 +489,24 @@ Framework.AddAccountBalance = function(src, _type, amount)
     return player.Functions.AddMoney(_type, amount)
 end
 
+---@description Adds the specified amount to the player's account balance of the specified type.
+---@param id string
+---@param _type string
+---@param amount number
+---@return boolean | nil
+Framework.AddAccountBalanceByIdentifier = function(id, _type, amount)
+    local player = Framework.GetPlayerByIdentifier(id) or QBox:GetOfflinePlayer(id)
+    if not player then return end
+    if _type == 'money' then _type = 'cash' end
+    if amount <= 0 then return false end
+    local paid = player.Functions.AddMoney(_type, amount)
+    if paid and not player.PlayerData.source then
+        QBox:SaveOffline(player.PlayerData)
+    end
+    return paid
+end
+
+
 ---@description Removes the specified amount from the player's account balance of the specified type.
 ---@param src number
 ---@param _type string
@@ -456,6 +518,22 @@ Framework.RemoveAccountBalance = function(src, _type, amount)
     if _type == 'money' then _type = 'cash' end
     if amount <= 0 then return false end
     return player.Functions.RemoveMoney(_type, amount)
+end
+
+---@description This will remove money based on the type of account (money/bank)
+---@param src number
+---@param _type string
+---@param amount number
+---@return boolean | nil
+Framework.RemoveAccountBalanceByIdentifier = function(id, _type, amount)
+    local player = Framework.GetPlayerByIdentifier(id) or QBox:GetOfflinePlayer(id)
+    if not player then return false end
+    if _type == 'money' then _type = 'cash' end
+    local paid = player.Functions.RemoveMoney(_type, amount)
+    if paid and not player.PlayerData.source then
+        QBox:SaveOffline(player.PlayerData)
+    end
+    return paid
 end
 
 ---@description Returns the player's account balance of the specified type.
@@ -470,6 +548,18 @@ Framework.GetAccountBalance = function(src, _type)
     local balance = playerData.money[_type] or 0
     if balance <= 0 then return 0 end
     return balance
+end
+
+---@description Returns the player's account balance of the specified type.
+---@param id string
+---@param _type string
+---@return number | nil
+Framework.GetAccountBalanceByIdentifier = function(id, _type)
+    local player = Framework.GetPlayerByIdentifier(id) or QBox:GetOfflinePlayer(id)
+    if not player then return 0 end
+    local playerData = player.PlayerData
+    if _type == 'money' then _type = 'cash' end
+    return playerData.money[_type]
 end
 
 ---@description Returns a table of owned vehicles for the player. format is {vehicle = vehicle, plate = plate}

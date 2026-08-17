@@ -22,7 +22,7 @@ end
 ---@param src number
 ---@return table
 function Clothing.GetAppearance(src)
-    return Callback.Trigger('community_bridge:cb:GetAppearance', src)
+    return lib.callback.await('community_bridge:cb:GetAppearance', src)
 end
 
 ---Apply skin data to a player

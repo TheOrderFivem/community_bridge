@@ -1,4 +1,6 @@
 ---@diagnostic disable: duplicate-set-field
+---
+---TODO: fix points
 Target = Target or {}
 Ids = Ids or Require("lib/utility/shared/ids.lua")
 
@@ -18,7 +20,7 @@ end
 
 function Target.CreateCanInteract(cb)
     if not cb then return end
-    local id = Ids.CreateUniqueId(InteractIds)
+    local id = lib.string.random('Aa1A', 8) -- Generate a random ID if not provided
     InteractIds[id] = {
         id = id,
         ableToInteract = -1,
@@ -80,7 +82,7 @@ function Target.AddLocalEntity(entities, _options)
         entities = { entities }
     end
     for _, entity in pairs(entities) do
-        local id = Ids.RandomString()
+        local id = lib.string.random('Aa1A', 8) -- Generate a random ID if not provided
         local title =  Language.Locale("target.title")
         local menuData = { id = id, title = title, options = {} }
         for k, v in pairs(fixedOptions) do
@@ -128,7 +130,7 @@ end
 
 function Target.AddBoxZone(name, coords, size, heading, options)
     local fixedOptions = Target.FixOptions(options)
-    local id = Ids.RandomString()
+    local id = lib.string.random('Aa1A', 8) -- Generate a random ID if not provided
     local title =  Bridge.Language.Locale("target.title")
     local menuData = { id = id, title = title, options = {} }
     for k, v in pairs(fixedOptions) do

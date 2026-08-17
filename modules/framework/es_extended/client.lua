@@ -11,7 +11,7 @@ local cachedItemList = nil
 ---@description This is an internal function, its here to attempt to emulate qbs shared items mainly. This should not be used outside of bridge.
 Framework.ItemList = function()
     if cachedItemList then return cachedItemList end
-    local items = Callback.Trigger('community_bridge:Callback:GetFrameworkItems', false)
+    local items = lib.callback.await('community_bridge:Callback:GetFrameworkItems', false)
     cachedItemList = { Items = items.Items or {} }
     return cachedItemList
 end
@@ -45,7 +45,7 @@ end
 ---@description This will return a table of all the jobs in the framework.
 ---@return table
 Framework.GetFrameworkJobs = function()
-    local jobs = Callback.Trigger('community_bridge:Callback:GetFrameworkJobs', false)
+    local jobs = lib.callback.await('community_bridge:Callback:GetFrameworkJobs', false)
     return jobs
 end
 
