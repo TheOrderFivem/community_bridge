@@ -3,7 +3,6 @@ local blipIDs = {}
 local spawnedPeds = {}
 local spawnedProps = {}
 
-Locales = Locales or Require('modules/locales/shared.lua')
 Point = Point or Require('lib/points/client/points.lua')
 
 ---Get the hash of a model (string or number)
@@ -496,7 +495,7 @@ function Utility.CopyToClipboard(text)
         type = "copytoclipboard",
         text = text
     })
-    local message = Locales and Locales.Locale("clipboard.copy")
+    local message = lib.locale("clipboard.copy")
     --TriggerEvent('community_bridge:Client:Notify', message, 'success')
     return true
 end

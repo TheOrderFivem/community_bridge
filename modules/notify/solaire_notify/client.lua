@@ -9,10 +9,6 @@ Notify.GetResourceName = function()
     return resourceName
 end
 
-local Language = Language or Require("modules/locales/shared.lua")
-local locale = Language.Locale
-local placeHolderText = locale("Notifications.PlaceholderTitle")
-
 Notify.SendNotify = function(message, _type, time)
     time = time or 3000
 
@@ -28,7 +24,7 @@ end
 ---@return nil
 Notify.SendNotification = function(title, message, _type, time, props)
     time = time or 3000
-    if not title or title == "" then title = placeHolderText end
+    if not title or title == "" then title = lib.locale("Notifications.PlaceholderTitle") end
 
     props = props or {}
 

@@ -1,18 +1,17 @@
 Scaleform = Scaleform or Require("lib/scaleform/client/scaleform.lua")
 Utility = Utility or Require("lib/utility/client/utility.lua")
 Raycast = Raycast or Require("lib/raycast/client/raycast.lua")
-Language = Language or Require("modules/locales/shared.lua")
 
 PlaceableObject = PlaceableObject or {}
 
 -- Register key mappings for placement controls
-RegisterKeyMapping('+place_object', locale('placeable_object.object_place'), 'mouse_button', 'MOUSE_LEFT')
-RegisterKeyMapping('+cancel_placement', locale('placeable_object.object_cancel'), 'mouse_button', 'MOUSE_RIGHT')
-RegisterKeyMapping('+rotate_left', locale('placeable_object.rotate_left'), 'keyboard', 'LEFT')
-RegisterKeyMapping('+rotate_right', locale('placeable_object.rotate_right'), 'keyboard', 'RIGHT')
-RegisterKeyMapping('+scroll_up', locale('placeable_object.object_scroll_up'), 'mouse_wheel', 'IOM_WHEEL_UP')
-RegisterKeyMapping('+scroll_down', locale('placeable_object.object_scroll_down'), 'mouse_wheel', 'IOM_WHEEL_DOWN')
-RegisterKeyMapping('+depth_modifier', locale('placeable_object.depth_modifier'), 'keyboard', 'LCONTROL')
+RegisterKeyMapping('+place_object', lib.locale('placeable_object.object_place'), 'mouse_button', 'MOUSE_LEFT')
+RegisterKeyMapping('+cancel_placement', lib.locale('placeable_object.object_cancel'), 'mouse_button', 'MOUSE_RIGHT')
+RegisterKeyMapping('+rotate_left', lib.locale('placeable_object.rotate_left'), 'keyboard', 'LEFT')
+RegisterKeyMapping('+rotate_right', lib.locale('placeable_object.rotate_right'), 'keyboard', 'RIGHT')
+RegisterKeyMapping('+scroll_up', lib.locale('placeable_object.object_scroll_up'), 'mouse_wheel', 'IOM_WHEEL_UP')
+RegisterKeyMapping('+scroll_down', lib.locale('placeable_object.object_scroll_down'), 'mouse_wheel', 'IOM_WHEEL_DOWN')
+RegisterKeyMapping('+depth_modifier', lib.locale('placeable_object.depth_modifier'), 'keyboard', 'LCONTROL')
 
 local state = {
     isPlacing = false,
@@ -45,11 +44,11 @@ local state = {
 }
 
 local placementText = {
-    string.format(locale('placeable_object.object_place'), Utility.GetCommandKey('+place_object')),
-    string.format(locale('placeable_object.object_cancel'), Utility.GetCommandKey('+cancel_placement')),
-    string.format(locale('placeable_object.rotate_clockwise'), Utility.GetCommandKey('+scroll_up')),
-    string.format(locale('placeable_object.rotate_counter_clockwise'), Utility.GetCommandKey('+scroll_down')),
-    string.format(locale('placeable_object.depth_modifier'), Utility.GetCommandKey('+depth_modifier'))
+    string.format(lib.locale('placeable_object.object_place'), Utility.GetCommandKey('+place_object')),
+    string.format(lib.locale('placeable_object.object_cancel'), Utility.GetCommandKey('+cancel_placement')),
+    string.format(lib.locale('placeable_object.rotate_clockwise'), Utility.GetCommandKey('+scroll_up')),
+    string.format(lib.locale('placeable_object.rotate_counter_clockwise'), Utility.GetCommandKey('+scroll_down')),
+    string.format(lib.locale('placeable_object.depth_modifier'), Utility.GetCommandKey('+depth_modifier'))
 
 }
 

@@ -1,31 +1,34 @@
+I think Community Bridge has been a huge benefit to the FiveM ecosystem and has helped a lot of creators support different frameworks without having to reinvent the same integrations over and over.
 
-Overall Community Bridge has been a blessing to fivem and a lot of creators, but i know people are becoming more and more wary to actually utilizing this because the scope has 
-since lost its way. over complicated library modules have led to bloatware where we dont need bloat. since ox_lib is required to run the bridge, why try to re-invent the wheel
-of a great library already and include it in a "bridge"
+That said, I think the scope of the project has gradually become too broad. A number of the library modules are now duplicating functionality that already exists in `ox_lib`, which is already a required dependency of Community Bridge.
 
-Since I personally believe that we should have a much more narrow scope I decided to do some leg work and reduce the lib modules to things that are **needed** and **not already handled by ox_lib**
+Because of that, I don't think we should maintain abstractions for functionality that can already be handled directly by `ox_lib`. It adds additional code, maintenance, and surface area without providing much benefit.
 
-# Completely Removed | Lib
+This PR removes the following `lib` modules:
 
-1) lib/anim module
-  - this already exists inside of ox_lib. there is no use for it. 
-  - its only called in entities/client/client_entity so if that module stays it will be replaced with ox's call
-2) callback
-  - while I do enjoy these callbacks, theres no specific reason to keep these involved as ox already exists in this repo by requiring it 
-  - all modules that used callbacks are easily switched to ox callbacks 
-3) markers
-  - while a neat module, ox does this
-4) points as well as you can really just use ox zones. may not be a 1 for 1, but ox zones can accomplish the same things
-5) raycast is already handled with ox lib
-6) scaleform already handled with ox_lib
-7) shells is pointless, if anything the script should be doing the spawning and handling and not a bridge. as many different shells from different creators exits
-8) sql is a wrapper of a wrapper for mysql, every framework starts with oxmysql, while an ORM would be nice, this isnt ORM level yet
-9) vehicles is not needed as ox handles this
-10) cutscenes
-   - like why? its used in so little of resources, no sense of keep loading this everywhere
+* `anim` — already provided by `ox_lib`
+* `callback` — can be replaced with `ox_lib` callbacks
+* `markers` — already handled by `ox_lib`
+* `raycast` — already handled by `ox_lib` and relatively niche
+* `scaleform` — already handled by `ox_lib`
+* `shells` — should be owned by the resource that needs them rather than the bridge
+* `sql` — effectively another abstraction over `oxmysql` without providing ORM-level functionality
+* `vehicles` — unnecessary given existing `ox_lib` functionality
+* `cutscenes` — extremely niche and doesn't justify being maintained as part of the bridge
 
-# Completely Removed | modules
-1) zones
-  - lets face it, polyzone is fucking trash and hasnt been given a semi decent update in 5 years. ox_lib is required for this bridge so we should enforce higher code quality
-    and there isnt a need for a wrapper when its a single resource being used, i can see this coming back in the future if someone makes a better or comparable zone
+I've also removed the `zones` and `locale` module.
 
+PolyZone has been around for a long time and was a perfectly reasonable solution when there weren't many alternatives. However, it hasn't received a meaningful update in years, and I don't think we should continue building abstractions around it when `ox_lib` already provides a modern zone implementation.
+
+Since `ox_lib` is already a required dependency of Community Bridge, I'd rather enforce the use of the better-supported implementation than continue wrapping an older solution simply for compatibility.
+
+If someone eventually develops a zone library that is genuinely better or provides functionality that `ox_lib` doesn't, I'm completely open to revisiting this decision. But right now, I don't think there's a strong reason to maintain a bridge layer around PolyZone.
+
+As for locales, ox already does a really great job with locales, and we should be utilizing this as well.
+# footnote
+
+The goal here isn't to remove functionality for the sake of removing it. It's to establish a much narrower scope for Community Bridge and avoid turning it into a general-purpose library.
+
+I'd rather see the bridge focus its maintenance and development effort on framework/resource compatibility — the part that actually benefits from having a bridge — while leaving general-purpose functionality to libraries that already specialize in it.
+
+If there's a legitimate use case for any of these modules that I'm overlooking, I'm absolutely open to discussing it. The main thing I'm trying to avoid is maintaining duplicate abstractions simply because they exist.

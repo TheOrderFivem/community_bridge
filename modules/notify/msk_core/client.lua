@@ -8,9 +8,6 @@ Notify.GetResourceName = function()
     return resourceName
 end
 
-local Language = Language or Require("modules/locales/shared.lua")
-local locale = Language.Locale
-local placeHolderText = locale("Notifications.PlaceholderTitle")
 
 ---DEPRICATED: PLEASE SWITCH TO Notify.SendNotification
 ---@param message string
@@ -31,7 +28,7 @@ end
 ---@return nil
 Notify.SendNotification = function(title, message, _type, time, props)
     time = time or 3000
-    if not title then title = placeHolderText end
+    if not title then title = lib.locale("Notifications.PlaceholderTitle") end
     return exports.msk_core:Notify(title, message, _type or "success", time)
 end
 
