@@ -8,7 +8,7 @@ Dispatch.SendAlert = function(data)
     if data.vehicle then
         table.insert(metadata, {
             type = 'vehicle',
-            model = data.vehicle or locale('unknown_vehicle_model'),
+            model = data.vehicle or lib.locale('unknown_vehicle_model'),
             plate = data.plate or nil,
             color = data.colorHex or nil
         })

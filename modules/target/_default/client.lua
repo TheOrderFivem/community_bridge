@@ -1,6 +1,6 @@
 ---@diagnostic disable: duplicate-set-field
+---
 Target = Target or {}
-Ids = Ids or Require("lib/utility/shared/ids.lua")
 
 local InteractIds = {}
 
@@ -18,7 +18,7 @@ end
 
 function Target.CreateCanInteract(cb)
     if not cb then return end
-    local id = Ids.CreateUniqueId(InteractIds)
+    local id = lib.string.random('Aa1A', 8) -- Generate a random ID if not provided
     InteractIds[id] = {
         id = id,
         ableToInteract = -1,
@@ -80,13 +80,13 @@ function Target.AddLocalEntity(entities, _options)
         entities = { entities }
     end
     for _, entity in pairs(entities) do
-        local id = Ids.RandomString()
-        local title =  Language.Locale("target.title")
+        local id = lib.string.random('Aa1A', 8) -- Generate a random ID if not provided
+        local title =  lib.locale("target.title")
         local menuData = { id = id, title = title, options = {} }
         for k, v in pairs(fixedOptions) do
             table.insert(menuData.options, {
                 title = title .. " " .. k,
-                description = Language.Locale("target.description"),
+                description = lib.locale("target.description"),
                 onSelect = function(selected, secondary, args)
                     if v.onSelect then
                         v.onSelect(selected, secondary, args)
@@ -97,7 +97,7 @@ function Target.AddLocalEntity(entities, _options)
         Point.Register(id, entity, 5, nil, function()
             local coords = GetEntityCoords(entity)
             local sleep = 3000
-            local test = Language.Locale("target.interact")
+            local test = lib.locale("target.interact")
             CreateThread(function()
                 while DoesEntityExist(entity) do
                     Wait(sleep)
@@ -128,13 +128,13 @@ end
 
 function Target.AddBoxZone(name, coords, size, heading, options)
     local fixedOptions = Target.FixOptions(options)
-    local id = Ids.RandomString()
-    local title =  Bridge.Language.Locale("target.title")
+    local id = lib.string.random('Aa1A', 8) -- Generate a random ID if not provided
+    local title =  lib.locale("target.title")
     local menuData = { id = id, title = title, options = {} }
     for k, v in pairs(fixedOptions) do
         table.insert(menuData.options, {
             title = title .. " " .. k,
-            description = Bridge.Language.Locale("target.description"),
+            description = lib.locale("target.description"),
             onSelect = function(selected, secondary, args)
                 if v.onSelect then
                     v.onSelect(selected, secondary, args)
@@ -151,7 +151,7 @@ function Target.AddBoxZone(name, coords, size, heading, options)
             local distance = #(coords - GetEntityCoords(PlayerPedId()))
             if distance < 10 then
                 sleep = 0
-                Utility.Draw3DHelpText(coords, Bridge.Language.Locale("target.interact"), 0.35)
+                Utility.Draw3DHelpText(coords, lib.locale("target.interact"), 0.35)
                 if IsControlJustPressed(0, 38) then
                     Menu.Open(menuData, false)
                 end

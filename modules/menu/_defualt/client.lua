@@ -6,7 +6,7 @@ Menu = {}
 ---@param useQb boolean Whether to use QB menu syntax.
 ---@return id string The menu ID.
 function Menu.Open(data, useQb)
-    local id = data.id or Ids.CreateUniqueId(Menus, nil, nil)
+    local id = data.id or lib.string.random('Aa1A', 8) -- Generate a random ID if not provided
     Menus[id] = OpenMenu(id, data, useQb)
     data.id = id
     return id

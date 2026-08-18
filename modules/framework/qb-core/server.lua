@@ -4,7 +4,7 @@ if GetResourceState('qbx_core') == 'started' then return end
 
 Framework = Framework or {}
 
-QBCore = exports['qb-core']:GetCoreObject()
+local QBCore = exports['qb-core']:GetCoreObject()
 
 Framework.Shared = QBCore.Shared
 
@@ -93,6 +93,15 @@ Framework.GetPlayerName = function(src)
     return playerData.charinfo.firstname, playerData.charinfo.lastname
 end
 
+---@description Returns the first and last name of the player.
+---@return string|nil, string|nil
+Framework.GetPlayerNameByIdentifier = function(id)
+    local player = Framework.GetPlayerByIdentifier(id) or QBCore.Functions.GetOfflinePlayer(id)
+    if not player then return end
+    local playerData = player.PlayerData
+    return playerData.charinfo.firstname, playerData.charinfo.lastname
+end
+
 ---@description Returns the player date of birth.
 ---@param src number
 ---@return string|nil
@@ -102,6 +111,17 @@ Framework.GetPlayerDob = function(src)
     local playerData = player.PlayerData
     return playerData.charinfo.birthdate
 end
+
+---@description Returns the player date of birth.
+---@param id number
+---@return string|nil
+Framework.GetPlayerDobByIdentifier = function(id)
+    local player = Framework.GetPlayerByIdentifier(id) or QBCore.Functions.GetOfflinePlayer(id)
+    if not player then return end
+    local playerData = player.PlayerData
+    return playerData.charinfo.birthdate
+end
+
 
 ---@description Returns a table of items matching the specified name and if passed metadata from the player's inventory.
 ---@param src number
@@ -240,6 +260,7 @@ Framework.SetPlayerMetadata = function(src, metadata, value)
     return true
 end
 
+
 ---@description Gets the specified metadata key to the player's data.
 ---@param src number
 ---@param metadata string
@@ -370,11 +391,32 @@ Framework.GetPlayerPhone = function(src)
     return playerData.charinfo.phone
 end
 
+---@description Returns the phone number of the player.
+---@param src number
+---@return string | nil
+Framework.GetPlayerPhoneByIdentifier = function(src)
+    local player = Framework.GetPlayerByIdentifier(src) or QBCore.Functions.GetOfflinePlayer(src)
+    if not player then return end
+    local playerData = player.PlayerData
+    return playerData.charinfo.phone
+end
+
+
 ---@description Returns the gang name of the player.
 ---@param src number
 ---@return string | nil
 Framework.GetPlayerGang = function(src)
     local player = Framework.GetPlayer(src)
+    if not player then return end
+    local playerData = player.PlayerData
+    return playerData.gang.name
+end
+
+---@description Returns the gang name of the player.
+---@param id number
+---@return string | nil
+Framework.GetPlayerGangByIdentifier = function(id)
+    local player = Framework.GetPlayerByIdentifier(id) or QBCore.Functions.GetOfflinePlayer(id)
     if not player then return end
     local playerData = player.PlayerData
     return playerData.gang.name
@@ -399,6 +441,8 @@ Framework.GetPlayerJob = function(src)
     if not jobData then return end
     return jobData.jobName, jobData.jobLabel, jobData.gradeName, jobData.gradeLevel
 end
+
+
 
 ---@description This will return the players job name, job label, job grade label job grade level, boss status,
 ---and duty status in a table
@@ -467,6 +511,24 @@ Framework.AddAccountBalance = function(src, _type, amount)
     return player.Functions.AddMoney(_type, amount)
 end
 
+---@description This will add money based on the type of account (money/bank)
+---@param src number
+---@param _type string
+---@param amount number
+---@return boolean | nil
+Framework.AddAccountBalanceByIdentifier = function(id, _type, amount)
+    local player = Framework.GetPlayerByIdentifier(id) or QBCore.Functions.GetOfflinePlayer(id)
+    if not player then return false end
+    if _type == 'money' then _type = 'cash' end
+    if amount <= 0 then return false end
+    local paid = player.Functions.AddMoney(_type, amount)
+    if paid and not player.PlayerData.source then
+        player.Functions.Save()
+    end
+    return paid
+end
+
+
 ---@description This will remove money based on the type of account (money/bank)
 ---@param src number
 ---@param _type string
@@ -482,9 +544,33 @@ end
 ---@description This will remove money based on the type of account (money/bank)
 ---@param src number
 ---@param _type string
+---@param amount number
+---@return boolean | nil
+Framework.RemoveAccountBalanceByIdentifier = function(id, _type, amount)
+    local player = Framework.GetPlayerByIdentifier(id) or QBCore.Functions.GetOfflinePlayer(id)
+    if not player then return false end
+    if _type == 'money' then _type = 'cash' end
+    local paid = player.Functions.RemoveMoney(_type, amount)
+    if paid and not player.PlayerData.source then
+        player.Functions.Save()
+    end
+    return paid
+end
+
+---@description This will remove money based on the type of account (money/bank)
+---@param src number
+---@param _type string
 ---@return string | nil
 Framework.GetAccountBalance = function(src, _type)
     local player = Framework.GetPlayer(src)
+    if not player then return 0 end
+    local playerData = player.PlayerData
+    if _type == 'money' then _type = 'cash' end
+    return playerData.money[_type]
+end
+
+Framework.GetAccountBalanceByIdentifier = function(id, _type)
+    local player = Framework.GetPlayerByIdentifier(id) or QBCore.Functions.GetOfflinePlayer(id)
     if not player then return 0 end
     local playerData = player.PlayerData
     if _type == 'money' then _type = 'cash' end

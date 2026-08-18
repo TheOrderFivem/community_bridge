@@ -1,8 +1,6 @@
 ---@diagnostic disable: duplicate-set-field
 if GetResourceState('es_extended') ~= 'started' then return end
 
-Prints = Prints or Require("lib/utility/shared/prints.lua")
-Callback = Callback or Require("lib/callback/shared/callback.lua")
 
 ESX = exports.es_extended:getSharedObject()
 
@@ -69,6 +67,15 @@ Framework.GetPlayerDob = function(src)
     return dob
 end
 
+Framework.GetPlayerDobByIdentifier = function(citizenid)
+    local xPlayer = Framework.GetPlayerByIdentifier(citizenid)
+    if xPlayer then
+        return xPlayer.get("dateofbirth")
+    end
+    local result = MySQL.single.await("SELECT dateofbirth FROM users WHERE identifier = @identifier", {["@identifier"] = citizenid})
+    return result and result.dateofbirth or nil
+
+end
 --- @description Returns the player data of the specified source in the framework defualt format
 --- @param src any
 --- @return table | nil
@@ -118,6 +125,15 @@ Framework.GetPlayerName = function(src)
     local xPlayer = Framework.GetPlayer(src)
     if not xPlayer then return end
     return xPlayer.variables.firstName, xPlayer.variables.lastName
+end
+
+Framework.GetPlayerNameByIdentifier = function(citizenid)
+    local xPlayer = Framework.GetPlayerByIdentifier(citizenid)
+    if xPlayer then
+        return xPlayer.variables.firstName, xPlayer.variables.lastName
+    end
+    local result = MySQL.single.await("SELECT firstname, lastname FROM users WHERE identifier = @identifier", {["@identifier"] = citizenid})
+    return result and result.firstname or nil, result and result.lastname or nil
 end
 
 ---@description This will return a table of all logged in players
@@ -340,6 +356,15 @@ Framework.GetPlayerPhone = function(src)
     return xPlayer.get("phone_number")
 end
 
+Framework.GetPlayerPhoneByIdentifier = function(citizenid)
+    local xPlayer = Framework.GetPlayerByIdentifier(citizenid)
+    if xPlayer then
+        return xPlayer.get("phone_number")
+    end
+    local result = MySQL.single.await("SELECT phone_number FROM users WHERE identifier = @identifier", {["@identifier"] = citizenid})
+    return result and result.phone_number or nil
+end
+
 ---@description This will return the job name, label, grade name, and grade level of the player.
 ---@deprecated
 ---@param src number
@@ -404,7 +429,10 @@ Framework.GetPlayerGang = function(src)
     print("ESX does not support gangs, please ensure you are using a supported gang system or that you have the correct start order.")
     return
 end
-
+Framework.GetPlayerGangByIdentifier = function(citizenid)
+    print("ESX does not support gangs, please ensure you are using a supported gang system or that you have the correct start order.")
+    return
+end
 ---@description This will get a table of player sources that have the specified job name.
 --- @param job string
 --- @return table
@@ -441,6 +469,28 @@ Framework.AddAccountBalance = function(src, _type, amount)
     return true
 end
 
+---@description This will add money based on the type of account (money/bank)
+--- @param src number
+--- @param _type string
+--- @param amount number
+--- @return boolean
+Framework.AddAccountBalanceByIdentifier = function(src, _type, amount)
+    local xPlayer = Framework.GetPlayer(src)
+    if _type == 'cash' then _type = 'money' end
+    if amount <= 0 then return false end
+    if xPlayer then
+        xPlayer.addAccountMoney(_type, amount)
+        return true
+    end
+    local money = MySQL.single.await("SELECT accounts FROM users WHERE identifier = @identifier", {["@identifier"] = src})
+    if not money then return false end
+    local accounts = json.decode(money.accounts)
+    accounts[_type] = (accounts[_type] or 0) + amount
+    MySQL.update.await("UPDATE users SET accounts = @accounts WHERE identifier = @identifier", {["@accounts"] = json.encode(accounts), ["@identifier"] = src})
+    return true
+end
+
+
 ---@description This will remove money based on the type of account (money/bank)
 --- @param src number
 --- @param _type string
@@ -457,6 +507,30 @@ Framework.RemoveAccountBalance = function(src, _type, amount)
     return true
 end
 
+---@description This will remove money based on the type of account (money/bank)
+--- @param src number
+--- @param _type string
+--- @param amount number
+--- @return boolean
+Framework.RemoveAccountBalanceByIdentifier = function(src, _type, amount)
+    local xPlayer = Framework.GetPlayer(src)
+    if _type == 'cash' then _type = 'money' end
+    if amount <= 0 then return false end
+    if xPlayer then
+        local accountVal = Framework.GetAccountBalance(src, _type)
+        if accountVal < amount then return false end
+        xPlayer.removeAccountMoney(_type, amount)
+        return true
+    end
+    local money = MySQL.single.await("SELECT accounts FROM users WHERE identifier = @identifier", {["@identifier"] = src})
+    if not money then return false end
+    local accounts = json.decode(money.accounts)
+    if (accounts[_type] or 0) < amount then return false end
+    accounts[_type] = (accounts[_type] or 0) - amount
+    MySQL.update.await("UPDATE users SET accounts = @accounts WHERE identifier = @identifier", {["@accounts"] = json.encode(accounts), ["@identifier"] = src})
+    return true
+end
+
 ---@description This will get money based on the type of account (money/bank)
 --- @param src number
 --- @param _type string
@@ -468,6 +542,20 @@ Framework.GetAccountBalance = function(src, _type)
     local balance = xPlayer.getAccount(_type).money or 0
     if balance <= 0 then return 0 end
     return balance
+end
+
+Framework.GetAccountBalanceByIdentifier = function(src, _type)
+    local xPlayer = Framework.GetPlayerByIdentifier(src)
+    if _type == 'cash' then _type = 'money' end
+    if xPlayer then
+        local balance = xPlayer.getAccount(_type).money or 0
+        if balance <= 0 then return 0 end
+        return balance
+    end
+    local money = MySQL.single.await("SELECT accounts FROM users WHERE identifier = @identifier", {["@identifier"] = src})
+    if not money then return 0 end
+    local accounts = json.decode(money.accounts)
+    return accounts[_type] or 0
 end
 
 ---@description This will add an item, and return true or false based on success
@@ -600,13 +688,13 @@ end)
 
 ---@description Callback to get framework jobs list
 ---@param source number
-Callback.Register('community_bridge:Callback:GetFrameworkJobs', function(source)
+lib.callback.register('community_bridge:Callback:GetFrameworkJobs', function(source)
     return Framework.GetFrameworkJobs() or {}
 end)
 
 ---@description This is linked to an internal function, its an attempt to standardize the item list across frameworks.
 ---@param source number
-Callback.Register('community_bridge:Callback:GetFrameworkItems', function(source)
+lib.callback.register('community_bridge:Callback:GetFrameworkItems', function(source)
     return Framework.ItemList() or {}
 end)
 

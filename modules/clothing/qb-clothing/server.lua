@@ -5,9 +5,7 @@ if GetResourceState('17mov_CharacterSystem') ~= 'missing' then return end
 Clothing = Clothing or {}
 Clothing.Players = {}
 
-Callback = Callback or Require("lib/utility/shared/callbacks.lua")
-Table = Table or Require('lib/utility/shared/tables.lua')
-QBCore = QBCore or exports['qb-core']:GetCoreObject() -- probably easiest for now to call the Framework module
+local qb = exports['qb-core'] -- probably easiest for now to call the Framework module
 
 --- Internal function to get the full appearance data including skin, model, and converted format
 ---@param src number The server ID of the player
@@ -15,7 +13,7 @@ QBCore = QBCore or exports['qb-core']:GetCoreObject() -- probably easiest for no
 function Clothing.GetFullAppearanceData(src)
     src = src and tonumber(src)
     assert(src, "src is nil")
-    local Player = QBCore.Functions.GetPlayer(src)
+    local Player = qb:GetPlayer(src)
     if not Player then return end
     local citId = Player.PlayerData.citizenid
     if not citId then return end
@@ -66,7 +64,7 @@ end
 function Clothing.SetAppearance(src, data, updateBackup, save)
     src = src and tonumber(src)
     assert(src, "src is nil")
-    local Player = QBCore.Functions.GetPlayer(src)
+    local Player = qb:GetPlayer(src)
     if not Player then return end
     local citId = Player.PlayerData.citizenid
     if not citId then return end
@@ -136,7 +134,7 @@ end
 AddEventHandler('community_bridge:Server:OnPlayerLoaded', function(src)
     src = src and tonumber(src)
     assert(src, "src is nil")
-    local Player = QBCore.Functions.GetPlayer(src)
+    local Player = qb:GetPlayer(src)
     if not Player then return end
     local citId = Player.PlayerData.citizenid
     if not citId then return end
@@ -168,7 +166,7 @@ AddEventHandler('onResourceStart', function(resource)
 end)
 
 --- Callback handler for retrieving a player's appearance data
-Callback.Register('community_bridge:cb:GetAppearance', function(source)
+lib.callback.register('community_bridge:cb:GetAppearance', function(source)
     local src = source
     return Clothing.GetAppearance(src)
 end)

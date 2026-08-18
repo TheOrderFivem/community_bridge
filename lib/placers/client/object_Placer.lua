@@ -1,17 +1,16 @@
 Placeable = Placeable or {}
-Utility = Utility or Require("lib/utility/client/utility.lua")
 if not lib then Require('init.lua', 'ox_lib') end
 
 local activePlacementProp = nil
-lib.locale()
+
 
 -- Object placer --
-local placementText = {
-    locale('placeable_object.place_object_place'),
-    locale('placeable_object.place_object_cancel'),
-    locale('placeable_object.place_object_scroll_up'),
-    locale('placeable_object.place_object_scroll_down')
-}
+-- local placementText = {
+    -- lib.locale('placeable_object.place_object_place'),
+    -- lib.locale('placeable_object.place_object_cancel'),
+    -- lib.locale('placeable_object.place_object_scroll_up'),
+    -- lib.locale('placeable_object.place_object_scroll_down')
+-- }
 
 local function finishPlacing()
     Bridge.Notify.HideHelpText()
@@ -39,7 +38,7 @@ Placeable.PlaceObject = function(object, distance, snapToGround, allowedMats, of
     local checkDist = distance or 10.0
     local ped = PlayerPedId()
 
-    Utility.LoadModel(propObject)
+    lib.requestModel(propObject)
 
     activePlacementProp = CreateObject(propObject, 1.0, 1.0, 1.0, false, true, true)
     SetModelAsNoLongerNeeded(propObject)

@@ -1,6 +1,5 @@
 ---@diagnostic disable: duplicate-set-field
 Clothing = Clothing or {}
-Callback = Callback or Require("lib/callback/shared/callback.lua")
 
 local ClothingBackup = {}
 
@@ -43,7 +42,7 @@ function Clothing.GetAppearance(entity)
     return skinData
 end
 
-Callback.Register('community_bridge:cb:GetAppearance', function()
+lib.callback.register('community_bridge:cb:GetAppearance', function()
     local ped = PlayerPedId()
     if not ped or not DoesEntityExist(ped) then return end
     local skinData = Clothing.GetAppearance(ped)

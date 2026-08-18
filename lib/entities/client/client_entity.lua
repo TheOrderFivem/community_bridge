@@ -1,5 +1,3 @@
-Utility = Utility or Require("lib/utility/client/utility.lua")
-Ids = Ids or Require("lib/utility/shared/ids.lua")
 Point = Point or Require("lib/points/client/points.lua")
 ClientEntity = {
     All = {},
@@ -75,7 +73,7 @@ end
 local function SpawnEntity(entityData)
     if entityData.spawned and DoesEntityExist(entityData.spawned) then return end -- Already spawned
     if entityData.model then
-        local loaded, model = Utility.LoadModel(entityData.model)
+        local loaded, model = lib.requestModel(entityData.model)
         if not loaded then
             print(string.format("[ClientEntity] Failed to load model %s for entity %s", entityData.model, entityData.id))
             return
@@ -129,7 +127,7 @@ end
 --- @param entityData EntityData
 --- @return table Registered point/entity entry (the value stored in ClientEntity.All[entityData.id]).
 function ClientEntity.Create(entityData)
-    entityData.id = entityData.id or Ids.CreateUniqueId(ClientEntity.All)
+    entityData.id = entityData.id or lib.string.random('Aa1A', 8) -- Generate a random ID if not provided
     if ClientEntity.All[entityData.id] then return ClientEntity.All[entityData.id] end
     entityData.rotation = entityData.rotation or vector3(0.0, 0.0, entityData.heading or 0.0)
     entityData.invoked =  entityData.invoked or GetInvokingResource() or "community_bridge"
@@ -236,7 +234,8 @@ function ClientEntity.SetAnim(id, anim)
     local entity = entityData.spawned
     if not entity or not DoesEntityExist(entity) then return end
     if not anim then return Bridge.Anim.Stop(id) end
-    Bridge.Anim.Play(id, entity, anim.dict, anim.name, anim.blendIn or 8.0, anim.blendOut or -8.0, anim.duration, anim.flags, anim.playbackRate or 0.0, anim.onComplete)
+    lib.playAnim(entity, anim.dict, anim.name, anim.blendIn or 8.0, anim.blendOut or -8.0, anim.duration, anim.flags, anim.playbackRate or 0.0)
+
 end
 
 --- Attaches the spawned FiveM entity for a ClientEntity to a target, or detaches when nil.
