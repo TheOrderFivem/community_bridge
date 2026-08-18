@@ -1,7 +1,6 @@
 ---@diagnostic disable: duplicate-set-field
 Clothing = Clothing or {}
 Clothing.LastAppearance = Clothing.LastAppearance or {}
-Callback = Callback or Require("lib/callback/shared/callback.lua")
 
 ---This will get the name of the in use resource.
 ---@return string

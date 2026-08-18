@@ -1,4 +1,4 @@
-Ids = Ids or Require("lib/utility/shared/ids.lua")
+
 
 local Entities = {}
 ServerEntity = {} -- Renamed from EntityRelay

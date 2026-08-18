@@ -1,5 +1,4 @@
 Utility = Utility or Require("lib/utility/client/utility.lua")
-Ids = Ids or Require("lib/utility/shared/ids.lua")
 Point = Point or Require("lib/points/client/points.lua")
 ClientEntity = {
     All = {},

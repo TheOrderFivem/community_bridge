@@ -2,7 +2,6 @@
 if GetResourceState('es_extended') ~= 'started' then return end
 
 ESX = exports.es_extended:getSharedObject()
-Callback = Callback or Require("lib/callback/shared/callback.lua")
 
 Framework = Framework or {}
 

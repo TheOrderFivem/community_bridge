@@ -1,6 +1,5 @@
 ---@diagnostic disable: duplicate-set-field
 Clothing = Clothing or {}
-Callback = Callback or Require("lib/callback/shared/callback.lua")
 
 local ClothingBackup = {}
 

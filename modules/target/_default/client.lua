@@ -1,8 +1,6 @@
 ---@diagnostic disable: duplicate-set-field
 ---
----TODO: fix points
 Target = Target or {}
-Ids = Ids or Require("lib/utility/shared/ids.lua")
 
 local InteractIds = {}
 
