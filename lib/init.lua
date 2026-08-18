@@ -53,7 +53,6 @@ if IsDuplicityVersion() then return cLib end
 
 cLib.Placeable = Placeable or Require("lib/placers/client/object_placer.lua")
 cLib.Utility = Utility or Require("lib/utility/client/utility.lua")
-cLib.PlaceableObject = ObjectPlacer or Require("lib/placers/client/placeable_object.lua")
 cLib.Point = Point or Require("lib/points/client/points.lua")
 cLib.Entity = ClientEntity or Require("lib/entities/client/client_entity.lua")
 

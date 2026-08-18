@@ -1,4 +1,3 @@
-Utility = Utility or Require("lib/utility/client/utility.lua")
 Point = Point or Require("lib/points/client/points.lua")
 ClientEntity = {
     All = {},
@@ -74,7 +73,7 @@ end
 local function SpawnEntity(entityData)
     if entityData.spawned and DoesEntityExist(entityData.spawned) then return end -- Already spawned
     if entityData.model then
-        local loaded, model = Utility.LoadModel(entityData.model)
+        local loaded, model = lib.requestModel(entityData.model)
         if not loaded then
             print(string.format("[ClientEntity] Failed to load model %s for entity %s", entityData.model, entityData.id))
             return
