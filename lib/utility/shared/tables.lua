@@ -29,7 +29,10 @@ end
 Table.TableContains = function(tbl, search, nested)
     for _, v in pairs(tbl) do
         if nested and type(v) == "table" then
-            return Table.TableContains(v, search)
+            local found, value = Table.TableContains(v, search, nested)
+            if found then
+                return true, value
+            end
         elseif v == search then
             return true, v
         end
