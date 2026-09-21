@@ -60,7 +60,7 @@ Table.GetClosest = function(coords, tbl)
     for k, v in pairs(tbl) do
         local c = v.coords
         local d = c and #(coords - c)
-        if d < dist then
+        if d and d < dist then
             dist = d
             closestPoint = v
         end
